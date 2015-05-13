@@ -1,0 +1,258 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+
+{% block script_extra %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function my_callback(data){
+            points = data.data;
+            for (point in points){
+                miObjeto.createMarker(points[point].point_x, points[point].point_y, points[point].label, points[point].url, points[point].label_url, points[point].id);
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block widgets %}
+    <div class="widget">
+        <div class="datepicker">
+            <div id="datepicker_mi_title">
+                Calendario de fotos
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block content %}
+
+    {% if 'inverboy.delete_chronologicalpicture' in user.get_all_permissions %}
+        <div class="deletephoto">
+            <a href="/inverboy/home/deletecronologicalpicture/{{ current_picture.id }}/{{ current_picture.photographic_zone_plane.id }}/{{ current_picture.photographic_zone_plane.image_plane.phase.stage.project.id }}/" onclick="return confirm_delete();"><img src="{{ static_prefix }}planes/img/deletephoto.png" alt="delete"></a>
+        </div>
+    {% endif %}
+
+    <!--
+        <form action="." method="POST">
+            <table>
+                <tr>
+                    <td>Criterio</td>
+                    <td><input type="text" name="criterion" value="{{ criterion }}"></td>
+                    <td><input type="submit" value="Buscar"></td>
+                </tr>
+            </table>
+        </form>
+        <a href="/inverboy/home/stageadd/{{ project.id }}">Nueva etapa</a>
+    -->
+
+    {% if picture_previous != None %}
+        <a href="/inverboy/home/cronologicalpicturesreport/{{ picture_previous.id }}/{{ picture_previous.photographic_zone_plane.id }}/{{ picture_previous.photographic_zone_plane.image_plane.phase.stage.project.id }}/" id="btn_previous" class="btn_previous"></a>
+    {% endif %}
+    {% if picture_forward != None %}
+        <a href="/inverboy/home/cronologicalpicturesreport/{{ picture_forward.id }}/{{ picture_forward.photographic_zone_plane.id }}/{{ picture_forward.photographic_zone_plane.image_plane.phase.stage.project.id }}/" id="btn_fordward" class="btn_fordward"></a>
+    {% endif %}
+    <div class="labelphoto">
+        fecha: {{ current_picture.get_label_date }}
+    </div>
+    <div id="leaf">
+    </div>
+
+<!--    <div id="tool_box">
+        <ul>
+            <li><span class="icon_tool"></span></li>
+            <li><a href="" id="tool_1"></a></li>
+            <li><a href="" id="tool_2"></a></li>
+            <li><a href="" id="tool_3"></a></li>
+        </ul>
+    </div>
+-->
+    {% if pictures != None %}
+        <div id="cron">
+            <h4>Linea de tiempo</h4>
+
+            <div class="slide_photos">
+                <ul>
+                    {% for picture in pictures %}
+
+                        {% if forloop.counter0|divisibleby:6 %}
+                             <li>
+                                  <div class="part">
+                                    <div class="cron">
+                        {% endif %}
+                            <div>
+                                <a href="/inverboy/home/cronologicalpicturesreport/{{ picture.id }}/{{ picture.photographic_zone_plane.id }}/{{ picture.photographic_zone_plane.image_plane.phase.stage.project.id }}/" class="{% if current_picture.id == picture.id %}border_photo{% endif %} mi_tumb" id="buttom_details_picture">
+                                    Foto {{ forloop.counter }}
+                                    <br/>
+                                    <span class="date_photo">
+                                        {{ picture.get_label_date }}
+                                    </span>
+                                </a>
+                                <img src="{{ static_prefix }}{{ picture.thumb_image_file.url_300x225 }}">
+                            </div>
+                        {% if current_picture.id == picture.id %}
+                            <script type="text/javascript">
+                                var page_slide = Math.floor({{ forloop.counter0 }}/6);
+                            </script>
+                        {% endif %}
+                        {% if forloop.counter|divisibleby:6 %}
+
+                                     </div>
+                                 </div>
+                              </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="cron_controls">
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="{{ static_prefix }}planes/js/plugins.js"></script>
+    <script src="{{ static_prefix }}planes/js/leaflet.js" ></script>    
+    <script src="{{ static_prefix }}planes/js/main.js"></script>
+    <script src="{{ static_prefix }}planes/js/slide.js" ></script>
+    <script src="{{ static_prefix }}planes/js/jquery/jquery-ui-1.10.1.custom.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        // Create the object plane
+        var miObjeto  = new Planes("leaf");
+        {% if current_picture != None %}
+        "{{ static_prefix }}{{ current_picture.path_map }}"
+            miObjeto.setMap("{{ static_prefix }}{{ current_picture.path_map }}", 2, 5);
+        {% endif %}
+    
+        //////////////////////////////////////////////////////////////////////
+        ////// SCRIPT ADICIONAL  PARA SLIDE //////
+
+        $("document").ready(function(e){
+
+           $(".slide_photos").easySlider({
+                auto: false,
+                continuous: false,
+                numeric: true  ,
+                speed: 1000,
+                pause: 4000,
+                adicionales: false,
+                controlsShow: true,
+                controlsFade: true,
+                slide_begin: page_slide
+            });
+
+
+            // #####################################################################
+            // Calendar implementation
+            
+            $("#wrap").css("height","830px"); // define new heght for the wrap container
+            $("#scrollbar").css("top","420px"); // define new heght for the wrap container
+
+            var dates = [];
+            var dates_object = [];
+            var urls = [];
+            //alert(dates_object[page_slide]);
+            //alert({{current_picture.id}});
+            $(".datepicker" ).datepicker({
+                dateFormat: 'yy-mm-dd',
+                dayNames:["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"],
+                dayNamesMin:["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
+                monthNames:[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ],
+                nextText:"Sig.",
+                prevText:".Ant",
+                prevText:".Ant",
+                //defaultDate: "2013-10-10", //dates_object[{{current_picture.id}}],
+
+                onSelect: function(){
+                    
+                    if (jQuery.inArray($(this).val(), dates) != -1)
+                        //alert(urls[$(this).val()]);  
+                    // ******** DIEGO HAY QUE TOMAR LOS DATOS QUE FALTAN DE LA URI COMO EN ESTE CASO DEJO 4 Y 1 AL FINAL DE LA URL QUE SUPONGO QUE SON ETAPA 1  PUNTO  4
+                    location.href=("/inverboy/home/cronologicalpicturesreport/"+urls[$(this).val()]+"/{{ current_picture.photographic_zone_plane.id }}/{{ current_picture.photographic_zone_plane.image_plane.phase.stage.project.id }}/");
+
+                },
+                beforeShowDay: function(date) {
+                        var current = $.datepicker.formatDate('yy-mm-dd', date);
+                        //console.log(current);
+                        //console.log(jQuery.inArray(current, dates) == -1 ? [true, ''] : [true, 'ui-state-hover', 'ui-state-highlight'] );
+                        return jQuery.inArray(current, dates) == -1 ? [true, ''] : [true, 'ui-state-hover'];
+                    }
+                }
+            );
+
+
+            
+            // DIEGO HAY QUE IMPLEMENTAR EL SERVIVIO EN TERORIA DEBE CORRER DE UNA ESTA CON DATOS DE 
+            // EJEMPLO REVISE POR FAVOR E IMPLEMENTE MI TRABAJO TERMINA AQUI EN ESTA ETAPA SOLO TIENE QUE
+            // METER EL SERIVICIO Y LOS DATOS DE ETAPA Y PLANO
+            var valCookie = getCookie("sessionid");
+            $.post("/inverboy/home/ajax/listdatesphotographiczoneplaneproject/{{ current_picture.photographic_zone_plane.id }}/{{ current_picture.photographic_zone_plane.image_plane.phase.stage.project.id }}/",{"sessionid":valCookie},function(data){
+                //console.log(data.data);
+
+                //console.log(data.data.data[0].date);
+                data = data.data;
+                for (d in data.data) {
+                    console.log(data.data[d].date);
+                    dates.push(data.data[d].date);
+                    urls[data.data[d].date] = data.data[d].url;
+                    dates_object[data.data[d].url] = data.data[d].date;
+                    //[d].url] = data.data[d].date;
+                };
+                $('.datepicker').datepicker('refresh'); // Refresh datepicker            
+                $('.datepicker').datepicker('setDate', dates_object[{{current_picture.id}}]);
+            });
+
+
+
+            /*$(".datepicker").on("click",".ui-datepicker-calendar a",function(e){
+                //e.preventDefault();
+                alert("hola");
+            });*/
+  
+            // #####################################################################         
+            
+            $( "body" ).keydown(keyEventHandler);
+
+            /*$( "body" ).keypress(function(e){
+                console.log("press key "+e.keyCode);
+            });*/
+
+
+
+        });
+
+
+        // Delete chronological photo
+        function confirm_delete(){
+            if(confirm("¿Realmente desea elminar este registro?")){
+                return true;
+            }
+            return false;
+        };
+
+
+        //////////////////////////////////////////////////////////////////////
+
+
+        function keyEventHandler(e) {
+            var e = e || window.event;
+               {% if picture_previous != None %}
+                if (parseInt(e.keyCode) == 37){
+                    console.log("izquierda");
+                    page = "/inverboy/home/cronologicalpicturesreport/{{ picture_previous.id }}/{{ picture_previous.photographic_zone_plane.id }}/{{ picture_previous.photographic_zone_plane.image_plane.phase.stage.project.id }}/";
+                    location.href = page;
+                }
+            {% endif %}
+            {% if picture_forward != None %}
+                if(parseInt(e.keyCode) == 39){
+                    console.log("DERECHA");
+                    page = "/inverboy/home/cronologicalpicturesreport/{{ picture_forward.id }}/{{ picture_forward.photographic_zone_plane.id }}/{{ picture_forward.photographic_zone_plane.image_plane.phase.stage.project.id }}/" ;
+                    location.href = page;
+                }
+            {% endif %}
+        }
+
+    </script>
+
+{% endblock %}

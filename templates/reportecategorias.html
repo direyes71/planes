@@ -1,0 +1,25 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+{% endblock %}
+{% block titulo %} Categorias suministros {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/categoriassearch/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    {% if 'inverboy.add_categoria' in user.get_all_permissions %}
+        <a href="/inverboy/home/categoriaadd/">Nueva categoria</a>
+    {% endif %}
+    <div id="id_reporte_categorias">
+        {% include 'ajax/categoriasearch.html' %}
+    </div>
+{% endblock %}

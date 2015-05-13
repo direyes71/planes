@@ -1,0 +1,50 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Suministros Almacen {% endblock %}
+{% block script %}
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block contenido %}
+    {{ reporte_ventas_opciones }}
+    <div id='flotanteSuministros' class="border">
+        {% include 'ajax/informacionsuministro.html' %}
+    </div>
+    <form action="/inverboy/home/suministrosalmacensearch/{{ proyecto.id }}/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    <div id="id_reporte_ventas">
+        {% include 'ajax/ventas/reporteventassearch.html' %}
+    </div>
+    <a href="/inverboy/home/imprimirreportealmacen/{{ proyecto.id }}">Imprimir reporte</a>
+    {% if 'inverboy.add_informesalida' in user.get_all_permissions %}
+        <a href="/inverboy/home/informesalidaadd/{{ proyecto.id }}/">Nuevo informe de salida</a>
+    {% endif %}
+{% endblock %}

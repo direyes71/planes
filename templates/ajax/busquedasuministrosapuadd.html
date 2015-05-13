@@ -1,0 +1,81 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="javascript:ventanaSuministros();">
+    <table>
+        <tr>
+            <th>Clasificacion general</th>
+            <td colspan="2">
+                <select id="id_clasificacion_general_suministro">
+                    <option value="0">----</option>
+                    <option value="Equipo" {% if clasificacion_general == 'Equipo' %}selected="selected"{% endif %}>Equipo</option>
+                    <option value="Mano de obra" {% if clasificacion_general == 'Mano de obra' %}selected="selected"{% endif %}>Mano de obra</option>
+                    <option value="Material" {% if clasificacion_general == 'Material' %}selected="selected"{% endif %}>Material</option>
+                    <option value="Transporte" {% if clasificacion_general == 'Transporte' %}selected="selected"{% endif %}>Transporte</option>
+                    <option value="Indirectos" {% if clasificacion_general == 'Indirectos' %}selected="selected"{% endif %}>Indirectos</option>
+                    <option value="Plenitareas" {% if clasificacion_general == 'Plenitareas' %}selected="selected"{% endif %}>Plenitareas</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio_busqueda" id="id_criterio_busqueda" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar" onclick="buscarSuministros();"></td>
+        </tr>
+    </table>
+</form>
+<table id="id_tabla_suministros_busqueda" border="2">
+    <tr>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Clasificacion general</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Sinonimos</th>
+        <th scope="col">Unidad de embalaje</th>
+        <th scope="col">Unidad de medida</th>
+        <th scope="col">Valor Prom.</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for suministro in lista_suministros.modelo %}
+        <tr>
+            <td>
+                <input type="checkbox" name="option_{{ forloop.counter }}" id="id_option_{{ suministro.id }}" value="{{ suministro.id }}" onchange="seleccionar(this, {{ suministro.id }}, {{lista_suministros.page}}, '{{ clasificacion_general }}', '{{ criterio }}');" {% for suministro_agregar in suministros_agregar %}{% if suministro.id == suministro_agregar.suministro.id %}checked="checked"{% endif %}{% endfor %} >
+            </td>
+            <td><label id="id_label_clasificacion_general_{{ forloop.counter }}" title="{{ suministro.clasificacion_general }}">{{ suministro.clasificacion_general }}</label></td>
+            <td><label id="id_label_nombre_{{ forloop.counter }}" title="{{ suministro.nombre }}">{{ suministro.nombre }}</label></td>
+            <td><label id="id_label_sinonimos_{{ forloop.counter }}" title="{{ suministro.sinonimos }}">{{ suministro.sinonimos }}</label></td>
+            <td><label id="id_label_unidad_embalaje_{{ forloop.counter }}" title="{{ suministro.unidad_embalaje|force_escape|intcomma }}">{{ suministro.unidad_embalaje|force_escape|intcomma }}</label></td>
+            <td><label id="id_label_unidad_medida_{{ forloop.counter }}" title="{{ suministro.unidad_medida }}">{{ suministro.unidad_medida }}</label></td>
+            <td><label id="id_label_promedio_precio_{{ forloop.counter }}" title="{{ suministro.promedio_precio_suministro|force_escape|intcomma }}">{{ suministro.promedio_precio_suministro|intcomma|force_escape }}</label></td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro.id }}"></label>
+                <input type="text" id="id_cantidad_{{ suministro.id }}" disabled="disabled" {% for suministro_agregar in suministros_agregar %}{% if suministro.id == suministro_agregar.suministro.id %}value="{{ suministro_agregar.cantidad|force_escape|intcomma }}"{% endif %}{% endfor %}>
+            </td>
+            <td>
+                <a href="javascript:agregarSuministro({{ suministro.id }}, {{lista_suministros.page}}, '{{ clasificacion_general }}', '{{ criterio }}');" id="ahref_agregar_{{ suministro.id }}" style="display: none">Agregar</a>
+                <img id="id_cargando_{{ suministro.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if lista_suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_suministros_apu_add('Dajax.process',{'pagina': 1, 'clasificacion_general': '{{ clasificacion_general }}', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_suministros_apu_add('Dajax.process',{'pagina': {{ lista_suministros.prev_page }}, 'clasificacion_general': '{{ clasificacion_general }}', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{lista_suministros.page}} de {{lista_suministros.pages}}
+{% if lista_suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_suministros_apu_add('Dajax.process',{'pagina': {{ lista_suministros.next_page }}, 'clasificacion_general': '{{ clasificacion_general }}', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_suministros_apu_add('Dajax.process',{'pagina': {{ lista_suministros.pages }}, 'clasificacion_general': '{{ clasificacion_general }}', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}
+<table>
+    <tr>
+        <td>
+            <input type="submit" value="Aceptar" onclick="this.disabled=true; agregarSuministros();">
+        </td>
+        <td>
+            <input type="submit" value="Cancelar" onclick="limpiarBusquedaSuministros(); ">
+        </td>
+    </tr>
+</table>

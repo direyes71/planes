@@ -1,0 +1,48 @@
+{% load humanize %}
+
+<form action="#" method="POST" id="id_form_busqueda_inmuebles_prospecto_agregar_convenio">
+    <table>
+        <tr>
+            <td>
+                Criterio Busqueda
+            </td>
+            <td>
+                <input name="criterio" id="id_criterio" value="{{ criterio }}">
+            </td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Inmuebles</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Inmueble</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Valor</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for agrupacion_inmueble in agrupaciones_inmueble %}
+                    <tr>
+                        <td><label>{{ agrupacion_inmueble.identificacion }}</label></td>
+                        <td>{{ agrupacion_inmueble.str_descripcion|escape|safe }}</td>
+                        <td><label>{{ agrupacion_inmueble.str_valor|force_escape|intcomma }}</label></td>
+                        <td><a href="/inverboy/home/nuevocontratoventa/{{ agrupacion_inmueble.id }}/{{ prospecto_venta.id }}/{{ proyecto.id }}/">Crear</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>
+
+<a href="#" id="id_btn_ver_todos_inmuebles_agregar_convenio">Ver todos</a>
+<input type="button" value="Cancelar" id="id_btn_cancelar_agregar">

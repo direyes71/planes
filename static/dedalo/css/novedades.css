@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* Estilo titulo */
+.titulo {
+    font-size: 1.2em;
+    text-align: center;
+    font-weight:bold;
+}
+
+/* Estilo parrafo */
+.parrafo {
+    font-size: 1.1em;
+    line-height: 1.25em;
+    margin: 1.25em 0;
+    text-align: left;
+}

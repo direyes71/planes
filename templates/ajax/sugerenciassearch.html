@@ -1,0 +1,62 @@
+<table id="tablaReportes"  align="center">
+    <tr>
+        <th scope="col">Fecha</th>
+        <th scope="col">Id. usuario</th>
+        <th scope="col">Nombres usuario</th>
+        <th scope="col">Apellidos usuario</th>
+        <th scope="col">Cargo</th>
+        <th scope="col">Observaciones</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for sugerencia in sugerencias.modelo %}
+        <tr>
+            <td>
+                {{ sugerencia.fecha|date:'Y-m-d' }}
+            </td>
+            <td>
+                {{ sugerencia.usuario.identificacion }}
+            </td>
+            <td>
+                {{ sugerencia.usuario.first_name }}
+            </td>
+            <td>
+                {{ sugerencia.usuario.last_name }}
+            </td>
+            <td>
+                {{ sugerencia.usuario.cargo }}
+            </td>
+            <td>
+                {{ sugerencia.observaciones }}
+            </td>
+            <td>
+                {% if sugerencia.estado == 1 %}
+                    En estudio
+                {% endif %}
+                {% if sugerencia.estado == 2 %}
+                    Aprobada
+                {% endif %}
+                {% if sugerencia.estado == 3 %}
+                    No opera
+                {% endif %}
+            </td>
+            <td>
+                {% if sugerencia.estado == 1 %}
+                    <a href="/inverboy/home/modificarestadosugerencia/{{ sugerencia.id }}/2/">Aprobada</a><br>
+                    <a href="/inverboy/home/modificarestadosugerencia/{{ sugerencia.id }}/3/">No opera</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if sugerencias.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_sugerencias('Dajax.process',{ 'pagina': 1, 'tipo_busqueda': {{ tipo_busqueda }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_sugerencias('Dajax.process',{ 'pagina': {{ sugerencias.prev_page }}, 'tipo_busqueda': {{ tipo_busqueda }} })"> < </a>
+{% else %}
+{% endif %}
+    Página {{ sugerencias.page }} de {{ sugerencias.pages }}
+{% if sugerencias.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_sugerencias('Dajax.process',{ 'pagina': {{ sugerencias.next_page }}, 'tipo_busqueda': {{ tipo_busqueda }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_sugerencias('Dajax.process',{ 'pagina': {{ sugerencias.pages }}, 'tipo_busqueda': {{ tipo_busqueda }} })"> >> </a>
+{% else %}
+{% endif %}

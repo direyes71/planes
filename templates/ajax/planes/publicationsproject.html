@@ -1,0 +1,28 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% for published in publications.modelo %}
+    <div class="content_block">
+        <div class="content_block_title"><span><img src="{{ static_prefix }}planes/img/person.png" alt="Icon"></span> <h4>{{ published.user }} - <span class="font_12">{{ published.publication_date }}</span></h4></div>
+        <div class="content_block_text" style="font-size: 16px;">
+            {{ published.text }}
+        </div>
+        <div class="action_buttons">
+            <a href="{{ published.id }}" class="buttom_1  see_more_chat">Ver mas</a>
+        </div>
+        <div class="clearfix"></div>
+        <div class="division"></div>
+        </div>
+	<div class="clearfix"></div>
+{% endfor %}
+
+{% if publications.has_prev %}
+    <a href="#" page="1" id="id_change_page"> << </a>
+    <a href="#" page="{{ publications.prev_page }}" id="id_change_page"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ publications.page }} de {{ publications.pages }}
+{% if publications.has_next %}
+    <a href="#" page="{{ publications.next_page }}" id="id_change_page"> > </a>
+    <a href="#" page="{{ publications.pages }}" id="id_change_page"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,50 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>ID</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Proveedor</th>
+        <th>Persona</th>
+        <th>Opciones</th>
+    </tr>
+    {% for orden_giro in ordenes_giro.modelo %}
+        <tr>
+            <td>
+                <label>OG{{ orden_giro.proyecto.id }}-{{ orden_giro.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.fecha_registro|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.proveedor.razon_social }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.persona.first_name }}, {{ orden_giro.persona.last_name }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/actaconformidadadd/{{ orden_giro.id }}/{{ proyecto.id }}/">Acta de conformidad</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_giro.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro_acta_conformidad_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro_acta_conformidad_add('Dajax.process',{'pagina': {{ ordenes_giro.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ordenes_giro.page}} de {{ordenes_giro.pages}}
+{% if ordenes_giro.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro_acta_conformidad_add('Dajax.process',{'pagina': {{ordenes_giro.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro_acta_conformidad_add('Dajax.process',{'pagina': {{ordenes_giro.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

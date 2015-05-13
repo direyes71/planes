@@ -1,0 +1,30 @@
+{% load humanize %}
+<table id="tablaReportes" border="1" align="center">
+    <tbody id=cuerpoTabla >
+        <tr>
+            <th>N&deg;</th>
+            <th>Tipo</th>
+            <th>Entidad</th>
+            <th>Cuenta</th>
+            <th>F. desembolso</th>
+            <th>Valor</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for pago_entidad_contrato in pagos_entidades_contrato %}
+            <tr>
+                <td><label>{{ forloop.counter }}</label></td>
+                <td>{{ pago_entidad_contrato.str_tipo_cuenta }}</td>
+                <td>{% if pago_entidad_contrato.entidad %}{{ pago_entidad_contrato.entidad }}{% endif %}</td>
+                <td>{% if pago_entidad_contrato.numero_cuenta %}{{ pago_entidad_contrato.numero_cuenta }}{% endif %}</td>
+                <td>{% if pago_entidad_contrato.fecha_desembolso %}{{ pago_entidad_contrato.fecha_desembolso }}{% endif %}</td>
+                <td>{{ pago_entidad_contrato.valor|force_escape|intcomma }}</td>
+                <td><a href = "#" id="id_btn_modificar_pago_entidad" indice="{{ forloop.counter0 }}">Modificar</a></td>
+                <td>{% if pago_entidad_contrato.permite_modificacion %}<a href = "#" id="id_btn_eliminar_pago_entidad" indice="{{ forloop.counter0 }}">Borrar</a>{% endif %}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="6">Total</th>
+            <td colspan="2" align="right"><label>${{ valor_pagar_entidad_contrato|force_escape|intcomma }}</label></td>
+        </tr>
+    </tbody>
+</table>

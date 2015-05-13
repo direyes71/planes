@@ -1,0 +1,46 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block script %}
+{% endblock %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Reporte an&aacute;lisis de cantidades por suministro
+{% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <td><label>Criterio</label></td>
+                <td><input type="text" name="criterio" value="{{ criterio }}"></td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    <div align="center">
+        <table border="1" align="center">
+            <tr>
+                <th>Clasificaci&oacute;n</th>
+                <th>Suministro</th>
+                <th>Un. medida</th>
+                <th>Cant. suministro</th>
+                <th>Cant. requerida</th>
+                <th>Cant. comprada</th>
+                <th>Inf. recep. / Actas</th>
+                <th>Cant. Facturada</th>
+                <th>Vlr. Facturado</th>
+            </tr>
+            {% for suministro in suministros %}
+                <tr>
+                    <td><label>{{ suministro.suministro.clasificacion_general }}</label></td>
+                    <td><label>{{ suministro.suministro.nombre }}</label></td>
+                    <td><label>{{ suministro.suministro.unidad_medida }}</label></td>
+                    <td><label>{{ suministro.cantidad_suministro|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.cantidad_total_requerida|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.cantidad_comprada|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.cantidad_almacen|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.cantidad_facturada|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.valor_facturado|force_escape|intcomma }}</label></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

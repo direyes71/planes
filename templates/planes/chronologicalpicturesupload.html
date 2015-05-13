@@ -1,0 +1,158 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+
+{% block script_extra %}
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<style type="text/css">
+
+div.fileinputs {
+    position: relative;
+}
+
+div.fakefile {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+
+/*input.file {
+    position: relative;
+    text-align: right;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    z-index: 2;
+}*/
+
+</style>
+
+<div class="form_upload">
+
+    <h3 class="text_ligth_gray">  Subida de fotos</h3>
+    <br />
+    <h6 class="text_ligth_gray">  {{ form.image_file.label_tag }} {{ form.image_file.help_text }}</h6>    
+    
+    <form action="." method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="content_form">
+            <table>
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                        <div class="fileinputs">
+                                <input type="file" class="file" id="id_image_file" name="image_file" multiple="true">
+                                <!--<div class="fakefile">
+                                    <div class="fake_input"> </div>
+                                </div>-->
+                        </div>
+                            <!--<input type="file" id="id_image_file" name="image_file" multiple="true">-->
+                    </td>
+                     <td>
+                         <input type="submit" value="Subir fotos" onclick="this.disabled=true;"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    <br />
+
+    {% if form.image_file.errors or form.non_field_errors%}
+        <h3 class="text_gray">Errores en el formulario</h3>
+          <div class='form_error'>
+               {% if form.non_field_errors %} {{ form.non_field_errors }}{% endif %}
+               {# { form.docfile } #}
+               {{ form.image_file.errors }}
+          </div>
+    {% endif %}
+
+    {% if upload_files %}
+        <h4>Archivos subidos</h4>
+        <ul>
+            {% for upload_file in upload_files %}
+                <li>{{ upload_file.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if corrupt_files_correct_format or corrupt_files_correct_project or corrupt_files_correct_initials_stage or corrupt_files_correct_initials_phase or corrupt_files_correct_initials_image_plane or corrupt_files_correct_photographic_zone_plane or corrupt_files_correct_date %}
+        <div id="informe_upload" class="text_ligth_gray">
+        <h3 class="text_gray">Hay archivos corruptos!!</h3>
+        {% if corrupt_files_correct_format %}
+            <h4>Archivos con formato incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_format %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_project %}
+            <h4>Archivos con identificador de proyecto incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_project %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_initials_stage %}
+            <h4>Archivos con identificador de etapa incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_initials_stage %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_initials_phase %}
+            <h4>Archivos con identificador de fase incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_initials_phase %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_initials_image_plane %}
+            <h4>Archivos con identificador de plano incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_initials_image_plane %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_photographic_zone_plane %}
+            <h4>Archivos con identificador de zona fotogr&aacute;fica incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_photographic_zone_plane %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if corrupt_files_correct_date %}
+            <h4>Archivos con identificador de fecha incorrecto</h4>
+            <ul>
+                {% for corrupt_file in corrupt_files_correct_date %}
+                    <li>{{ corrupt_file.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
+</div>
+</div>
+<script type="text/javascript">
+
+$("document").ready(function(e){
+
+   // $('input[type="file"]').change(function(e){
+
+        //alert($(this).val());
+    //});
+
+});
+
+</script>
+{% endblock %}
+

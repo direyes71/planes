@@ -1,0 +1,67 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="javascript:buscarProveedores();">
+    <table>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio_busqueda" id="id_criterio_busqueda" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar" onclick="buscarProveedores();"></td>
+        </tr>
+    </table>
+</form>
+<table id="id_tabla_proveedores_busqueda">
+    <tr>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Razon social</th>
+        <th scope="col">Nombre comercial</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Tipo de proveedor</th>
+        <th scope="col">Telefono 1</th>
+        <th scope="col">Precio</th>
+        <th scope="col">+ Iva</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for proveedor in lista_proveedores.modelo %}
+        <tr>
+            <td><input type="checkbox" name="option_{{ forloop.counter }}" id="id_option_{{ proveedor.id }}" value="{{ proveedor.id }}" onchange="seleccionar(this, {{ proveedor.id }}, {{lista_proveedores.page}}, '{{ criterio }}');" {% for proveedor_agregar in proveedores_agregar %}{% if proveedor.id == proveedor_agregar.proveedor.id %}checked="checked"{% endif %}{% endfor %} ></td>
+            <td><label id="id_label_identificacion_{{ forloop.counter }}" title="{{ proveedor.identificacion }}">{{ proveedor.identificacion }}</label></td>
+            <td><label id="id_label_razon_social_{{ forloop.counter }}" title="{{ proveedor.razon_social }}">{{ proveedor.razon_social }}</label></td>
+            <td><label id="id_label_nombre_comercial_{{ forloop.counter }}" title="{{ proveedor.nombre_comercial }}">{{ proveedor.nombre_comercial }}</label></td>
+            <td><label id="id_label_direccion_{{ forloop.counter }}" title="{{ proveedor.direccion }}">{{ proveedor.direccion }}</label></td>
+            <td><label id="id_label_tipo_{{ forloop.counter }}" {% if proveedor.tipo == 1 %} title="Persona Natural" {% else %} title="Juridica" {% endif %}>{% if proveedor.tipo == 1 %} Persona Natural {% else %} Juridica {% endif %}</label></td>
+            <td><label id="id_label_telefono_1_{{ forloop.counter }}" title="{{ proveedor.telefono_1 }}">{{ proveedor.telefono_1 }}</label></td>
+            <td>
+                <label id="id_label_error_precio_{{ proveedor.id }}"></label>
+                <input type="text" id="id_precio_{{ proveedor.id }}" disabled="disabled" {% for proveedor_agregar in proveedores_agregar %}{% if proveedor.id == proveedor_agregar.proveedor.id %}value="{{ proveedor_agregar.precio|force_escape|intcomma }}"{% endif %}{% endfor %}>
+            </td>
+            <td><input type="checkbox" id="id_option_iva_{{ proveedor.id }}" disabled="disabled" {% for proveedor_agregar in proveedores_agregar %}{% if proveedor.id == proveedor_agregar.proveedor.id %}{% if proveedor_agregar.iva %}checked="checked" {% endif %}{% endif %}{% endfor %}></td>
+            <td>
+                <a href="javascript:agregarProveedor({{ proveedor.id }}, {{lista_proveedores.page}}, '{{ criterio }}');" id="ahref_agregar_{{ proveedor.id }}" style="display: none">Agregar</a>
+                <img id="id_cargando_{{ proveedor.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if lista_proveedores.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_add('Dajax.process',{'pagina': {{ lista_proveedores.prev_page }}, 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ lista_proveedores.page }} de {{ lista_proveedores.pages }}
+{% if lista_proveedores.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_add('Dajax.process',{'pagina': {{ lista_proveedores.next_page }}, 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_add('Dajax.process',{'pagina': {{ lista_proveedores.pages }}, 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}
+<table>
+    <tr>
+        <td>
+            <input type="submit" value="Aceptar" onclick="this.disabled=true; agregarProveedores();">
+        </td>
+        <td>
+            <input type="submit" value="Cancelar" onclick="limpiarBusquedaProveedores(); ">
+        </td>
+    </tr>
+</table>

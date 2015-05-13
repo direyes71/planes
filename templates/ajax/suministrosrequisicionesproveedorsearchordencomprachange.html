@@ -1,0 +1,119 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="javascript:buscarSuministrosProveedor({{ orden_compra.id }}, {{ proyecto.id }})">
+    <table>
+        <tr>
+            <td>
+                Criterio <input type="text" id="id_text_busqueda" name="text_busqueda" value="{{ criterio }}"> <input type="submit" value="Buscar">
+            </td>
+        </tr>
+    </table>
+</form>
+<table id="id_tabla_suministros_busqueda" align="center" border="1">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad requerida</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Observaciones req.</th>
+        <th>Cantidad comprar</th>
+        <th>Precio</th>
+        <th>+ IVA</th>
+        <th>Observaciones</th>
+        <th>Opciones</th>
+    </tr>
+    {% for suministro_requisiciones in suministros_requisiciones.modelo %}
+        <tr>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.cantidad_requerida|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.unidad_embalaje|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.observaciones }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">{% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}{{ error.error }}{% endif %}</label>
+                {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id or suministro_requisiciones.cantidad != '' %}
+                    {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}
+                        <input type="text" id="id_text_cantidad_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" value="{{ error.value|force_escape }}"/>
+                    {% else %}
+                        <label>{{ suministro_requisiciones.cantidad|intcomma|force_escape }}</label>
+                    {% endif %}
+                {% else %}
+                    <input type="text" id="id_text_cantidad_{{ suministro_requisiciones.suministro.suministro.suministro.id }}"/>
+                {% endif %}
+            </td>
+            <td>
+                <label id="id_label_error_precio_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">{% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}{{ error.error_precio }}{% endif %}</label>
+                {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id or suministro_requisiciones.precio != '' %}
+                    {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}
+                        <input type="text" id="id_text_precio_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" value="{{ error.value_precio|force_escape }}"/>
+                    {% else %}
+                        <label>{{ suministro_requisiciones.precio|intcomma|force_escape }}</label>
+                    {% endif %}
+                {% else %}
+                    <input type="text" id="id_text_precio_{{ suministro_requisiciones.suministro.suministro.suministro.id }}"/>
+                {% endif %}
+            </td>
+            <td>
+                <input type="checkbox" id="id_iva_suministro_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id and error.iva_suministro == 0.16 %}checked="checked" {% else %}{% if suministro_requisiciones.iva_suministro == 0.16 %}checked="checked" {% endif %}{% endif %}{% if error.id != suministro_requisiciones.suministro.suministro.suministro.id and suministro_requisiciones.cantidad != '' %}disabled="disabled" {% endif %}/>
+            </td>
+            <td>
+                {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id or suministro_requisiciones.cantidad != '' %}
+                    {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}
+                        <textarea id="id_text_observaciones_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" name="text_observaciones_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">{{ error.value_observaciones }}</textarea>
+                    {% else %}
+                        <label>{{ suministro_requisiciones.observaciones }}</label>
+                    {% endif %}
+                {% else %}
+                        {# % if suministro_requisiciones.cantidad_nueva_cotizacion != '' % #}
+                            <textarea id="id_text_observaciones_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" name="text_observaciones_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">{{ suministro_requisiciones.observaciones }}</textarea>
+                        {# % endif % #}
+                {% endif %}
+            </td>
+            <td>
+                {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id or suministro_requisiciones.cantidad == '' %}
+                    <a href="javascript:void(0)" onclick="anadirSuministro({{ suministros_requisiciones.page }}, {{ suministro_requisiciones.suministro.suministro.suministro.id }}, {{ orden_compra.id }}, '{{ criterio }}', {{ proyecto.id }});" id="ahref_agregar_suministro_{{ suministro_requisiciones.suministro.suministro.suministro.id}}">Agregar</a>
+                {% else %}
+                    <img id="id_ima_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInputSuministroAgregar({{ suministros_requisiciones.page }}, {{ suministro_requisiciones.suministro.suministro.suministro.id }}, {{ orden_compra.id }}, '{{ criterio }}', {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_agregar_suministro_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros_requisiciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_orden_compra_change('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_orden_compra_change('Dajax.process',{'pagina': {{ suministros_requisiciones.prev_page }}, 'criterio': '{{ criterio }}', 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_requisiciones.page }} de {{ suministros_requisiciones.pages }}
+{% if suministros_requisiciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_orden_compra_change('Dajax.process',{'pagina': {{ suministros_requisiciones.next_page }}, 'criterio': '{{ criterio }}', 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_orden_compra_change('Dajax.process',{'pagina': {{ suministros_requisiciones.pages }}, 'criterio': '{{ criterio }}', 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<p align="right">
+    <!-- <a href="javascript:anadirTodosSuministros({{ orden_compra.id }}, {{ proyecto.id }});" id="ahref_cotizar_todo_{{ orden_compra.id }}">Cotizar todos</a> -->
+    <img id="id_cargando_cotizar_todo_{{ orden_compra.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+</p>
+<br>
+<input type="button" id="id_guardar" value="Agregar suministros" onclick="anadirSuministros({{ orden_compra.id }}, {{ proyecto.id }});">
+<input type="button" id="id_cancelar" value="Cancelar" onclick="cancelarAnadirSuministros({{ proyecto.id }});">

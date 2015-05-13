@@ -1,0 +1,201 @@
+{% extends "html/base_home.html"%}
+{% load dajaxice_templatetags %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function preguntar(){
+            var nombre = document.getElementById('id_nombre_contacto').value;
+            var cargo = document.getElementById('id_cargo_contacto').value;
+            var telefono = document.getElementById('id_telefono_contacto').value;
+            var ext = document.getElementById('id_ext_contacto').value;
+            var celular = document.getElementById('id_celular_contacto').value;
+            var email = document.getElementById('id_email_contacto').value;
+            Dajaxice.aplicacion.inverboy.agregar_contacto_proveedor('Dajax.process',{'nombre': nombre, 'cargo': cargo, 'telefono': telefono, 'ext': ext, 'celular': celular, 'email': email });
+        }
+
+        // FUNCION PARA MODIFICAR UNA FILA SELECCIONADA DE LA TABLA CONTACTOS
+        function modificarFila(indice) {
+            Dajaxice.aplicacion.inverboy.ventana_modificar_contacto_proveedor('Dajax.process',{ 'indice': indice });
+        }
+
+        function modificarContacto(indice) {
+            var nombre = document.getElementById('id_nombre_contacto').value;
+            var cargo = document.getElementById('id_cargo_contacto').value;
+            var telefono = document.getElementById('id_telefono_contacto').value;
+            var ext = document.getElementById('id_ext_contacto').value;
+            var celular = document.getElementById('id_celular_contacto').value;
+            var email = document.getElementById('id_email_contacto').value;
+            Dajaxice.aplicacion.inverboy.modificar_contacto_proveedor('Dajax.process',{ 'indice': indice, 'nombre': nombre, 'cargo': cargo, 'telefono': telefono, 'ext': ext, 'celular': celular, 'email': email });
+        }
+
+        // FUNCION PARA ELMIMINAR UNA FILA SELECCIONADA DE LA TABLA CONTACTOS
+        function borrarFila(indice)	{
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                Dajaxice.aplicacion.inverboy.eliminar_contacto_proveedor('Dajax.process',{ 'indice': indice });
+            }
+        }
+
+        function ventanaContacto() {
+            Dajaxice.aplicacion.inverboy.ventana_contacto_proveedor('Dajax.process',{ });
+        }
+
+        function cerrarVentanaContacto() {
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+
+        // VALIDACIONES
+        // FUNCION TRIM
+        function trim(stringToTrim) {
+        	return stringToTrim.replace(/^\s+|\s+$/g,"");
+        }
+    </script>
+
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 420px;
+            height: 310px;
+            left: 50%;
+            top: 50%;
+            margin-left: -210px;  /*Tamaño del DIV entre 2*/
+            margin-top: -155px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+                                                
+
+        /* estilo para el mensaje de error del contacto */
+        .mensajeErrorContacto {
+            display: none;
+        }
+    </style>
+
+{% endblock %}
+{% block titulo %}{% if change %}Modificar proveedor{% else %}Nuevo proveedor{% endif %}{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/contactoadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    
+    <!-- contenido página -->
+    <form action="." method="post">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Identificacion (NIT):</label></th>
+                <td>{{ form1.identificacion.errors }} {{ form1.identificacion }}</td>
+            </tr>
+            <tr>
+                <th><label>Razon social:</label></th>
+                <td>{{ form1.razon_social.errors }} {{ form1.razon_social }}</td>
+            </tr>
+            <tr>
+                <th><label>Nombre Comercial:</label></th>
+                <td>{{ form1.nombre_comercial.errors }} {{ form1.nombre_comercial }}</td>
+            </tr>
+            <tr>
+                <th><label>Tipo de proveedor:</label></th>
+                <td>{{ form1.tipo.errors }} {{ form1.tipo }}</td>
+            </tr>
+            <tr>
+                <th><label>Regimen tributario:</label></th>
+                <td>{{ form1.regimen_tributario.errors }} {{ form1.regimen_tributario }}</td>
+            </tr>
+            <tr>
+                <th><label>Direccion:</label></th>
+                <td>{{ form1.direccion.errors }} {{ form1.direccion }}</td>
+            </tr>
+            <tr>
+                <th><label> Departamento: </label></th>
+                <td>
+                    <select name="departamento" id="id_departamento" onchange="Dajaxice.aplicacion.inverboy.cargar_municipios('Dajax.process',{'option':this.value, 'elemento': 'id_municipio'})">
+                        <option value="0" selected="selected">---</option>
+                        {% for departamento in departamentos %}
+                            <option value="{{ departamento.id }}" {% if departamento == departamento_actual %}selected="selected" {% endif %}>{{ departamento.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label> Municipio: </label></th>
+                <td>
+                    {{ form1.municipio.errors }}
+                    <select name="municipio" id="id_municipio" size="1">
+                    {% for municipio in municipios %}
+                        <option value="{{ municipio.id }}" {% if municipio == municipio_actual %}selected="selected" {% endif %}>{{ municipio.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Telefono principal:</label></th>
+                <td>{{ form1.telefono_1.errors }} {{ form1.telefono_1 }}</td>
+            </tr>
+            <tr>
+                <th><label>Otro telefono:</label></th>
+                <td>{{ form1.telefono_2.errors }} {{ form1.telefono_2 }}</td>
+            </tr>
+            <tr>
+                <th><label>Fax:</label></th>
+                <td>{{ form1.fax.errors }} {{ form1.fax }}</td>
+            </tr>
+            <tr>
+                <th><label>Web site:</label></th>
+                <td>{{ form1.web_site.errors }} {{ form1.web_site }}</td>
+            </tr>
+            <tr>
+                <th><label>Email:</label></th>
+                <td>{{ form1.email.errors }} {{ form1.email }}</td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>{{ form1.estado }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th><label>Observaciones</label></th>
+                <td>
+                    {{ form1.observaciones.errors }}
+                    <textarea rows="4" cols="25" style="resize: none;" id="id_observaciones" name="observaciones">{% if form1.observaciones.value %}{{ form1.observaciones.value }}{% endif %}</textarea>
+                </td>
+            </tr>
+        </table>
+        <div id="reporte_contactos">
+            {% include 'ajax/contactosproveedor.html' %}
+        </div>
+        <p align="center"><a href="javascript:void(0)" onclick ="ventanaContacto();">Agregar Contacto</a></p>
+        <br>
+        <p align="center"><input type="submit" value="Guardar Proveedor" onclick="this.disabled=true"></p>
+    </form>
+    <!-- fin contenido página -->
+{% endblock %}

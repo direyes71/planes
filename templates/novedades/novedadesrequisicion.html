@@ -1,0 +1,26 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - NOVEDADES MODULO REQUISICIONES  {% endblock %}
+{% block contenido %}
+    <p class="titulo">VER REQUISICIONES</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/requisicionnovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br>
+        1 - Consecutivo Requisición
+            <br>
+        2 - Nombre del suministro, que se encuentre en la Requisición
+            <br>
+            <br>
+        El listado de requisiciones se encuentra ordenado por el código consecutivo de creación.
+    </p>
+{% endblock %}

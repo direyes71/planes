@@ -1,0 +1,74 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table border="1" id="id_tabla_suministros" align="center">
+    <tbody id=id_cuerpo_tabla>
+        <tr>
+            <th>Estandar</th>
+            <th>Clasificacion general</th>
+            <th>Nombre</th>
+            <th>Sinonimos</th>
+            <th>Unidad de embalaje</th>
+            <th>Unidad de medida</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Opciones</th>
+        </tr>
+        {% for suministro_apu in suministros_apu.modelo %}
+            <tr>
+                <th>
+                    {% if suministro_apu.suministro.clasificacion_general == 'Mano de obra' %}
+                        {% if apu_manejo_estandar %}
+                            <input type="checkbox" onchange="asignarSuministroApuEstandar(this, {{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});" {% if suministro_estandar == suministro_apu.suministro.id %}checked="checked"{% endif %}>
+                        {% endif %}
+                    {% endif %}
+                </th>
+                <td>{{ suministro_apu.suministro.clasificacion_general }}</td>
+                <td>{{ suministro_apu.suministro.nombre }}</td>
+                <td>{{ suministro_apu.suministro.sinonimos }}</td>
+                <td>
+                    {% if suministro_apu.suministro.unidad_embalaje != -1.0 %}
+                        {{ suministro_apu.suministro.unidad_embalaje|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>{{ suministro_apu.suministro.unidad_medida }}</td>
+                <td>
+                    <label id="id_label_error_precio_{{ suministro_apu.suministro.id }}">{% if error.item == 'precio' and error.id == suministro_apu.suministro.id %}{{ error.error }}{% endif %}</label>
+                    <input type="text" id="id_text_precio_{{ suministro_apu.suministro.id }}" name="text_precio" size="12" {% if error.item == 'precio' and error.id == suministro_apu.suministro.id %}value="{{ error.value }}"{% else %}value="{{ suministro_apu.precio|intcomma|force_escape }}" disabled="disabled"{% endif %}>
+                    {% if error.item == 'precio' and error.id == suministro_apu.suministro.id %}
+                        <img id="id_ima_2_{{ suministro_apu.suministro.id }}" name="ima_2" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px;" onclick="modificarPrecio({{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});"/>
+                    {% else %}
+                        {% if proyecto.proceso_proyecto == 1 %}
+                            <img id="id_ima_{{ suministro_apu.suministro.id }}" name="ima" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInput({{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});">
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    <label id="id_label_error_cantidad_{{ suministro_apu.suministro.id }}">{% if error.item == 'cantidad' and error.id == suministro_apu.suministro.id %}{{ error.error }}{% endif %}</label>
+                    <input type="text" id="id_text_cantidad_{{ suministro_apu.suministro.id }}" name="text_cantidad" size="12" {% if error.item == 'cantidad' and error.id == suministro_apu.suministro.id %}value="{{ error.value }}"{% else %}value="{{ suministro_apu.cantidad|intcomma|force_escape }}" disabled="disabled"{% endif %}>
+                    {% if error.item == 'cantidad' and error.id == suministro_apu.suministro.id %}
+                        <img id="id_ima_4_{{ suministro_apu.suministro.id }}" name="ima_4" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px;" onclick="modificarCantidad({{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});"/>
+                    {% else %}
+                        <img id="id_ima_3_{{ suministro_apu.suministro.id }}" name="ima_3" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInputCantidad({{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});">
+                    {% endif %}
+                </td>
+                <td>
+                    {% if proyecto.proceso_proyecto == 1 %}
+                        <a href = "javascript:void(0)" onclick="borrarFila({{ suministro_apu.suministro.id }}, {{ suministros_apu.page }}, {{ proyecto.id }});">Borrar</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if suministros_apu.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto_add('Dajax.process',{'pagina': 1, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto_add('Dajax.process',{'pagina': {{ suministros_apu.prev_page }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_apu.page }} de {{ suministros_apu.pages }}
+{% if suministros_apu.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto_add('Dajax.process',{'pagina': {{ suministros_apu.next_page }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto_add('Dajax.process',{'pagina': {{ suministros_apu.pages }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

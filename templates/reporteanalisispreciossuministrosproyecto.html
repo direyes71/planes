@@ -1,0 +1,38 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block script %}
+{% endblock %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Reporte an&aacute;lisis de cantidades por suministro
+{% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <td><label>Criterio</label></td>
+                <td><input type="text" name="criterio" value="{{ criterio }}"></td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    <div align="center">
+        <table border="1" align="center">
+            <tr>
+                <th>Clasificaci&oacute;n</th>
+                <th>Suministro</th>
+                <th>Cant. comprada</th>
+                <th>Un. medida</th>
+                <th>Valor ejecutado en OC</th>
+            </tr>
+            {% for suministro in suministros %}
+                <tr>
+                    <td><label>{{ suministro.suministro.clasificacion_general }}</label></td>
+                    <td><label>{{ suministro.suministro.nombre }}</label></td>
+                    <td><label>{{ suministro.cantidad|force_escape|intcomma }}</label></td>
+                    <td><label>{{ suministro.suministro.unidad_medida }}</label></td>
+                    <td><label>{{ suministro.precio_ejecutado_ordenes_compra|force_escape|intcomma }}</label></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

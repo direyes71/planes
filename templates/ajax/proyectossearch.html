@@ -1,0 +1,89 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">No.</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Iniciales</th>
+        <th scope="col">Tipo proyecto</th>
+        <th scope="col">Ciudad</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Proceso</th>
+        <th scope="col">Director de obra</th>
+        <th scope="col">Extension</th>
+        <th scope="col">Opciones</th>
+    </tr>
+
+    {% for proyecto in proyectos.modelo %}
+        <tr id='fila_proyecto_{{ forloop.counter0 }}'>
+            <td>
+                {{ proyecto.id }}
+            </td>
+            <td>
+               <a href="javascript:void(0)" onclick ="detalles_proyecto( {{ proyecto.id }},{{  forloop.counter0  }} );"> {{ proyecto.nombre }} </a>
+            </td>
+            <td>
+                {{ proyecto.iniciales }}
+            </td>
+            <td>
+                {{ proyecto.tipo_proyecto }}
+            </td>
+            <td>
+                {{ proyecto.municipio.departamento.nombre }}, {{ proyecto.municipio.nombre }}
+            </td>
+            <td>
+                {{ proyecto.direccion }}
+            </td>
+            <td>
+                {% if proyecto.estado_proyecto == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if proyecto.proceso_proyecto == 1 %}
+                    En presupuesto
+                {% endif %}
+            </td>
+            <td>
+                {% if proyecto.director_obra != None %}
+                    {{ proyecto.director_obra }}
+                {% endif %}
+            </td>
+            <td>
+                {{ proyecto.ext }}
+            </td>
+            <td>
+                {% if 'inverboy.view_proyecto' in user.get_all_permissions %}
+                    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Detalles</a>
+                {% endif %}
+                {% if 'inverboy.change_proyecto' in user.get_all_permissions %}
+                    <a href="/inverboy/home/proyectochange/{{ proyecto.id }}">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if proyectos.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proyectos('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proyectos('Dajax.process',{'pagina': {{ proyectos.prev_page }}, 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{proyectos.page}} de {{proyectos.pages}}
+{% if proyectos.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proyectos('Dajax.process',{'pagina': {{ proyectos.next_page }}, 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proyectos('Dajax.process',{'pagina': {{ proyectos.pages }}, 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

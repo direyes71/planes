@@ -1,0 +1,31 @@
+{% extends 'html/base_home.html' %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/"> Proyecto: {{ proyecto.nombre }} </a> - Capitulo: {{ capitulo.nombre_capitulo }} - {{ titulo }} {% endblock %}
+{% block contenido %}
+    <form action="." name="form1" method="post">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Codigo:</label></th>
+                <td>
+                    {{ form.codigo.errors }} {{ form.codigo }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+        </div>
+    </form>
+{% endblock %}

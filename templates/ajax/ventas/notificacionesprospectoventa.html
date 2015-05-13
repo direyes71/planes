@@ -1,0 +1,41 @@
+{% load humanize %}
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Notificaciones</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Fecha</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Fecha rta.</th>
+                    <th>Observaciones rta.</th>
+                    <th>Rta. oportuna</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for notificacion_prospecto in prospecto_venta.notificacionventa_set.all %}
+                    <tr>
+                        <td><label>{{ notificacion_prospecto.str_tipo_notificacion }}</label></td>
+                        <td><label>{{ notificacion_prospecto.fecha_limite_notificacion }}</label></td>
+                        <td><label>{{ notificacion_prospecto.descripcion }}</label></td>
+                        <td><label>{% if notificacion_prospecto.fecha_registro_respuesta %}{{ notificacion_prospecto.fecha_registro_respuesta }}{% endif %}</label></td>
+                        <td><label>{% if notificacion_prospecto.fecha_registro_respuesta %}{{ notificacion_prospecto.respuesta_notificacion }}{% endif %}</label></td>
+                        <td><label>{% if notificacion_prospecto.fecha_registro_respuesta %}{% if notificacion_prospecto.respuesta_oportuna %}Si{% else %}No{% endif %}{% endif %}</label></td>
+                        <td>
+                            {% if notificacion_prospecto.permite_contestar %}
+                                <a href="javascript:void(0)" id="id_btn_contestar_notificacion" notificacion_id="{{ notificacion_prospecto.id }}">Contestar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,69 @@
+<!-- <form action="javascript:preguntar();"> -->
+    <table>
+        <tr>
+            <th>*<label for="id_nombre_contacto">Nombre contacto:</label></th>
+            <td>
+                {{ error_nombre }}<br>
+                <input id="id_nombre_contacto" type="text" name="nombre_contacto" maxlength="80" value="{{ nombre }}"/>
+            </td>
+        </tr>
+        <tr>
+            <th>*<label for="id_cargo_contacto">Cargo contacto:</label></th>
+            <td>
+                {{ error_cargo }}
+                <select name="cargo_contacto" id="id_cargo_contacto">
+                    <option value="0">----</option>
+                    <option value="1" {% if cargo == 1 %}selected="selected"{% endif %}>Gerente</option>
+                    <option value="2" {% if cargo == 2 %}selected="selected"{% endif %}>Subgerente</option>
+                    <option value="3" {% if cargo == 3 %}selected="selected"{% endif %}>Asesor comercial</option>
+                    <option value="4" {% if cargo == 4 %}selected="selected"{% endif %}>Gerente comercial</option>
+                    <option value="5" {% if cargo == 5 %}selected="selected"{% endif %}>Director de departamento</option>
+                    <option value="6" {% if cargo == 6 %}selected="selected"{% endif %}>Vendedor</option>
+                    <option value="7" {% if cargo == 7 %}selected="selected"{% endif %}>Secretaria</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>*<label for="id_telefono_contacto">Telefono contacto:</label></th>
+            <td>
+                {{ error_telefono }}<br>
+                <input id="id_telefono_contacto" type="text" name="telefono_contacto" maxlength="10" value="{{ telefono }}"/>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="id_ext_contacto">Ext contacto:</label></th>
+            <td>
+                {{ error_ext }}<br>
+                <input id="id_ext_contacto" type="text" name="ext_contacto" maxlength="4" value="{{ ext }}"/>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="id_celular_contacto">Celular contacto:</label></th>
+            <td>
+                {{ error_celular }}<br>
+                <input id="id_celular_contacto" type="text" name="celular_contacto" maxlength="10" value="{{ celular }}"/>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="id_email_contacto">Email contacto:</label></th>
+            <td>
+                {{ error_email }}<br>
+                <input id="id_email_contacto" type="text" name="email_contacto" maxlength="40" value="{{ email }}"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                {% if change == 0 %}
+                    <input type="button" value="Aceptar" onclick="this.disabled=true; preguntar();"/>
+                {% endif %}
+                {% if change == 1 %}
+                    <input type="button" value="Aceptar" onclick="this.disabled=true; modificarContacto({{ indice }});"/>
+                {% endif %}
+            </td>
+            <td align="center">
+                <input type="submit" value="Cancelar" onclick="cerrarVentanaContacto();">
+            </td>
+        </tr>
+    </table>
+*Campos obligatorios
+<!-- </form> -->

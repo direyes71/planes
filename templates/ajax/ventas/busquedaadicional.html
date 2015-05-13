@@ -1,0 +1,68 @@
+{% load humanize %}
+
+<table>
+    <tr>
+        <td>
+            Tipo adicional:
+        </td>
+        <td colspan="2">
+            <select name="tipo_adicional" class="chosen-select" style="width: 350px;">
+                <option value="">-----</option>
+                {% for tipo_adicional in tipos_adicional %}
+                    <option value="{{ tipo_adicional.id }}"{% if tipo_adicional.id == tipo_adicional_actual.id %}selected="selected"{% endif %}>{{ tipo_adicional.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Tipo adicional</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripci&oacute;n</th>
+        <th scope="col">Valor</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for adicional in adicionales.modelo %}
+        <tr>
+            <td>
+                <label>{% if adicional.tipo_adicional %}{{ adicional.tipo_adicional }}{% endif %}</label>
+            </td>
+            <td>
+                <label>{{ adicional.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ adicional.descripcion }}</label>
+            </td>
+            <td>
+                <label>{{ adicional.valor|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.change_adicionalagrupacion' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificaradicional/{{ adicional.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if adicionales.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_adicionales('Dajax.process',{'pagina': 1{% if tipo_adicional_actual %}, 'tipo_adicional': {{ tipo_adicional_actual.id }}{% endif %}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_adicionales('Dajax.process',{'pagina': {{ adicionales.prev_page }}{% if tipo_adicional_actual %}, 'tipo_adicional': {{ tipo_adicional_actual.id }}{% endif %}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ adicionales.page }} de {{ adicionales.pages }}
+{% if adicionales.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_adicionales('Dajax.process',{'pagina': {{ adicionales.next_page }}{% if tipo_adicional_actual %}, 'tipo_adicional': {{ tipo_adicional_actual.id }}{% endif %}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_adicionales('Dajax.process',{'pagina': {{ adicionales.pages }}{% if tipo_adicional_actual %}, 'tipo_adicional': {{ tipo_adicional_actual.id }}{% endif %}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

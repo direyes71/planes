@@ -1,0 +1,207 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} Home {% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <h2 align="center"> BIENVENIDO AL SISTEMA DE INFORMACI&Oacute;N INVERBOY</h2>
+
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+
+    <table align="center">
+        <tr>
+            {% if 'inverboy.add_usuario' in user.get_all_permissions or 'inverboy.view_usuario' in user.get_all_permissions or 'auth.add_group' in user.get_all_permissions or 'auth.view_group' in user.get_all_permissions %}
+                <td>
+                    <div title="Usuarios">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/usuarios.png" alt="">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                    {% if 'inverboy.add_usuario' in user.get_all_permissions %}
+                                        <a href="/inverboy/home/usuarioadd/"> Nuevo usuario</a><br>
+                                    {% endif %}
+                                    {% if 'inverboy.view_usuario' in user.get_all_permissions %}
+                                        <a href="/inverboy/home/usuariossearch/"> Ver usuarios</a><br>
+                                    {% endif %}
+                                    {% if 'auth.add_group' in user.get_all_permissions %}
+                                        <a href="/inverboy/home/gruposadd/"> Nuevo grupo</a><br>
+                                    {% endif %}
+                                    {% if 'auth.view_group' in user.get_all_permissions %}
+                                        <a href="/inverboy/home/grupossearch/"> Ver grupos de usuario</a>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+            {% if 'inverboy.add_proveedor' in user.get_all_permissions or 'inverboy.view_proveedor' in user.get_all_permissions %}
+                <td>
+                    <div title="Proveedores">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/proveedores.jpeg" alt="">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_proveedor' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/proveedoradd/"> Nuevo proveedor</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_proveedor' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/proveedoressearch/"> Ver proveedores</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+            {% if 'inverboy.add_suministro' in user.get_all_permissions or 'inverboy.view_suministro' in user.get_all_permissions or 'inverboy.view_categoria' in user.get_all_permissions %}
+                <td>
+                    <div title="Suministros">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/suministros.jpg" alt="">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_suministro' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/suministroadd/"> Nuevo Suministro</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_suministro' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/suministrossearch/"> Ver Suministros</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_categoria' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/categoriassearch/">Clasificacion de suministros</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+            {% if 'inverboy.add_apu' in user.get_all_permissions or 'inverboy.view_apu' in user.get_all_permissions %}
+                <td>
+                    <div title="APU's">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/apus.png" alt="">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_apu' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/apuadd/"> Nuevo APU</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_apu' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/apussearch/"> Ver APU's</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_capitulo' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/capitulossearch/"> Clasificaci&oacute;n de APU's</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+        </tr>
+        <tr>
+            {% if 'inverboy.add_proyecto' in user.get_all_permissions or 'inverboy.view_proyecto' in user.get_all_permissions %}
+                <td>
+                    <div title="Proyectos">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/proyecto.jpg" alt="proyecto" width="100px" height="100px">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_proyecto' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/proyectoadd/"> Nuevo proyecto</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_proyecto' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/proyectosview/"> Ver proyectos</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+        
+            {% if 'inverboy.add_encuesta' in user.get_all_permissions or 'inverboy.view_encuesta' in user.get_all_permissions %}
+                <td>
+                    <div title="Encuestas">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/proyecto.jpg" alt="proyecto" width="100px" height="100px">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_encuesta' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/nuevaencuesta/"> Nueva encuesta</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_encuesta' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/busquedaencuestas/"> Ver encuestas</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+
+            {% if 'inverboy.add_entidadbancaria' in user.get_all_permissions or 'inverboy.view_entidadbancaria' in user.get_all_permissions %}
+                <td>
+                    <div title="Entidad bancaria">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img src="{{ static_prefix }}ima/proyecto.jpg" alt="proyecto" width="100px" height="100px">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if 'inverboy.add_entidadbancaria' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/nuevaentidadbancaria/"> Nueva entidad bancaria</a><br>
+                                        {% endif %}
+                                        {% if 'inverboy.view_entidadbancaria' in user.get_all_permissions %}
+                                            <a href="/inverboy/home/busquedaentidadesbancarias/"> Ver entidades bancarias</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+{% endblock %}

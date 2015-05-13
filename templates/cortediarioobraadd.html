@@ -1,0 +1,61 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Corte diario de obra
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function buscarSuministro(orden_servicio_id, proyecto_id) {
+            criterio = document.getElementById('id_criterio').value;
+            Dajaxice.aplicacion.inverboy.buscar_items_orden_servicio_corte_diario_obra('Dajax.process', { 'criterio': criterio, 'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id });
+        }
+        function agregarSuministroActaObra(pagina, suministro_id, orden_servicio_id, criterio, proyecto_id) {
+            var cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            document.getElementById('a_href_anadir_suministro_'+suministro_id).style.display='none';
+            document.getElementById('id_cargando_'+suministro_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.agregar_suministro_corte_diario_obra_add('Dajax.process', { 'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'criterio': criterio, 'proyecto_id': proyecto_id, 'cantidad': cantidad });
+        }
+        function activarModificarCantidadSuministro(pagina, suministro_id, orden_servicio_id, proyecto_id){
+            criterio = document.getElementById('id_criterio').value;
+            Dajaxice.aplicacion.inverboy.activar_modificar_suministro_corte_diario_obra_add('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function paginar(pagina, orden_servicio_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.paginar_items_corte_diario_obra_add('Dajax.process',{ 'pagina': pagina, 'criterio': criterio, 'orden_servicio_id': orden_servicio_id,'proyecto_id': proyecto_id });
+        }
+    </script>
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <table>
+        <tr>
+            <th>Orden de servicio No.</th>
+            <td colspan="3"><label>OS{{ orden_servicio.proyecto.id }}-{{ orden_servicio.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha de creaci&oacute;n</th>
+            <td><label>{{ orden_servicio.fecha_creacion|date:'Y-m-d' }}</label></td>
+            <th>Fecha de arribo</th>
+            <td><label>{{ orden_servicio.fecha_entrega|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor</th>
+            <td colspan="3"><label>{{ orden_servicio.proveedor.identificacion }} - {{ orden_servicio.proveedor.razon_social }}</label></td>
+        </tr>
+        {% if orden_servicio.tercero != None %}
+            <tr>
+                <th>Tercero</th>
+                <td colspan="3"><label>{{ orden_servicio.tercero.identificacion }} - {{ orden_servicio.tercero.razon_social }}</label></td>
+            </tr>
+        {% endif %}
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosordenserviciosearchcortediarioobra.html' %}
+    </div>
+    <form action="." method="POST">
+        <p align="center">
+            <input type="submit" id="id_guardar" value="Realizar corte diario de obra" onclick="this.disabled=true;">
+        </p>
+    </form>
+{% endblock %}

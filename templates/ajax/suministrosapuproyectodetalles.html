@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table id="tablaReportes" align="center">
+    <tbody id=id_cuerpo_tabla>
+        <tr>
+            <th>Estandar</th>
+            <th>Clasificacion general</th>
+            <th>Nombre</th>
+            <th>Unidad de embalaje</th>
+            <th>Unidad de medida</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Cant. tot. req.</th>
+            <th>Cant. tot. comprada</th>
+            <th>Cant. tot. I.R</th>
+            <th>Aprox. suministro</th>
+            <th>Salidas &aacute;lmacen</th>
+        </tr>
+        {% for suministro in suministros.modelo %}
+            <tr>
+                <td align="center">
+                    {% if suministro.id == apu.suministro_estandar.id %}
+                        <label>&radic;</label>
+                    {% endif %}
+                </td>
+                <td><label>{{ suministro.suministro.clasificacion_general }}</label></td>
+                <td><label>{{ suministro.suministro.nombre }}</label></td>
+                <td>
+                    {% if suministro.suministro.unidad_embalaje != -1.0 %}
+                        <label>{{ suministro.suministro.unidad_embalaje|force_escape|intcomma }}</label>
+                    {% endif %}
+                </td>
+                <td><label>{{ suministro.suministro.unidad_medida }}</label></td>
+                <td><label>{{ suministro.precio_suministro|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.cantidad_suministro|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.cantidad_total_requerida|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.cantidad_comprada|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.cantidad_almacen|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.aproximacion_cantidad_suministro|force_escape|intcomma }}</label></td>
+                <td><label>{{ suministro.cantidad_salidas_almacen|force_escape|intcomma }}</label></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto('Dajax.process',{'pagina': 1, 'apu_proyecto_id': {{ apu.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'apu_proyecto_id': {{ apu.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros.page }} de {{ suministros.pages }}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto('Dajax.process',{'pagina': {{ suministros.next_page }}, 'apu_proyecto_id': {{ apu.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_proyecto('Dajax.process',{'pagina': {{ suministros.pages }}, 'apu_proyecto_id': {{ apu.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

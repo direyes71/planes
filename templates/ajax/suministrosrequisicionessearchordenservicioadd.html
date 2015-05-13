@@ -1,0 +1,53 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>Criterio <input type="text" id="id_criterio" name="criterio" value="{{ criterio }}"> <input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad requerida</th>
+        <th>Unidad de medida</th>
+        <th>Observaciones</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for suministro_requisiciones in suministros_requisiciones.modelo %}
+        <tr>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.cantidad_requerida|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.observaciones }}
+            </td>
+            <td>
+                <a href="javascript:void(0)" onclick="Dajaxice.aplicacion.inverboy.suministro_orden_servicio_cotizar('Dajax.process',{ 'suministro_id': {{ suministro_requisiciones.suministro.suministro.id }}, 'proyecto_id': {{ proyecto.id }} });">Cotizar</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros_requisiciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisiciones_cotizacion_orden_servicio_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisiciones_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_requisiciones.page }} de {{ suministros_requisiciones.pages }}
+{% if suministros_requisiciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisiciones_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisiciones_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

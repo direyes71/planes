@@ -1,0 +1,27 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for grupo in grupos.modelo %}
+        <tr>
+            <td>
+                {{ grupo.name }}
+            </td>
+            <td>
+                <a href="/inverboy/home/gruposdetails/{{ grupo.id }}/"> Ver detalles </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if grupos.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_grupos_usuario('Dajax.process',{'pagina': 1, 'html': 'reportegrupos.html', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_grupos_usuario('Dajax.process',{'pagina': {{ grupos.prev_page }}, 'html': 'reportegrupos.html', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ grupos.page }} de {{ grupos.pages }}
+{% if grupos.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_grupos_usuario('Dajax.process',{'pagina': {{ grupos.next_page }}, 'html': 'reportegrupos.html', 'criterio': '{{ criterio }}' })"> >> </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_grupos_usuario('Dajax.process',{'pagina': {{ grupos.pages }}, 'html': 'reportegrupos.html', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

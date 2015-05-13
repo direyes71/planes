@@ -1,0 +1,57 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        // VENTANA EMERGENTE PROVEEDOR
+
+        function detalles_proveedor(proveedor_id, indice) {
+            Dajaxice.aplicacion.inverboy.informacion_proveedor('Dajax.process',{'id': proveedor_id, 'indice': indice });
+        }
+
+        function cerrarVentanaProveedor(){
+            document.getElementById('flotanteProveedores').style.display = 'none' ;
+        }
+        // VENTANA EMERGENTE PROVEEDOR
+    </script>
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block titulo %}Proveedores{% endblock %}
+{% block contenido %}
+    <div id='flotanteProveedores' class="border">
+        {% include 'ajax/informacionproveedor.html' %}
+    </div>
+    <form action="/inverboy/home/proveedoressearch/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    <div id="id_reporte_proveedores">
+        {% include 'ajax/proveedorsearch.html' %}
+    </div>
+{% endblock %}

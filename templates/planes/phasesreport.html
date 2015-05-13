@@ -1,0 +1,375 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+
+{% block script_extra %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+{% endblock %}
+
+{% block add_ons %}
+    <div class="mask" id="mask"></div>
+    <div class="mi_modal" id="modal1">
+
+    </div>
+    <!-- <div class="mi_modal" id="modal2"> -->
+    <div id="modal2">
+
+    </div>
+    <div class="mi_modal" id="modal3">
+    
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% comment %}
+    {% if 'inverboy.create_setup' in user.get_all_permissions %}
+    {% endcomment %}
+        <a href="#" id="button_new_phase" class="buttom_add_stage">Nueva fase</a>
+    {% comment %}
+    {% endif %}
+    {% endcomment %}
+    {% for phase in phases %}
+        <div class="content_block_phase">
+            <div class="content_block_title"><span><img src="{{ static_prefix }}{{ phase.get_image }}" alt="Icon"></span> <h4>{{ phase.name }} - {{ phase.initials }}</h4></div>
+
+            <div class="content_block_text">
+                {{ phase.description }}
+                <div class="action_buttons actions_phase">
+                    {% comment %}
+                    {% if 'inverboy.create_setup' in user.get_all_permissions and phase.can_be_eliminated %}
+                    {% endcomment %}
+                        <a href="/inverboy/home/phasechange/{{ phase.id }}/{{ phase.stage.project.id }}" phase_id="{{ phase.id }}" class="buttom_1 phase_update">Modificar</a>
+                        <a href="/inverboy/home/phasedelete/{{ phase.id }}/{{ phase.stage.id }}/{{ phase.stage.project.id }}" class="buttom_1 phase_delete">Eliminar</a>
+                    {% comment %}
+                    {% endif %}
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <a href="#" id="id_phase_{{ phase.id }}" class="see_more_planes">Planos</a>
+            <div class="clearfix"></div>
+            <div class="division"></div>
+
+            <div class="stage_planes">
+                {% for image_plane in phase.imageplane_set.all %}
+                    <div class="plane" id="plane_{{ image_plane.id }}">
+                        <img src="{{ static_prefix }}{{ image_plane.thumb_image_file.url_300x225 }}">
+                        <div class="plane_hover">
+                            <a href="/inverboy/home/planedescription/{{ image_plane.id }}/{{ image_plane.phase.stage.project.id }}" class="go_plane">ver cronograma fotogr&aacute;fico</a>
+                            {% comment %}
+                            {% if 'inverboy.create_setup' in user.get_all_permissions and image_plane.can_be_eliminated %}
+                            {% endcomment %}
+                                <a href="#" plano_id= "{{ image_plane.id }}" class="delete_plane">Eliminar plano</a>
+                                <a href="/inverboy/home/form_update_plane/{{ image_plane.id }}/{{ image_plane.phase.stage.project.id }}/" plane_id="{{ image_plane.id }}" class="edit_plane">Editar plano</a>
+                            {% comment %}
+                            {% endif %}
+                            {% endcomment %}
+                        </div>
+                        <!--<div class="plane_description">{{ image_plane.description }}</div> -->
+                    </div>
+                {% endfor %}
+                {% comment %}
+                {% if 'inverboy.create_setup' in user.get_all_permissions %}
+                {% endcomment %}
+                    <div class="add_plane_phase" >
+                        <a href="#" phase_id="{{ phase.id }}" class="plus_plane_phase"></a>
+                    </div>
+                {% comment %}
+                {% endif %}
+                {% endcomment %}
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+    {% endfor %}
+    <script type="text/javascript">
+        $(document).ready(function(e){
+
+            $(".stage_planes").css("display","none");
+
+            $(".see_more_planes").click(function(e){
+                e.preventDefault();
+                console.log("click","click");
+                planes = $(this).parent().find('.stage_planes');
+                //    planes.show(500);
+                if (planes.css("display")==="none"){
+                    planes.slideDown(500);
+                }else{
+                    planes.slideUp(500);
+                }
+                //$(this).parent().find('.stage_planes').show("slow");
+            });
+        });
+
+
+        $(document).ready(function(e) {
+
+            var mi_util =  new Utils({
+                mask:            ".mask",
+                action_post:     "",
+                load_container:  "#modal1",
+                modal_container: ".mi_modal"
+            });
+
+            $(".delete_plane").click(function(e){
+                if (confirm("¿Desea eliminar el plano?")){
+                    var plano_id = $(this).attr("plano_id");
+                    location.href = "/inverboy/home/imageplanedelete/" + plano_id + "/{{ project.id }}/";
+                }
+
+            });
+
+            $(".edit_plane").click(function(e){
+                e.preventDefault();
+                var plane_id = $(this).attr("plane_id");
+                mi_util.set_params({load_container: "#modal3", modal_container: ".mi_modal"})
+                mi_util.show_modal();
+                $("#modal3").load("/inverboy/home/planechange/" + plane_id + "/{{ stage.project.id }}/",function(){
+                    $("#modal3").on("submit","#form_add_plane",function(e){
+                        e.preventDefault();
+                        var btn_send = $(this).find("input[type='submit']");
+                        btn_send.attr("disabled","disabled");
+                        var data = new FormData($(this)[0]);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/inverboy/home/planechange/" + plane_id + "/{{ stage.project.id }}/",
+                            enctype: "multipart/form-data",
+                            data : data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(data) {
+                                if (parseInt(data.result) == 1){
+                                    alert(data.message);
+                                    var plane_id  = data.data.plane_id;
+                                    location.href = "/inverboy/home/planedescription/" + plane_id + "/{{ project.id }}/";
+                                } else if (parseInt(data.result) == 0) {
+                                    alert(data.message);
+                                    $("#modal3").html(data.data.form);
+                                }
+                            }
+                        });
+                    });
+
+                    $("#modal3").on("click","#button_cancel_save_phase",function(e){
+                        e.preventDefault();
+                        setTimeout(function(){
+                            $("#modal3").slideUp();
+                            $("#mask").hide();
+                        }, 10);
+
+                    });
+                });
+            });
+
+            $(".plus_plane_phase").click(function(e){
+                e.preventDefault();
+                var phase_id = $(this).attr("phase_id");
+                mi_util.set_params({load_container: "#modal3", modal_container: ".mi_modal"})
+                mi_util.show_modal();
+                $("#modal3").load("/inverboy/home/newplane/" + phase_id + "/{{ stage.project.id }}/",function(){
+                    $("#modal3").on("submit","#form_add_plane",function(e){
+                        e.preventDefault();
+                        var btn_send = $(this).find("input[type='submit']");
+                        btn_send.attr("disabled","disabled");
+                        console.log($(this)[0]);
+                        var data = new FormData($(this)[0]);
+                        //var data = $(this)[0];
+                        console.log(data);
+                        $.ajax({
+                            type: "POST",
+                            url: "/inverboy/home/newplane/" + phase_id + "/{{ stage.project.id }}/",
+                            enctype: "multipart/form-data",
+                            data : data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(data) {
+                                btn_send.removeAttr("disabled");
+                                if (parseInt(data.result) == 1){
+                                    alert(data.message);
+                                    var plane_id  = data.data.plane_id;
+                                    location.href = "/inverboy/home/planedescription/" + plane_id + "/{{ project.id }}/";
+                                } else if (parseInt(data.result) == 0) {
+                                    alert(data.message);
+                                    $("#modal3").html(data.data.form);
+                                }
+                            }
+                        });
+                    });
+
+                    $("#modal3").on("click","#button_cancel_save_phase",function(e){
+                        e.preventDefault();
+                        setTimeout(function(){
+                            $("#modal3").slideUp();
+                            $("#mask").hide();
+                        }, 10);
+
+                    });
+                });
+            });
+
+
+
+            $(".mask").click(function(e){
+                mi_util.hide_modal();
+            })
+
+            $("#button_new_phase").click(function(e){
+                e.preventDefault();
+                mi_util.set_params({load_container: "#modal3", modal_container: ".mi_modal"});
+                mi_util.show_modal();
+
+                $("#modal3").load("/inverboy/home/phaseadd/{{ stage.id }}/{{ stage.project.id }}/",function(){
+                    $("#modal3").on("submit","#form_add_phase",function(e){
+                        e.preventDefault();
+                        var btn_send = $(this).find("input[type='submit']");
+                        btn_send.attr("disabled","disabled");
+                        var data = new FormData($(this)[0]);
+                        $.ajax({
+                            type: "POST",
+                            url: "/inverboy/home/phaseadd/{{ stage.id }}/{{ stage.project.id }}/",
+                            enctype: "multipart/form-data",
+                            data : data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(data) {
+                                if (parseInt(data.result) == 1){
+                                    alert(data.message);
+                                    location.reload();
+                                } else if (parseInt(data.result) == 0) {
+                                    alert(data.message);
+                                    $("#modal3").html(data.data.form);
+                                }
+                            }
+                        });
+                    });
+
+                    $("#modal3").on("click","#button_cancel_save_phase",function(e){
+                        e.preventDefault();
+                        setTimeout(function(){
+                            $("#modal3").slideUp();
+                            $("#mask").hide();
+                        }, 10);
+                    });
+
+                });
+
+            });
+
+            $(".phase_update").click(function(e){
+                e.preventDefault();
+                var phase_id = $(this).attr("phase_id");
+                mi_util.set_params({load_container: "#modal3", modal_container: ".mi_modal"});
+                mi_util.show_modal();
+
+                $("#modal3").load("/inverboy/home/phasechange/" + phase_id + "/{{ stage.project.id }}/",function(){
+                    $("#modal3").on("submit","#form_add_phase",function(e){
+                        e.preventDefault();
+                        var btn_send = $(this).find("input[type='submit']");
+                        btn_send.attr("disabled","disabled");
+                        var data = new FormData($(this)[0]);
+                        $.ajax({
+                            type: "POST",
+                            url: "/inverboy/home/phasechange/" + phase_id + "/{{ stage.project.id }}/",
+                            enctype: "multipart/form-data",
+                            data : data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(data) {
+                                if (parseInt(data.result) == 1){
+                                    alert(data.message);
+                                    location.reload();
+                                } else if (parseInt(data.result) == 0) {
+                                    alert(data.message);
+                                    $("#modal3").html(data.data.form);
+                                }
+                            }
+                        });
+                    });
+
+                    $("#modal3").on("click","#button_cancel_save_phase",function(e){
+                        e.preventDefault();
+                        setTimeout(function(){
+                            $("#modal3").slideUp();
+                            $("#mask").hide();
+                        }, 10);
+                    });
+                });
+            });
+
+            /*$("#modal_name").on("submit","#form_update",function(e){
+               e.preventDefault();
+                data = $(this).serialize();
+
+            });*/
+
+            function Utils(params){
+                var defaults = {
+                    mask:            ".mask",
+                    action_post:     "",
+                    load_container:  "#modal1",
+                    modal_container: ".mi_modal",
+                    speed:            300
+                };
+
+                this.params = $.extend(defaults,params);
+
+                this.set_params = function(params2){
+                    this.params = $.extend(defaults,params2);
+                }
+
+                this.getButtom = function(){
+                    alert(this.params.container);
+                }
+
+                //
+                this.show_modal = function(){
+                    var interno = $(this.params.load_container);
+                    var mask = $(this.params.mask);
+                    var speed = this.params.speed;
+
+                    var anchoTotal = parseInt($(window).width());
+                    var altoTotal = parseInt($(window).height());
+                    var anchoCaja2 = parseInt(interno.width());
+                    var altoCaja2 = parseInt(interno.height());
+                    var scrollt = $(window).scrollTop();
+                    var alto_documento = $(document).height();
+                    console.log("scrollt",$(window).scrollTop());
+                    console.log("alto doc",altoTotal);
+
+                    interno.css("left", (anchoTotal / 2) - (anchoCaja2 / 2));
+                    interno.css("top", scrollt +  (altoTotal/2) - (altoCaja2 / 2));
+
+                    interno.css("left", (125 + (anchoTotal / 2) - (anchoCaja2 / 2)));
+                    interno.css("top", (175 + scrollt +  (altoTotal/2) - (altoCaja2 / 2)));
+
+                    mask.css("height", alto_documento) + " !important";
+
+                    mask.fadeIn(speed,function(e){
+                        interno.fadeIn(speed);
+                    });
+                }
+
+                this.hide_modal = function(){
+                    var interno = $(this.params.load_container);
+                    var mask = $(this.params.mask);
+                    var speed = this.params.speed;
+
+                    interno.fadeOut(speed, function(e){
+                        mask.fadeOut(speed);
+                    });
+                }
+            }
+        });
+
+    </script>
+
+{% endblock %}

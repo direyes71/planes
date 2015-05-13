@@ -1,0 +1,56 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} NOVEDADES MODULO APU'S PROYECTO {% endblock %}
+{% block contenido %}
+    <p class="titulo">ADICIONES EN APU PROYECTO</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/apunovedad1.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Ahora es posible en los proyectos que ya se encuentren en estado de Ejecución:
+        <br>
+        <br/>
+        1 - Agregar nuevos APU's
+        <br>
+        2 - Modificar Apu's existentes
+        <br>
+        <br/>
+        Tener en cuenta que dichos Apu's creados o modificados seran considerados como adición del presupuesto ya establecido.
+    </p>
+    <br>
+    <br>
+    <!-- Ver cotizaciones -->
+    <p class="titulo">MODIFICAR APU PROYECTO (PROYECTO EN ESTADO DE EJECUCIÓN)</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/apunovedad2.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Al modificar un Apu proyecto en ejecución, se puede:
+            <br/>
+            <br/>
+        1 - Edtitar la cantidad del suministro:
+            <br/>
+            <br/>
+            Adicionando: Aumentar la cantidad de suministro, según sea necesario.
+            <br/>
+            Disminuyendo: Disminuir la cantidad de suministro, según y proporcionalmente a la cantidad de Apu y cantidad de Proyecto,
+            <br/>
+            teniendo en cuenta la cantidad total requerida de dicho suministro, no puede ser menor a esta.
+            <br/>
+            <br/>
+        2 - Agregar un suministro al APU proyecto
+            <br/>
+            <br/>
+        Tener en cuenta que las modificaciones seran consideradas como adiciones al presupuesto.
+    </p>
+{% endblock %}

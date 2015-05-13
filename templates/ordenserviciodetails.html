@@ -1,0 +1,154 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles orden de servicio
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th colspan="2">No.</th>
+            <td colspan="2"><label>OS{{ orden_servicio.proyecto.id }}-{{ orden_servicio.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha de creaci&oacute;n:</th>
+            <td><label>{{ orden_servicio.fecha_creacion|date:'Y-m-d' }}</label></td>
+            {% if orden_servicio.fecha_extendida == None %}
+                <th>Fecha de Entrega</th>
+                <td><label>{{ orden_servicio.fecha_entrega|date:'Y-m-d' }}</label></td>
+            {% else %}
+                <td>
+                    <label>Fecha de Entrega: {{ orden_servicio.fecha_entrega|date:'Y-m-d' }}</label>
+                </td>
+                <td>
+                    <label>Fecha de Extendida: {{ orden_servicio.fecha_extendida|date:'Y-m-d' }}</label>
+                </td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>Proveedor:</th>
+            <td colspan="3"><label>{{ orden_servicio.proveedor.identificacion }} - {{ orden_servicio.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Reteica:</th>
+            <td><label>{{ orden_servicio.rete_ica }}</label></td>
+            <th>Retefuente:</th>
+            <td><label>{{ orden_servicio.rete_fuente }}</label></td>
+        </tr>
+        <tr>
+            <th>Forma de pago:</th>
+            <td>
+                {% if orden_servicio.forma_pago == 1 %}
+                    <label>Anticipado</label>
+                {% endif %}
+                {% if orden_servicio.forma_pago == 2 %}
+                    <label>Contra-entrega</label>
+                {% endif %}
+                {% if orden_servicio.forma_pago == 3 %}
+                    <label>Cortes de obra</label>
+                {% endif %}
+                {% if orden_servicio.forma_pago == 4 %}
+                    <label>Otro</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if orden_servicio.forma_pago == 4 %}
+                    <label>{{ orden_servicio.parametro_pago }}</label>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Anticipo</th>
+            <td><label>{{ orden_servicio.amortizacion }}</label></td>
+            <th>Retenci&oacute;n garantia</th>
+            <td><label>{{ orden_servicio.retencion_garantia }}</label></td>
+        </tr>
+        {% if orden_servicio.tipo_iva != None %}
+            <tr>
+                <th>Tipo de iva</th>
+                <td colspan="3"><label>{{ orden_servicio.str_tipo_iva }}</label></td>
+            </tr>
+            {% if orden_servicio.tipo_iva == 1 %}
+                <tr>
+                    <th>Costo directo:</th>
+                    <td><label>{{ orden_servicio.str_valor_costo_directo|force_escape|intcomma }}</label></td>
+                    <th>Porcentaje AIU:</th>
+                    <td><label>{{ orden_servicio.porcentaje_a_i_u }}</label></td>
+                </tr>
+                <tr>
+                    <th>Porcentaje utilidad:</th>
+                    <td><label>{{ orden_servicio.porcentaje_utilidad }}</label></td>
+                    <th>Porcentaje IVA:</th>
+                    <td><label>{{ orden_servicio.porcentaje_iva }}</label></td>
+                </tr>
+            {% endif %}
+            {% if orden_servicio.tipo_iva == 2 %}
+                <th>Porcentaje IVA:</th>
+                <td><label>{{ orden_servicio.porcentaje_iva }}</label></td>
+            {% endif %}
+            {% if orden_servicio.tipo_iva == 3 %}
+                <tr>
+                    <th>Porcentaje AIU:</th>
+                    <td><label>{{ orden_servicio.porcentaje_a_i_u }}</label></td>
+                </tr>
+                <tr>
+                    <th>Porcentaje IVA:</th>
+                    <td><label>{{ orden_servicio.porcentaje_iva }}</label></td>
+                </tr>
+            {% endif %}
+        {% endif %}
+        <tr>
+            <th>Observaciones:</th>
+            <td>
+                <label>{{ orden_servicio.observaciones }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Aplica tercero</th>
+            <td><label>{% if orden_servicio.tercero != None %}Si{% else %}No{% endif %}</label></td>
+        </tr>
+        {% if orden_servicio.tercero != None %}
+            <tr>
+                <th>Tercero:</th>
+                <td colspan="3"><label>{{ orden_servicio.tercero.identificacion }} - {{ orden_servicio.tercero.razon_social }}</label></td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Aplica cooperativa</th>
+            <td><label>{% if orden_servicio.aplica_cooperativa %}Si{% else %}No{% endif %}</label></td>
+        </tr>
+        {% if orden_servicio.aplica_cooperativa %}
+            <tr>
+                <th>% Base gravable:</th>
+                <td><label>{{ orden_servicio.base_gravable_cooperativa }}</label></td>
+                <th>% IVA:</th>
+                <td><label>{{ orden_servicio.porcentaje_iva_cooperativa }}</label></td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Persona</th>
+            <td>
+                <label>{{ orden_servicio.persona }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Opciones</th>
+            <td>
+                {% if orden_servicio.permiso_modificar %}
+                    {% if 'inverboy.assignchangepermission_ordenservicio' in user.get_all_permissions and orden_servicio.permite_modificar == 1 and orden_servicio.permiso_modificar == 1 and orden_servicio.amortizacion > 0 %}
+                        <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_orden_servicio('Dajax.process',{'permiso': 0, 'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }} });">Cancelar permitir modificaci&oacute;n</a>
+                    {% endif %}
+                {% else %}
+                    {% if 'inverboy.assignchangepermission_ordenservicio' in user.get_all_permissions and orden_servicio.permite_modificar == 1 and orden_servicio.permiso_modificar == 0 %}
+                        <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_orden_servicio('Dajax.process',{'permiso': 1, 'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }} });">Permitir modificaci&oacute;n</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosordenserviciosearch.html' %}
+    </div>
+    <a href="/inverboy/home/imprimirordenservicio/{{ orden_servicio.id }}/{{ proyecto.id }}/">Imprimir</a>
+{% endblock %}

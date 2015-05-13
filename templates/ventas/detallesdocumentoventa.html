@@ -1,0 +1,32 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - {% if documento == 'aperturafiducuenta' %}Detalles documento apertura fiducuenta{% endif %}
+    {% if documento == 'cartainstrucciones' %}Detalles carta de instrucciones{% endif %}{% if documento == 'promesacompraventa' %}Detalles promesa de compraventa{% endif %}
+{% endblock %}
+{% block script %}
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block contenido %}
+    <table>
+        <tr>
+            <td>
+                <p align="justify">{{ texto }}</p>
+            </td>
+        </tr>
+    </table>
+    {% if 'inverboy.add_documentoventa' in user.get_all_permissions %}
+        {% if documento == 'aperturafiducuenta' %}
+            <a href="/inverboy/home/registrardocumentoventaaperturafiducuenta/{{ proyecto.id }}/">Editar</a>
+        {% endif %}
+        {% if documento == 'cartainstrucciones' %}
+            <a href="/inverboy/home/registrardocumentoventacartainstrucciones/{{ proyecto.id }}/">Editar</a>
+        {% endif %}
+        {% if documento == 'promesacompraventa' %}
+            <a href="/inverboy/home/registrardocumentoventapromesacompraventa/{{ proyecto.id }}/">Editar</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}

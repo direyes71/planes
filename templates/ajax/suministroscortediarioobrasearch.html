@@ -1,0 +1,40 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad recibida</th>
+        <th>Unidad de medida</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                {{ suministro.suministro.suministro.suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                <input  type="text" size="12" disabled="disabled" value="{{ suministro.cantidad|force_escape|intcomma }}"/>
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.suministro.suministro.unidad_medida }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': 1, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.next_page }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.pages }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

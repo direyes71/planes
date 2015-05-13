@@ -1,0 +1,316 @@
+{% extends 'html/base_pdf.html' %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block contenido %}
+    <table class="tabla_borde_dos">
+        <tr>
+            <th>
+                Proveedor:
+            </th>
+            <td>
+                <label>
+                    {{ acta_recibo_obra.orden_servicio.proveedor.razon_social }}{% if acta_recibo_obra.orden_servicio.tercero != None %} - Supervisor: {{ acta_recibo_obra.orden_servicio.tercero.razon_social }}{% endif %}
+                </label>
+            </td>
+            <th>
+                NIT:
+            </th>
+            <td>
+                <label>{{ acta_recibo_obra.orden_servicio.proveedor.identificacion }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Telefono:
+            </th>
+            <td>
+                <label>{{ acta_recibo_obra.orden_servicio.proveedor.telefono_1 }}</label>
+            </td>
+            <th>
+                E-mail:
+            </th>
+            <td>
+                <label>{{ acta_recibo_obra.orden_servicio.proveedor.email }}</label>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <table class="tabla_borde_dos">
+        <tr>
+            <th>Acta de recibo de obra No.: </th>
+            <td><label>ARO{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.consecutivo }}</label></td>
+            <th>Fecha de registro: </th>
+            <td><label>{{ acta_recibo_obra.fecha_acta|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Orden de servicio No.: </th>
+            <td colspan="3"><label>OS{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.orden_servicio.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Proyecto: </th>
+            <td><label>{{ acta_recibo_obra.orden_servicio.proyecto.nombre }}</label></td>
+            <th>Ciudad: </th>
+            <td><label>{{ acta_recibo_obra.orden_servicio.proyecto.municipio.nombre }}, {{ acta_recibo_obra.orden_servicio.proyecto.municipio.departamento.nombre }}</label></td>
+        </tr>
+        <tr>
+            <th>Direcci&oacute;n: </th>
+            <td><label>{{ acta_recibo_obra.orden_servicio.proyecto.direccion }}</label></td>
+        </tr>
+    </table>
+
+    <br>
+
+    <table class="tabla_borde_reporte_uno">
+        <tr>
+            <th width="320px">Suministro</th>
+            <th>Cantidad</th>
+            <th width="60px">Und</th>
+            <th>Valor unitario</th>
+            <th>Valor item</th>
+        </tr>
+        {% for suministro in acta_recibo_obra.suministros %}
+            <tr>
+                <td>
+                    <label>{{ suministro.suministro.suministro.suministro.suministro.nombre }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ suministro.cantidad|force_escape|intcomma }}</label>
+                </td>
+                <td align="center">
+                    <label>{{ suministro.suministro.suministro.suministro.suministro.unidad_medida }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ suministro.suministro.suministro_orden_servicio_item.precio|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ suministro.valor_item|force_escape|intcomma }}</label>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="4" align="right">
+               Valor corte
+            </th>
+            <td align="right">
+                <label>{{ acta_recibo_obra.valor_corte|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <div>
+        <table width="100%">
+            <tr>
+                <td>
+                    <div>
+                        {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                                <table class="tabla_borde_reporte_uno" width="250px">
+                                    <tr>
+                                        <th colspan="2">Cooperativa</th>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>Valor cooperativa</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.valor_cooperativa|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                </table>
+                        {% endif %}
+                    </div>
+                </td>
+                <td align="center">
+                    <div>
+                        <table class="tabla_borde_reporte_uno" width="240px">
+                            <tr>
+                                <th colspan="2">Proveedor</th>
+                            </tr>
+                            {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva == 1 or acta_recibo_obra.orden_servicio.tipo_iva == 3 %}
+                                    <tr>
+                                        <td align="right"><label>Costo directo</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_costo_directo_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>AIU</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_aiu_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>IVA</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_iva_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                {% endif %}
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva == 2 %}
+                                    <tr>
+                                        <td align="right"><label>Subtotal</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_subtotal_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>IVA ({{ acta_recibo_obra.orden_servicio.porcentaje_iva|force_escape|intcomma }}%)</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_iva_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td align="right"><label>Total a facturar</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_total_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Anticipo</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.valor_anticipo|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Retegarantia</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_retegarantia|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Descuentos</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.descuento|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Reteica</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_reteica_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Retefuente</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_retefuente_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label><b>Neto a pagar</b></label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_neto_pagar_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <br>
+    
+    <h2 align="center">Discriminaci&oacute;n por capitulos</h2>
+
+    <table class="tabla_borde_reporte_uno" width="800px" align="center">
+        <tr>
+            <th width="400px">Capitulo</th>
+            {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                <th>IVA cooperativa</th>
+            {% endif %}
+            <th>Valor capitulo</th>
+        </tr>
+        {% for capitulo in acta_recibo_obra.discriminacion_capitulos %}
+            <tr>
+                <td align="left">
+                    {{ capitulo.capitulo.nombre_capitulo }}
+                </td>
+                {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                    <td align="right">
+                        {{ capitulo.valor_iva_cooperativa|force_escape|floatformat:0|intcomma }}
+                    </td>
+                {% endif %}
+                <td align="right">
+                    {{ capitulo.valor_total_capitulo|force_escape|floatformat:0|intcomma }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br>
+    
+    <div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                            <table class="tabla_borde_reporte_uno" width="360px">
+                                <tr>
+                                    <th colspan="5">Cooperativa</th>
+                                </tr>
+                                <tr>
+                                    <th>Capitulo</th>
+                                    <th>SubTotal</th>
+                                    <th>B. grav.</th>
+                                    <th>IVA</th>
+                                    <th>Total</th>
+                                </tr>
+                                {% for capitulo in acta_recibo_obra.discriminacion_capitulos %}
+                                    <tr>
+                                        <td align="left">
+                                            {{ capitulo.capitulo.nombre_capitulo }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_subtotal_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_base_gravable_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_iva_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_total_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <table class="tabla_borde_reporte_uno" width="360px">
+                            <tr>
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                    <th colspan="6">Proveedor</th>
+                                {% else %}
+                                    <th colspan="3">Proveedor</th>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <th>Capitulo</th>
+                                <th>Costo directo</th>
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                    <th>Base IVA</th>
+                                {% endif %}
+                                <th>Subtotal</th>
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                    <th>IVA</th>
+                                {% endif %}
+                                <th>Total</th>
+                            </tr>
+                            {% for capitulo in acta_recibo_obra.discriminacion_capitulos %}
+                                <tr>
+                                    <td>
+                                        {{ capitulo.capitulo.nombre_capitulo }}
+                                    </td>
+                                    <td align="right">
+                                        {{ capitulo.valor_costo_directo_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                    {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                        <td align="right">
+                                            {{ capitulo.base_iva_proveedor|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    {% endif %}
+                                    <td align="right">
+                                        {{ capitulo.valor_subtotal_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                    {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                        <td align="right">
+                                            {{ capitulo.valor_iva_proveedor|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    {% endif %}
+                                    <td align="right">
+                                        {{ capitulo.valor_total_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}

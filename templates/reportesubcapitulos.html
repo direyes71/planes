@@ -1,0 +1,23 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} Capitulo {{ capitulo.nombre_capitulo }} <a href="/inverboy/home/capitulossearch/">Ver capitulos:</a> - Subcapitulos {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/subcapitulossearch/{{ capitulo.id }}/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    {% if 'inverboy.add_capitulo' in user.get_all_permissions %}
+        <a href="/inverboy/home/subcapituloadd/{{ capitulo.id }}/">Nuevo subcapitulo</a>
+    {% endif %}
+    <div id="id_reporte_subcapitulos">
+        {% include 'ajax/subcapitulosearch.html' %}
+    </div>
+{% endblock %}

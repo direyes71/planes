@@ -1,0 +1,90 @@
+<form action="javascript:buscarPersonas({{ proyecto.id }});">
+    <table>
+        <tr>
+            <th>Cargo</th>
+            <td>
+                <select id="id_cargo_persona">
+                    <option value="0">----</option>
+                    <option value="Junta directiva">Junta directiva</option>
+                    <option value="Revisor fiscal">Revisor fiscal</option>
+                    <option value="Gerente general">Gerente general</option>
+                    <option value="Asesor jurídico">Asesor jur&iacute;dico</option>
+                    <option value="Director de diseño y desarrollo">Director de diseño y desarrollo</option>
+                    <option value="Arquitecto de diseño">Arquitecto de diseño</option>
+                    <option value="Auxiliar de arquitectura">Auxiliar de arquitectura</option>
+                    <option value="Interventor de proyectos">Interventor de proyectos</option>
+                    <option value="Director de obra">Director de obra</option>
+                    <option value="Residente de obra">Residente de obra</option>
+                    <option value="Operador">Operador</option>
+                    <option value="Coordinador sisoma">Coordinador sisoma</option>
+                    <option value="Almacén">Almac&eacute;n</option>
+                    <option value="Conductor">Conductor</option>
+                    <option value="Director de compras y contratación">Director de compras y contrataci&oacute;n</option>
+                    <option value="Asistente de compras">Asistente de compras</option>
+                    <option value="Gerente administrativo y financiero">Gerente administrativo y financiero</option>
+                    <option value="Director financiero">Director financiero</option>
+                    <option value="Tesorería">Tesorer&iacute;a</option>
+                    <option value="Contador">Contador</option>
+                    <option value="Auditor financiero">Auditor financiero</option>
+                    <option value="Auxiliar administrativo">Auxiliar administrativo</option>
+                    <option value="Servicios generales">Servicios generales</option>
+                    <option value="Gerente comercial">Gerente comercial</option>
+                    <option value="Director comercial">Director comercial</option>
+                    <option value="Asesor comercial">Asesor comercial</option>
+                    <option value="Informador">Informador</option>
+                    <option value="Gestor de calidad">Gestor de calidad</option>
+                    <option value="Auditor de calidad">Auditor de calidad</option>
+                    <option value="Administración">Administraci&oacute;n</option>
+                    <option value="Recepción">Recepci&oacute;n</option>
+                    <option value="Mensajería">Mensajer&iacute;a</option>
+                    <option value="Director de sistemas">Director de sistemas</option>
+                    <option value="Ingeniero de desarrollo">Ingeniero de desarrollo</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio_busqueda" id="id_criterio_busqueda" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+<table id="id_tabla_personas_busqueda">
+    <tr>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Nombre usuario</th>
+        <th scope="col">Nombres</th>
+        <th scope="col">Apellidos</th>
+        <th scope="col">Cargo</th>
+        <th scope="col">Celular</th>
+    </tr>
+    {% for persona in lista_usuarios.modelo %}
+        <tr>
+            <td><input type="checkbox" name="option_{{ forloop.counter }}" id="id_option_{{ forloop.counter }}" value="{{ persona.id }}" onchange="javascript:seleccionar({{ persona.id }}, {{ lista_usuarios.page }}, '{{ criterio }}', '{{ cargo_usuario }}', {{ proyecto.id }});"{% if persona.id in personas_seleccionadas %} checked="checked"{% endif %}>{{ forloop.counter }}</td>
+            <td>{% if error.id == persona.id %}<label>{{ error.error }}</label><br>{% endif %}<label id="id_label_identificacion_{{ forloop.counter }}" title="{{ persona.identificacion }}">{{ persona.identificacion }}</label></td>
+            <td><label id="id_label_username_{{ forloop.counter }}" title="{{ persona.username }}">{{ persona.username }}</label></td>
+            <td><label id="id_label_nombres_{{ forloop.counter }}" title="{{ persona.first_name }}">{{persona.first_name }}</label></td>
+            <td><label id="id_label_apellidos_{{ forloop.counter }}" title="{{ persona.last_name }}">{{ persona.last_name }}</label></td>
+            <td><label id="id_label_cargo_{{ forloop.counter }}" title="{{ persona.cargo }}">{{ persona.cargo }}</label></td>
+            <td><label id="id_label_celular_{{ forloop.counter }}" title="{{ persona.celular }}">{{ persona.celular }}</label></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td>
+            <input type="submit" value="Aceptar" onclick="agregarPersonas({{ proyecto.id }});">
+        </td>
+        <td>
+            <input type="submit" value="Cancelar" onclick="limpiarBusquedaPersonas({{ proyecto.id }});">
+        </td>
+    </tr>
+</table>
+{% if lista_usuarios.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_usuarios('Dajax.process',{'pagina': {{ lista_usuarios.prev_page }}, 'criterio': '{{ criterio }}', 'cargo_usuario': '{{ cargo_usuario }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{lista_usuarios.page}} de {{lista_usuarios.pages}}
+{% if lista_usuarios.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.buscar_usuarios('Dajax.process',{'pagina': {{ lista_usuarios.next_page }}, 'criterio': '{{ criterio }}', 'cargo_usuario': '{{ cargo_usuario }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

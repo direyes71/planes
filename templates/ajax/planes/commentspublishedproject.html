@@ -1,0 +1,41 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<div id="modal_cab">
+    <a href="#" id="modal_exit" class="btn_exit">Cerrar la ventana</a>
+    <img src="{{ static_prefix }}planes/img/person.png" class="modal_image">
+    <div class="modal_name">
+        Mensaje de: {{ published.user }}
+    </div>
+    <div id="modal_message">
+        {{ published.text }} <span class="modal_message_date">fecha: {{ published.publication_date }}</span>
+    </div>
+</div>
+<div id="modal_form">
+    <form action="#" metod="post" id="form_send_comment_published">
+        <textarea id="modal_form_message" name="text" placeholder="Digite aqui su respuesta"></textarea>
+        <input type="hidden" name="published" value="{{ published.id }}">
+        <input type="hidden" name="project" value="{{ published.project.id }}">
+        <input type="submit" value="Enviar"/>
+    </form>
+</div>
+<div id="modal_scrollbar">
+    <div class="handle">
+    </div>
+</div>
+<div id="modal_frame">
+    <div class="slide">
+        <div id="modal_answers">
+            {% for comment_published in published.commentpublishedproject_set.all reversed %}
+                <div class="user_answer">
+                    <div class="user_answer_name">{{ comment_published.user }}</div>
+                    <div class="user_answer_date">Fecha: {{ comment_published.publication_date }}</div>
+                    <img src="{{ static_prefix }}planes/img/person.png" class="modal_image_answer">
+                    <div class="user_answer_content">
+                        {{ comment_published.text }}
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Descripci&oacute;n</th>
+        <th>Valor</th>
+    </tr>
+    {% for item in items.modelo %}
+        <tr>
+            <td>
+                {{ item.item_orden_giro.descripcion }}
+            </td>
+            <td>
+                {{ item.valor|force_escape|intcomma }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if items.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_acta_conformidad('Dajax.process',{'pagina': 1, 'acta_conformidad_id': {{ acta_conformidad.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_acta_conformidad('Dajax.process',{'pagina': {{ items.prev_page }}, 'acta_conformidad_id': {{ acta_conformidad.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ items.page }} de {{ items.pages }}
+{% if items.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_acta_conformidad('Dajax.process',{'pagina': {{ items.next_page }}, 'acta_conformidad_id': {{ acta_conformidad.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_acta_conformidad('Dajax.process',{'pagina': {{ items.pages }}, 'acta_conformidad_id': {{ acta_conformidad.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

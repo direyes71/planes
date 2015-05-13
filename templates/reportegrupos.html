@@ -1,0 +1,20 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} Grupos de usuario {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/grupossearch/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}" maxlength="40" onkeyup="return validar_vacio_solo_espacios(event)" onkeypress="return validar_teclado_numerosLetrasEspacios(event)" pattern="^[A-Za-z0-9\s\xF1\xD1\Á\É\Í\Ó\Ú\á\é\í\ó\ú]+$">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+     <div id="id_reporte_grupos">
+        {% include 'ajax/grupousuariosearch.html' %}
+    </div>
+{% endblock %}

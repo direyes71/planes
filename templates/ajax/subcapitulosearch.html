@@ -1,0 +1,37 @@
+ <table id="tablaReportes" align="center">
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Opciones</th>
+        </tr>
+        {% for subcapitulo in subcapitulos.modelo %}
+            <tr>
+                <td>
+                    {{ subcapitulo.nombre_capitulo }}
+                </td>
+                <td>
+                    {% if subcapitulo.estado_capitulo == 0 %}
+                        Inactiva
+                    {% else %}
+                        Activa
+                    {% endif %}
+                </td>
+                <td>
+                    {% if 'inverboy.change_capitulo' in user.get_all_permissions %}
+                        <a href="/inverboy/home/subcapituloschange/{{ subcapitulo.id }}/">Modificar</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if subcapitulos.has_prev %}
+        <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apus('Dajax.process',{'pagina': 1, 'html': 'reportesubcapitulos.html', 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}' })"> << </a>
+        <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apus('Dajax.process',{'pagina': {{ subcapitulos.prev_page }}, 'html': 'reportesubcapitulos.html', 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}' })"> < </a>
+    {% else %}
+    {% endif %}
+        P&aacute;gina {{ subcapitulos.page }} de {{ subcapitulos.pages }}
+    {% if subcapitulos.has_next %}
+        <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apus('Dajax.process',{'pagina': {{ subcapitulos.next_page }}, 'html': 'reportesubcapitulos.html', 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}' })"> > </a>
+        <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apus('Dajax.process',{'pagina': {{ subcapitulos.pages }}, 'html': 'reportesubcapitulos.html', 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}' })"> >> </a>
+    {% else %}
+    {% endif %}

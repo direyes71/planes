@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th>Suministro</th>
+        <td><label>{{ suministro.nombre }}</label></td>
+    </tr>
+    <tr>
+        <th>Fecha</th>
+        <td><label>{{ fecha_especifica }}</label></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>
+            No.
+        </th>
+        <th>
+            Cantidad
+        </th>
+        <th>
+            U. medida
+        </th>
+        <th>
+            Registro
+        </th>
+    </tr>
+    {% for suministro_corte_diario in suministros_cortes_diarios %}
+        <tr>
+            <td>
+                <label>CDO{{ suministro_corte_diario.corte_diario_obra.orden_servicio.proyecto.id }}-{{ suministro_corte_diario.corte_diario_obra.consecutivo }}</label>
+            </td>
+            <td>
+                {% if suministro_corte_diario.corte_diario_obra.id == error.id %}
+                    <label>{{ error.error }}</label>
+                    <input type="text" id="id_text_cantidad_{{ suministro_corte_diario.corte_diario_obra.id }}" value="{{ error.value|force_escape }}">
+                    <a href="javascript:void(0)" id="a_href_anadir_item_{{ item.item.id }}" onclick="modificarSuministroCorteDiarioObra({{ suministro_corte_diario.corte_diario_obra.id }}, {{ suministro_corte_diario.suministro.suministro_orden_servicio_item.suministro.id }}, '{{ fecha_especifica }}', {{ orden_servicio.id }}, '{{ fecha_inicio }}', '{{ fecha_fin }}', {{ proyecto.id }});"><img src="{{ static_prefix }}ima/vistobueno.jpg" alt="" style="width:22px; height:22px;"></a>
+                {% else %}
+                    <label>{{ suministro_corte_diario.cantidad|force_escape|intcomma }}</label>
+                    <img id="id_modificar_{{ suministro_corte_diario.corte_diario_obra.id }}" name="modificar" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;" onclick="activarInputCantidad({{ suministro_corte_diario.corte_diario_obra.id }}, {{ suministro_corte_diario.suministro.suministro_orden_servicio_item.suministro.id }}, '{{ fecha_especifica }}', {{ orden_servicio.id }}, '{{ fecha_inicio }}', '{{ fecha_fin }}', {{ proyecto.id }});">
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ suministro_corte_diario.corte_diario_obra.persona }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<div>
+    <td colspan="2"><input type="submit" value="Aceptar" onclick="registrarSuministroCorteDiarioObra({{ orden_servicio.id }}, '{{ fecha_inicio }}', '{{ fecha_fin }}', {{ proyecto.id }});"></td>
+    <td colspan="2"><input type="submit" value="Cancelar" onclick="cerrarVentanaDetalles();"></td>
+</div>

@@ -1,0 +1,93 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Seccion del proyecto
+        </td>
+        <td colspan="2">
+            <select name="seccion_proyecto" id="id_seccion_proyecto" class="chosen-select" style="width: 350px;">
+                <option value="">----</option>
+                {% for seccion_proyecto in secciones_proyecto %}
+                    <option value="{{ seccion_proyecto.id }}"{% if actual_seccion_proyecto.id == seccion_proyecto.id %} selected="selected"{% endif %}>{{ seccion_proyecto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="button" value="Buscar" id="id_btn_buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Secci&oacute;n proy.</th>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Area construida</th>
+        <th scope="col">Area privada</th>
+        <th scope="col">Estado inmueble</th>
+        <th scope="col">F. ent. obra</th>
+        <th scope="col">F. escrit.</th>
+        <th scope="col">F. entrega</th>
+        <th scope="col">Precio actual</th>
+        <th scope="col">Lista de precios</th>
+    </tr>
+    {% for inmueble in inmuebles.modelo %}
+        <tr>
+            <td>
+                <input type="checkbox" name="seleccion_modificacion_masiva" value="{{ inmueble.id }}">
+            </td>
+            <td>
+                <label>{{ inmueble.tipo_inmueble.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.seccion_proyecto.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.identificacion }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_construida }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_privada }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_estado_inmueble }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_entrega_obra|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_escrituradate|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_entrega|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.valor|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_lista_precios }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if inmuebles.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': 1, 'tipo_inmueble': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.prev_page }}, 'tipo_inmueble': '{{ actual_tipo_inmueble }}', 'seccion_proyecto': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ inmuebles.page }} de {{ inmuebles.pages }}
+{% if inmuebles.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.next_page }}, 'tipo_inmueble': '{{ actual_tipo_inmueble }}', 'seccion_proyecto': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.pages }}, 'tipo_inmueble': '{{ actual_tipo_inmueble }}', 'seccion_proyecto': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

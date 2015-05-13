@@ -1,0 +1,448 @@
+{% extends "html/base_home.html" %}
+
+{% block titulo_pagina %} Detalles proyecto {% endblock %}
+
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+
+        var array_personas = new Array();
+        var personas = "";
+        var modificar_persona = false;
+        var contacto_id = -1;
+
+        function ventanaPersona(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_persona_proyecto_add('Dajax.process', {'proyecto_id': proyecto_id});
+        }
+
+        // Función para añadir una nueva persona anexa al proyecto
+        function anadirPersonaProyecto(proyecto_id){
+            identificacion = document.getElementById('id_identificacion').value;
+            nombre = document.getElementById('id_nombre').value;
+            cargo = document.getElementById('id_cargo').value;
+            telefono = document.getElementById('id_telefono').value;
+            proveedor = document.getElementById('id_proveedor').value;
+            Dajaxice.aplicacion.inverboy.anadir_persona_anexa_proyecto('Dajax.process', {'identificacion': identificacion, 'nombre': nombre, 'cargo': cargo, 'telefono': telefono, 'proveedor': proveedor, 'proyecto_id': proyecto_id });
+        }
+
+        // Función cancelar añadir una nueva persona anexa al proyecto
+        function cancelarAnadirPersonaProyecto(proyecto_id){
+            document.getElementById('light2').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+
+        // Función para modificar una fila de personas anexas al proyecto
+        function modificarFila(persona_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_modificar_persona_anexa_proveedor('Dajax.process',{ 'persona_id': persona_id, 'proyecto_id': proyecto_id });
+        }
+
+        function modificarPersonaAnexa(persona_id, proyecto_id) {
+            identificacion = document.getElementById('id_identificacion').value;
+            nombre = document.getElementById('id_nombre').value;
+            cargo = document.getElementById('id_cargo').value;
+            telefono = document.getElementById('id_telefono').value;
+            proveedor = document.getElementById('id_proveedor').value;
+            Dajaxice.aplicacion.inverboy.modificar_persona_anexa_proyecto('Dajax.process',{ 'persona_id': persona_id, 'identificacion': identificacion, 'nombre': nombre, 'cargo': cargo, 'telefono': telefono, 'proveedor': proveedor, 'proyecto_id': proyecto_id });
+        }
+
+        // FUNCION PARA ELMIMINAR UNA FILA SELECCIONADA DE LA TABLA PERSONAS
+        function borrarFila(persona_id, proyecto_id) {
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                Dajaxice.aplicacion.inverboy.eliminar_persona_proyecto('Dajax.process', {'persona_id': persona_id, 'proyecto_id': proyecto_id });
+            }
+        }
+
+        function ventanaAnadirPersonaAdministrativo(proyecto_id){
+            Dajaxice.aplicacion.inverboy.ventana_anadir_persona_administrativo_proyecto('Dajax.process',{'proyecto_id': proyecto_id});
+        }
+
+        function buscarPersonas(proyecto_id){
+            var cargo_persona = document.getElementById('id_cargo_persona').value;
+            var criterio = document.getElementById('id_criterio_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_usuarios('Dajax.process',{'pagina': 1, 'criterio': criterio, 'cargo_usuario': cargo_persona, 'proyecto_id': proyecto_id});
+        }
+
+        function seleccionar(usuario_id, pagina, criterio, cargo_persona, proyecto_id){
+            Dajaxice.aplicacion.inverboy.seleccionar_usuario_persona_administrativo_proyecto_add('Dajax.process',{'usuario_id': usuario_id, 'pagina': pagina, 'criterio': criterio, 'cargo_usuario': cargo_persona, 'proyecto_id': proyecto_id});
+        }
+
+        // FUNCION PARA LIMPIAR LA VENTANA DE BUSQUEDA DE PERSONAS
+        function limpiarBusquedaPersonas(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_anadir_persona_administrativo_proyecto_add('Dajax.process',{'proyecto_id': proyecto_id});
+        }
+
+        // FUNCION PARA AGREGAR PERSONAS 
+        function agregarPersonas(proyecto_id){
+            Dajaxice.aplicacion.inverboy.anadir_personas_administrativo_proyecto_add('Dajax.process',{'proyecto_id': proyecto_id});
+        }
+
+        // FUNCION PARA ELMIMINAR UNA FILA SELECCIONADA DE LA TABLA PERSONAS
+        function eliminarPersonaProyecto(persona_id, proyecto_id) {
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                Dajaxice.aplicacion.inverboy.eliminar_persona_administrativo_proyecto('Dajax.process', {'usuario_id': persona_id, 'proyecto_id': proyecto_id });
+            }
+        }
+
+        function mostrar_panel(panel) {
+            elemento_panel = document.getElementById(panel);
+            if (elemento_panel.style.display == '' || elemento_panel.style.display == 'none') {
+                elemento_panel.style.display = 'block';
+                element.innerHTML = 'Ocultar';
+            } else if (elemento_panel.style.display == 'block') {
+                elemento_panel.style.display = 'none';
+                element.innerHTML = 'Detalles';
+            }
+        }
+
+
+        // Funcion para dar color
+        function darColorBorde(obj, color) {
+            document.getElementById(obj).style.borderColor = color;
+        }
+
+        // FUNCION TRIM
+        function trim(stringToTrim) {
+        	return stringToTrim.replace(/^\s+|\s+$/g,"");
+        }
+
+        // FUNCION PARA VALIDACION DE STRINGS
+        function validarString(string) {
+            if(trim(string) != "") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+         // FUNCION PARA VALIDACION DE NUMEROS
+        function validarNumero(numero) {
+            if (!/^([0-9])*[.]?[0-9]*$/.test(numero)) {
+                /*alert("El valor " + numero + " no es un número");*/
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    </script>
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal2 {
+            display: none;
+            position: absolute;
+            width: 800px;
+            height: 240px;
+            left: 50%;
+            top: 50%;
+            margin-left: -400px;  /*Tamaño del DIV entre 2*/
+            margin-top: -120px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .panel_personas {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block titulo %} Detalles proyecto: <b>{{ proyecto.nombre|upper }}</b>{% endblock %}
+
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick=""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/personassearchproyecto.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    <!-- ventana modal -->
+    <div id="light2" class="modal2">
+        {% include 'ajax/personaproyectoadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    <!-- contenido página -->
+    <div class="infoProyecto">
+        <li><a href="#"><b>{{ proyecto.nombre|upper }}</b></a>
+            <ul>
+                    <li><a href="#"><b>Iniciales:</b> {{ proyecto.iniciales }}</a></li>
+                    <li><a href="#"><b>Tipo proyecto:</b> {{ proyecto.tipo_proyecto }}</a></li>
+                    <li><a href="#"><b>Direcci&oacute;n:</b> {{ proyecto.direccion }}</a></li>
+                    <li><a href="#"><b>Ciudad:</b> {{ proyecto.municipio.departamento.nombre }}, {{ proyecto.municipio.nombre }}</a></li>
+                    <li><a href="#"><b>Extensi&oacute;n:</b> {{ proyecto.ext }}</a></li>
+            </ul>
+        </li>
+    </div>
+    <div class="menu_desplegable">
+    <ul>
+    {% if 'inverboy.view_capituloapuproyecto' in user.get_all_permissions or 'inverboy.view_apuproyecto' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#" >APU'S PROYECTO &#9658;</a>
+            <ul>
+                {% if 'inverboy.view_capituloapuproyecto' in user.get_all_permissions %}
+                    <li class="primera"><a href="/inverboy/home/capitulosapuproyectosearch/{{ proyecto.id }}/">Capitulos del proyecto</a></li>
+                {% endif %}
+                <li><a href="/inverboy/home/apusproyectosearch/{{ proyecto.id }}/">APU's del proyecto</a></li>
+                <li><a href="/inverboy/home/reporteestadoapusproyecto/{{ proyecto.id }}/">Reporte estado APU's del proyecto</a></li>
+                <li><a href="/inverboy/home/reportesuministrosproyecto/{{ proyecto.id }}/">Reporte an&aacute;lisis suministros del proyecto</a></li>
+                <li><a href="/inverboy/home/reporteanalisispreciossuministrosapusproyecto/{{ proyecto.id }}/">Reporte an&aacute;lisis precios APU's proyecto</a></li>
+                <li><a href="/inverboy/home/reporteanalisispreciossuministrosproyecto/{{ proyecto.id }}/">Reporte an&aacute;lisis precios suministros proyecto</a></li>
+            </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.add_requisicion' in user.get_all_permissions or 'inverboy.view_requisicion' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">REQUISICIONES &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_requisicion' in user.get_all_permissions %}
+                    <li class="primera"><a href="/inverboy/home/requisicionproyectoadd/{{ proyecto.id }}/">Nueva requisici&oacute;n</a></li>
+                {% endif %}
+                {% if 'inverboy.view_requisicion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/requisicionesaprobarproyectosearch/{{ proyecto.id }}/">Ver requisici&oacute;nes pendientes por aprobar{% if proyecto.numero_requisiciones_pendientes_aprobar > 0 %} ({{ proyecto.numero_requisiciones_pendientes_aprobar }}){% endif %}</a></li>
+                    <li><a href="/inverboy/home/requisicionesproyectosearch/{{ proyecto.id }}/">Ver requisici&oacute;nes</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.add_cotizacion' in user.get_all_permissions or 'inverboy.view_cotizacion' in user.get_all_permissions or 'inverboy.view_ordencompra' in user.get_all_permissions or 'inverboy.add_informerecepcion' in user.get_all_permissions or 'inverboy.view_informerecepcion' in user.get_all_permissions or 'inverboy.view_suministroalmacen' in user.get_all_permissions or 'inverboy.view_informesalida' in user.get_all_permissions or 'inverboy.add_facturaordencompra' in user.get_all_permissions or 'inverboy.view_facturaordencompra' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">ORDENES DE COMPRA &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_cotizacion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/compras/{{ proyecto.id }}/">Cotizar orden de compra por suministro</a></li>
+                    <li><a href="/inverboy/home/comprasproveedor/{{ proyecto.id }}/">Cotizar orden de compra por proveedor</a></li>
+                {% endif %}
+                {% if 'inverboy.view_cotizacion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/cotizacionesproyectosearch/{{ proyecto.id }}/">Ver cotizaciones ordenes de compra</a></li>
+                {% endif %}
+                {% if 'inverboy.view_ordencompra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/ordenescompraproyectosearch/{{ proyecto.id }}/">Ordenes de compra</a></li>
+                {% endif %}
+                {% if 'inverboy.add_informerecepcion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/informerecepcionaddordenescompra/{{ proyecto.id }}/">Nuevo informe de recepci&oacute;n</a></li>
+                {% endif %}
+                {% if 'inverboy.view_informerecepcion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/informesrecepcionproyectosearch/{{ proyecto.id }}/">Ver informes de recepci&oacute;n</a></li>
+                {% endif %}
+                {% if 'inverboy.view_suministroalmacen' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/suministrosalmacensearch/{{ proyecto.id }}/">Almac&eacute;n</a></li>
+                {% endif %}
+                {% if 'inverboy.view_informesalida' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/informessalidaproyectoview/{{ proyecto.id }}/">Informes de salida</a></li>
+                {% endif %}
+                {% if 'inverboy.add_facturaordencompra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/facturaordencompraproyectoaddproveedoresordenescompra/{{ proyecto.id }}/">Nueva factura orden compra</a></li>
+                {% endif %}
+                {% if 'inverboy.view_facturaordencompra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedafacturasordenescompraproyecto/{{ proyecto.id }}/">Ver facturas ordenes de compra</a></li>
+                {% endif %}
+           </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.add_cotizacion' in user.get_all_permissions or 'inverboy.view_cotizacion' in user.get_all_permissions or 'inverboy.view_ordenservicio' in user.get_all_permissions or 'inverboy.add_cortediarioobra' in user.get_all_permissions or 'inverboy.view_cortediarioobra' in user.get_all_permissions or 'inverboy.add_actareciboobra' in user.get_all_permissions or 'inverboy.view_actareciboobra' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">ORDENES DE SERVICIO &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_cotizacion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/ordenservicioadd/{{ proyecto.id }}/">Cotizar orden de servicio por suministro</a></li>
+                    <li><a href="/inverboy/home/ordenservicioproveedor/{{ proyecto.id }}/">Cotizar orden de servicio por proveedor</a></li>
+                {% endif %}
+                {% if 'inverboy.view_cotizacion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/cotizacionesordenservicioproyectosearch/{{ proyecto.id }}/">Ver cotizaciones ordenes de servicio</a></li>
+                {% endif %}
+                {% if 'inverboy.view_ordenservicio' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/ordenesservicioproyectosearch/{{ proyecto.id }}/">Ordenes de servicio</a></li>
+                {% endif %}
+                {% if 'inverboy.add_cortediarioobra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/cortediarioobraaddordenesservicio/{{ proyecto.id }}/">Nuevo corte diario de obra</a></li>
+                {% endif %}
+                {% if 'inverboy.view_cortediarioobra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/cortesdiarioobraproyectosearch/{{ proyecto.id }}/">Cortes diarios de obra</a></li>
+                {% endif %}
+                {% if 'inverboy.add_actareciboobra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/actareciboobraproyectoadd/{{ proyecto.id }}/">Nueva acta de recibo de obra</a></li>
+                {% endif %}
+                {% if 'inverboy.view_actareciboobra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedaactasreciboobraproyectoaprobar/{{ proyecto.id }}/">Ver actas de recibo de obra por aprobar ({{ proyecto.numero_actas_recibo_obra_pendientes_aprobar }})</a></li>
+                    <li><a href="/inverboy/home/actasreciboobraproyectosearch/{{ proyecto.id }}/">Ver actas de recibo de obra</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.add_requisicionindirectos' in user.get_all_permissions or 'inverboy.add_ordengiro' in user.get_all_permissions or 'inverboy.view_ordengiro' in user.get_all_permissions or 'inverboy.add_actaconformidad' in user.get_all_permissions or 'inverboy.view_actaconformidad' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">MODULO DE INDIRECTOS &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_requisicionindirectos' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/requisicionindirectosproyectoadd/{{ proyecto.id }}/">Nueva requisici&oacute;n de indirectos</a></li>
+                {% endif %}
+                {% if 'inverboy.add_ordengiro' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/ordengiroproyectoadd/{{ proyecto.id }}/">Nueva orden de giro</a></li>
+                {% endif %}
+                {% if 'inverboy.view_ordengiro' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/ordenesgiroproyectosearch/{{ proyecto.id }}/">Ver ordenes de giro</a></li>
+                {% endif %}
+                {% if 'inverboy.add_actaconformidad' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/actaconformidadaddordenesgiro/{{ proyecto.id }}/">Nueva acta de conformidad</a></li>
+                {% endif %}
+                {% if 'inverboy.view_actaconformidad' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/actasconformidadproyectosearch/{{ proyecto.id }}/">Ver actas de conformidad</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.add_apuproyecto' in user.get_all_permissions or 'inverboy.view_actareciboobra' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">REPORTES &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_apuproyecto' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/reportepresupuestoproyectodiscriminadoapus/{{ proyecto.id }}/">Reporte presupuesto proyecto discriminado por apus</a></li>
+                    <li><a href="/inverboy/home/reportevaloressuministrosordencompra/{{ proyecto.id }}/">Reporte valores suministros ordenes de compra</a></li>
+                {% endif %}
+                {% if 'inverboy.view_actareciboobra' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/reportepagoactasreciboobra/{{ proyecto.id }}/">Reporte pago actas recibo obra</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+
+    {% if 'inverboy.view_adicionalagrupacion' in user.get_all_permissions or 'inverboy.view_seccionproyecto' in user.get_all_permissions or 'inverboy.view_tipoinmueble' in user.get_all_permissions or 'inverboy.add_inmueble' in user.get_all_permissions or 'inverboy.change_inmueble' in user.get_all_permissions or 'inverboy.view_inmueble' in user.get_all_permissions or 'inverboy.add_agrupacioninmueble' in user.get_all_permissions or 'inverboy.view_agrupacioninmueble' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">INMUEBLES &#9658;</a>
+            <ul>
+                {% if 'inverboy.view_adicionalagrupacion' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedatipoadicionales/{{ proyecto.id }}/">Ver tipos adicional</a></li>
+                    <li><a href="/inverboy/home/busquedaadicionales/{{ proyecto.id }}/">Ver adicionales</a></li>
+                {% endif %}
+                {% if 'inverboy.view_seccionproyecto' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedaseccionesproyecto/{{ proyecto.id }}/">Busqueda secciones proyecto</a></li>
+                {% endif %}
+                {% if 'inverboy.view_tipoinmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedatipoinmuebles/{{ proyecto.id }}/">Busqueda Tipo inmueble</a></li>
+                {% endif %}
+                {% if 'inverboy.add_inmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/nuevoinmueble/{{ proyecto.id }}/">Nuevo inmueble</a></li>
+                {% endif %}
+                {% if 'inverboy.view_inmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedainmuebles/{{ proyecto.id }}/">Ver inmuebles del proyecto</a></li>
+                {% endif %}
+                {% if 'inverboy.change_inmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/asignacionindividualpreciosinmuebles/{{ proyecto.id }}/">Asignaci&oacute;n individual de precios (Inmuebles)</a></li>
+                {% endif %}
+                {% if 'inverboy.add_agrupacioninmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/nuevaagrupacioninmueble/{{ proyecto.id }}/">Nueva agrupaci&oacute;n inmueble</a></li>
+                {% endif %}
+                {% if 'inverboy.view_agrupacioninmueble' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedaagrupacioninmuebles/{{ proyecto.id }}/">Ver agrupaci&oacute;nes inmueble</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+
+    {% if 'inverboy.add_cliente' in user.get_all_permissions or 'inverboy.view_cliente' in user.get_all_permissions or 'inverboy.add_contratoventa' in user.get_all_permissions or 'inverboy.view_documentoventa' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="#">VENTAS &#9658;</a>
+            <ul>
+                {% if 'inverboy.add_cliente' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/nuevocliente/{{ proyecto.id }}/">Nuevo cliente</a></li>
+                {% endif %}
+                {% if 'inverboy.view_cliente' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedaclientes/{{ proyecto.id }}/">Busqueda clientes</a></li>
+                {% endif %}
+                {% if 'inverboy.view_contratoventa' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedacontratoventa/{{ proyecto.id }}/">Busqueda ventas del proyecto</a></li>
+                {% endif %}
+                {% if 'inverboy.view_documentoventa' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/busquedadocumentosventas/{{ proyecto.id }}/">Documentos de ventas</a></li>
+                {% endif %}
+                 {% if 'inverboy.view_documentoventa' in user.get_all_permissions %}
+                    <li><a href="/inverboy/home/reportesventas/{{ proyecto.id }}/">Reportes</a></li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+    {% if 'inverboy.view_stage' in user.get_all_permissions %}
+        <li class="nivel1 primera"><a class="nivel1" href="/inverboy/home/stagesreport/{{ proyecto.id }}/">IR A REPORTE FOTOGRAFICO</a>
+        </li>
+    {% endif %}
+    </ul>
+    </div>
+
+    {% if 'inverboy.view_personaadministrativoproyecto' in user.get_all_permissions or 'inverboy.add_personaadministrativoproyecto' in user.get_all_permissions %}
+        <table align="center">
+            <tr>
+                <td>
+                    <h2 align="right">Personal administrativo del proyecto</h2>
+                </td>
+                <td>
+                    <a href="javascript:mostrar_panel('id_personal_administrativo');">Detalles</a>
+                </td>
+            </tr>
+        </table>
+        <div id="id_personal_administrativo" class="panel_personas">
+            {% if 'inverboy.view_personaadministrativoproyecto' in user.get_all_permissions %}
+                <div id="personal_administrativo_proyecto">
+                    {% include 'ajax/personaladministrativoproyecto.html' %}
+                </div>
+            {% endif %}
+            {% if 'inverboy.add_personaadministrativoproyecto' in user.get_all_permissions %}
+                <div align="center">
+                    <a href="javascript:void(0)" onclick ="ventanaAnadirPersonaAdministrativo( {{ proyecto.id }} );">Agregar personal administrativo</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if 'inverboy.view_personaproyecto' in user.get_all_permissions or 'inverboy.add_personaproyecto' in user.get_all_permissions %}
+        <table align="center">
+            <tr>
+                <td>
+                    <h2 align="right">Personas anexas al proyecto</h2>
+                </td>
+                <td>
+                    <a href="javascript:mostrar_panel('id_personal_anexo');">Detalles</a>
+                </td>
+            </tr>
+        </table>
+        <div id="id_personal_anexo" class="panel_personas">
+            {% if 'inverboy.view_personaproyecto' in user.get_all_permissions %}
+                <div id="personas_proyecto">
+                    {% include 'ajax/personasproyecto.html' %}
+                </div>
+            {% endif %}
+            {% if 'inverboy.add_personaproyecto' in user.get_all_permissions %}
+                <div align="center">
+                    <a href="javascript:void(0)" onclick ="ventanaPersona( {{ proyecto.id }} );">Agregar personal anexo</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}

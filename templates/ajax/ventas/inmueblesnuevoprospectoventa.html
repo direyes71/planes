@@ -1,0 +1,31 @@
+{% load humanize %}
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Inmuebles de interes</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Inmueble</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Valor</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for agrupacion in agrupaciones %}
+                    <tr>
+                        <td><label>{{ agrupacion.identificacion }}</label></td>
+                        <td>{{ agrupacion.str_descripcion|escape|safe }}</td>
+                        <td><label>{{ agrupacion.str_valor|force_escape|intcomma }}</label></td>
+                        <td><a href="javascript:void(0)" id="id_btn_eliminar_agrupacion_inmueble" agrupacion_inmuebles_id="{{ agrupacion.id }}">Quitar</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>

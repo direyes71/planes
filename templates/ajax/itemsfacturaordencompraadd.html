@@ -1,0 +1,103 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Eliminar</th>
+        <th>I. R.</th>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Cantidad I. R.</th>
+        <th>Cant. Facturada</th>
+        <th>Cantidad esta factura</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Precio/Unitario</th>
+        <th>+ Iva</th>
+        <th>Subtotal</th>
+        <th>Iva</th>
+        <th>Total</th>
+    </tr>
+    {% for item_factura in items_factura.modelo %}
+        <tr>
+            <td>
+                <img id="id_elimina_{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}" src="{{ static_prefix }}ima/elimina.jpg" onclick="eliminar_suministro({{ items_factura.page }}, {{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}, {{ item_factura.suministro.informe_recepcion.id }}, {{ proveedor.id }}, {{ proyecto.id }});"/>
+            </td>
+            <td>
+                <label>IR{{ item_factura.suministro.informe_recepcion.orden_compra.proyecto.id }}-{{ item_factura.suministro.informe_recepcion.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.clasificacion_general }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.cantidad|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.cantidad_facturada|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}_{{ item_factura.suministro.informe_recepcion.id }}">{% if error.id == item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id and error.informe_recepcion_id == item_factura.suministro.informe_recepcion.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" id="id_text_cantidad_{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}_{{ item_factura.suministro.informe_recepcion.id }}" name="text_cantidad" size="12" {% if error.id == item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id and error.informe_recepcion_id == item_factura.suministro.informe_recepcion.id %}value="{{ error.value|force_escape }}"{% else %} disabled="disabled" value="{{ item_factura.cantidad_suministro_nueva_factura|intcomma|force_escape }}"{% endif %}/>
+                {% if error.id == item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id and error.informe_recepcion_id == item_factura.suministro.informe_recepcion.id %}
+                    <img id="id_ima_2_{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}_{{ item_factura.suministro.informe_recepcion.id }}" name="ima_2" src="{{ static_prefix }}ima/vistobueno.jpg"  style="width:22px; height:22px;" onclick="modificarCantidad({{ items_factura.page }}, {{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}, {{ item_factura.suministro.informe_recepcion.id }}, {{ proveedor.id }}, {{ proyecto.id }});"/>
+                {% else %}
+                    <img id="id_ima_{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}" name="ima" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInput({{ items_factura.page }}, {{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.id }}, {{ item_factura.suministro.informe_recepcion.id }}, {{ proveedor.id }}, {{ proyecto.id }});">
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.suministro.unidad_embalaje|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.precio|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.suministro.suministro_orden_compra_item.iva_suministro|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.subtotal|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.valor_iva|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.valor_total|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if items_factura.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra_add('Dajax.process',{'pagina': 1, 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra_add('Dajax.process',{'pagina': {{ items_factura.prev_page }}, 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ items_factura.page }} de {{ items_factura.pages }}
+{% if items_factura.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra_add('Dajax.process',{'pagina': {{ items_factura.next_page }}, 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra_add('Dajax.process',{'pagina': {{ items_factura.pages }}, 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<div>
+    <table class="tablaReportes" align="center">
+        <tr>
+            <th colspan="2">Previo</th>
+        </tr>
+        <tr>
+            <th>Subtotal</th>
+            <td><label>{{ discriminacion_valores.subtotal|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>IVA</th>
+            <td><label>{{ discriminacion_valores.valor_iva|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td><label>{{ discriminacion_valores.valor_total|force_escape|intcomma }}</label></td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,41 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for tipo_adicional in tipos_adicional.modelo %}
+        <tr>
+            <td>
+                <label>{{ tipo_adicional.nombre }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.change_adicionalagrupacion' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificartipoadicional/{{ tipo_adicional.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if tipos_adicional.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_adicional('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_adicional('Dajax.process',{'pagina': {{ tipos_adicional.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ tipos_adicional.page }} de {{ tipos_adicional.pages }}
+{% if tipos_adicional.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_adicional('Dajax.process',{'pagina': {{ tipos_adicional.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_adicional('Dajax.process',{'pagina': {{ tipos_adicional.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

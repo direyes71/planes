@@ -1,0 +1,42 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_notificacion_venta"{% if change == 0 %} valor="guardar"{% else %}{% if change == 1 %} valor="modificar"{% endif %}{% endif %}>
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Tipo de notificaci&oacute;n:</th>
+            <td>{{ form.tipo_notificacion.errors }}{{ form.tipo_notificacion }}</td>
+        </tr>
+        <tr>
+            <th>Fecha limite notificaci&oacute;n:</th>
+            <td>{{ form.fecha_limite_notificacion.errors }}
+                {{ form.fecha_limite_notificacion }}
+                <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha limite" id="lanzador">
+            </td>
+        </tr>
+        <tr>
+            <th>Hora limite notificaci&oacute;n:</th>
+            <td>{{ form.hora_limite_notificacion.errors }}
+                {{ form.hora_limite_notificacion }}
+                <!--
+                <img id="clockpick" width="20" height="20" src="{{ static_prefix }}ima/clock.gif">
+                -->
+            </td>
+        </tr>
+        <tr>
+            <th>Descripci&oacute;n:</th>
+            <td>{{ form.descripcion.errors }}{{ form.descripcion }}</td>
+        </tr>
+        <tr>
+            <td align="center">
+                <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+            </td>
+            <td align="center">
+                <input type="button" value="Cancelar" id="id_btn_cancelar_agregar">
+            </td>
+        </tr>
+    </table>
+    {% if change == 1 %}
+        <input type="hidden" value="{{ indice }}" name="indice_notificacion">
+    {% endif %}
+</form>

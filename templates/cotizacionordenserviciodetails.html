@@ -1,0 +1,487 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles cotizaci&oacute;n orden de servicio{% endblock %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function formaPago() {
+            opcion = document.getElementById('id_forma_pago').value;
+            document.getElementById('id_parametro_forma_pago').style.display = 'block';
+            document.getElementById('id_parametro_pago').value = '';
+            if(opcion=='4'){
+                document.getElementById('id_label_parametro_pago').innerHTML = 'Cual?';
+                document.getElementById('id_label_parametro_pago').style.display = 'block';
+            }
+            else {
+                document.getElementById('id_parametro_forma_pago').style.display = 'none';
+                document.getElementById('id_label_parametro_pago').style.display = 'none';
+            }
+        }
+        function eliminar_suministro(suministro_id, cotizacion_id, proyecto_id) {
+            if (confirm("¿Realmente desea eliminar este item?"))
+                Dajaxice.aplicacion.inverboy.eliminar_suministro_cotizacion('Dajax.process', { 'suministro_id': suministro_id, 'cotizacion_id': cotizacion_id, 'proyecto_id': proyecto_id });
+        }
+        function activarInput(pagina, suministro_id, cotizacion_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_cotizacion_realizar_orden_servicio('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'cotizacion_id': cotizacion_id, 'proyecto_id': proyecto_id });
+        }
+        function modificarCantidad(pagina, suministro_id, cotizacion_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_cantidad_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_suministro_cotizacion_orden_servicio('Dajax.process', { 'suministro_id': suministro_id, 'cantidad': valorcampo, 'cotizacion_id': cotizacion_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function activarInputPrecio(pagina, suministro_id, cotizacion_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_precio_suministro_cotizacion_realizar_orden_servicio('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'cotizacion_id': cotizacion_id, 'proyecto_id': proyecto_id });
+        }
+        function modificarPrecio(pagina, suministro_id, cotizacion_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_precio_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_suministro_cotizacion('Dajax.process', { 'suministro_id': suministro_id, 'precio': valorcampo, 'cotizacion_id': cotizacion_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function modificarIva(pagina, suministro_id, cotizacion_id, proyecto_id){
+            var valorcampo = document.getElementById('id_check_iva_'+(suministro_id)).checked;
+            Dajaxice.aplicacion.inverboy.modificar_iva_suministro_cotizacion('Dajax.process', { 'suministro_id': suministro_id, 'cotizacion_id': cotizacion_id, 'iva': valorcampo, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function cambiarTipoIva(parametro, proyecto_id){
+            Dajaxice.aplicacion.inverboy.cambiar_tipo_iva_cotizacion_orden_servicio_add('Dajax.process', { 'parametro': parametro, 'proyecto_id': proyecto_id });
+        }
+        function panelAplicaCooperativa(elemento){
+            if (elemento.checked == true) {
+                document.getElementById('id_panel_aplica_cooperativa').style.display = 'block';
+                document.getElementById('id_base_gravable_cooperativa').value = '';
+                document.getElementById('id_porcentaje_iva_cooperativa').value = '';
+            } else if (elemento.checked == false) {
+                document.getElementById('id_panel_aplica_cooperativa').style.display = 'none';
+            }
+        }
+
+        function panelAplicaTercero(elemento, proveedor_id, proyecto_id){
+            if (elemento.checked == true) {
+                Dajaxice.aplicacion.inverboy.cargar_terceros_orden_servicio_add('Dajax.process', {'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+            } else if (elemento.checked == false) {
+                document.getElementById('id_panel_aplica_tercero').style.display = 'none';
+            }
+        }
+    </script>
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+
+
+<link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+<script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="{{ static_prefix }}css/custom-theme/jquery-ui-1.10.4.custom.min.css">
+
+
+<script src="{{ static_prefix }}js/jquery.1.11.0.min.js"></script>
+
+    
+<script type="text/javascript" src="{{ static_prefix }}js/jquery-ui-1.10.4.custom.min.js"></script>
+
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <td>Fecha de creaci&oacute;n: <input type="text" readonly="readonly" value="{{ cotizacion.fecha_creacion }}"></td>
+                <td>Proveedor: <input type="text" readonly="readonly" value="{{ cotizacion.proveedor.razon_social }}"></td>
+            </tr>
+            <tr>
+                <td>
+                    {% if error_fecha_arribo != '' %}
+                        <label id="id_label_error_fecha_arribo">{{ error_fecha_arribo }}</label><br>
+                    {% endif %}
+                    Fecha de entrega:
+                    <input type="text" id="id_fecha_arribo" name="fecha_arribo" placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual" value="{{ fecha_arribo|force_escape }}"/>
+                    <!-- <input type="text" id="id_fecha_arribo" name="fecha_arribo" onkeyup="validar_fecha(this);" onkeypress="return validar_teclado_fecha(event)" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual"/> -->
+                    <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                    <script type="text/javascript" charset="utf-8">
+                        Calendar.setup({inputField:"id_fecha_arribo",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                    </script>
+                </td>
+                <td>Fecha actual: {{ fecha_actual }}</td>
+            </tr>
+            <tr>
+                <td>
+                    {% if error_amortizacion_anticipo != '' %}
+                        <label id="id_label_error_amortizacion">{{ error_amortizacion_anticipo }}</label><br>
+                    {% endif %}
+                    Amortizaci&oacute;n anticipo: <input type="text" id="id_amortizacion_anticipo" name="amortizacion_anticipo" value="{{ amortizacion_anticipo }}"> %
+                </td>
+                <td>
+                    {% if error_retencion_garantia != '' %}
+                        <label id="id_label_error_retencion_garantia">{{ error_retencion_garantia }}</label><br>
+                    {% endif %}
+                    Retenci&oacute;n de garantia: <input type="text" id="id_retencion_garantia" name="retencion_garantia" value="{{ retencion_garantia }}"> %
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% if error_rete_ica != '' %}
+                        <label id="id_label_error_rete_ica">{{ error_rete_ica }}</label><br>
+                    {% endif %}
+                    Reteica: <input type="text" id="id_rete_ica" name="rete_ica" value="{{ rete_ica|force_escape }}">
+                </td>
+                <td>
+                    {% if error_rete_fuente != '' %}
+                        <label id="id_label_error_rete_fuente">{{ error_rete_fuente }}</label><br>
+                    {% endif %}
+                    Retefuente: <input type="text" id="id_rete_fuente" name="rete_fuente" value="{{ rete_fuente|force_escape }}"> %
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% if error_forma_pago != '' %}
+                        <label id="id_label_error_forma_pago">{{ error_forma_pago }}</label><br>
+                    {% endif %}
+                    Forma de pago
+                    <select id="id_forma_pago" name="forma_pago" onchange="formaPago();">
+                        <option value="0">----</option>
+                        <option value="2" {% if forma_pago == 2 %}selected="selected" {% endif %}>Contra-entrega</option>
+                        <option value="3" {% if forma_pago == 3 %}selected="selected" {% endif %}>Cortes-obra</option>
+                        <option value="4" {% if forma_pago == 4 %}selected="selected" {% endif %}>Otro</option>
+                    </select>
+                </td>
+                <td>
+                    {% if error_parametro_pago != '' %}
+                        <label id="id_label_error_parametro_forma_pago">{{ error_parametro_pago }}</label><br>
+                    {% endif %}
+                    <label id="id_label_parametro_pago">{% if forma_pago == 4 %}Cual?{% endif %}</label>
+                    <div id="id_parametro_forma_pago" {% if forma_pago != 4 %}style="display: none;"{% endif %}>
+                        <textarea id="id_parametro_pago" name="parametro_pago">{{ parametro_pago }}</textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Observaciones:
+                    <textarea id="id_observaciones" name="observaciones">{{ observaciones }}</textarea>
+                </td>
+            </tr>
+        </table>
+
+        {% if cotizacion.proveedor.regimen_tributario == 1 %}
+            <div>
+                <tr>
+                    <th>Tipo de IVA:</th>
+                    <td>
+                        <select name="tipo_iva" onchange="cambiarTipoIva(this.value, {{ proyecto.id }});">
+                            <option value="1">IVA / Utilidad</option>
+                            <option value="2"{% if tipo_iva == 2 %} selected="selected"{% endif %}>Porcentaje</option>
+                            <option value="3"{% if tipo_iva == 3 %} selected="selected"{% endif %}>IVA / AIU</option>
+                        </select>
+                    </td>
+                </tr>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            {% if error_iva != '' %}
+                                <label id="id_label_error_iva">{{ error_iva }}</label><br>
+                            {% endif %}
+                            Iva: <input type="text" id="id_iva" name="iva" value="{{ iva }}"> %
+                        </td>
+                        <td>
+                            <div id="id_parametros_iva_aiu"{% if tipo_iva == 2 %} style="display: none;"{% endif %}>
+                                {% if error_a_i_u != '' %}
+                                    <label id="id_label_error_a_i_u">{{ error_a_i_u }}</label><br>
+                                {% endif %}
+                                Porcentaje aiu: <input type="text" id="id_a_i_u" name="a_i_u" value="{{ a_i_u }}"> %
+                            </div>
+                        </td>
+                        <td>
+                            <div id="id_parametros_iva_utilidad"{% if tipo_iva == 2 or tipo_iva == 3 %} style="display: none;"{% endif %}>
+                                {% if error_utilidad != '' %}
+                                    <label id="id_label_error_utilidad">{{ error_utilidad }}</label><br>
+                                {% endif %}
+                                Utilidad: <input type="text" id="id_utilidad" name="utilidad" value="{{ utilidad }}"> %
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endif %}
+
+        <table>
+            <tr>
+                <td>
+                    Aplica tercero
+                    <input type="checkbox" name="aplica_tercero" value="1"{% if aplica_tercero %} checked="checked"{% endif %} onchange="panelAplicaTercero(this, {{ cotizacion.proveedor.id }}, {{ proyecto.id }});">
+                </td>
+                <td>
+                    <div id="id_panel_aplica_tercero" {% if not aplica_tercero %}style="display: none;"{% endif %}>
+                        <table>
+                            <tr>
+                                <td>
+                                    {% if error_tercero != '' %}
+                                        <label>{{ error_tercero }}</label>
+                                    {% endif %}
+                                    <select id="id_tercero" name="tercero">
+                                        <option value="0">----</option>
+                                        {% for item in terceros %}
+                                            <option value="{{ item.id }}" {% if item.id == tercero.id %}selected="selected" {% endif %}>{{ item.razon_social }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td>
+                    Aplica cooperativa
+                    <input type="checkbox" name="aplica_cooperativa" value="1"{% if aplica_cooperativa %} checked="checked"{% endif %} onchange="panelAplicaCooperativa(this);">
+                </td>
+                <td>
+                    <div id="id_panel_aplica_cooperativa" {% if not aplica_cooperativa %}style="display: none;"{% endif %}>
+                        <table>
+                            <tr>
+                                <td>
+                                    % Base gravable
+                                </td>
+                                <td>
+                                    {% if error_base_gravable_cooperativa != '' %}
+                                        <label id="id_label_error_base_gravable_cooperativa">{{ error_base_gravable_cooperativa }}</label><br>
+                                    {% endif %}
+                                    <input id="id_base_gravable_cooperativa" name="base_gravable_cooperativa" value="{{ base_gravable_cooperativa }}">
+                                </td>
+                                <td>
+                                    % IVA
+                                </td>
+                                <td>
+                                    {% if error_porcentaje_iva_cooperativa != '' %}
+                                        <label id="id_label_error_porcentaje_iva_cooperativa">{{ error_porcentaje_iva_cooperativa }}</label><br>
+                                    {% endif %}
+                                    <input id="id_porcentaje_iva_cooperativa" name="porcentaje_iva_cooperativa" value="{{ porcentaje_iva_cooperativa }}">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministroscotizacionordenserviciosearch.html' %}
+        </div>
+
+        <div id="contenedor_agregar_suministro">
+            <p>
+                <label>Agregar suministro: </label> 
+                <select id="agregar_suministro" type="text" multiple >
+                    {% for categoria in todos_suministros %} 
+                        <optgroup label="{{categoria.0.nombre}} ({{categoria.1|length}})">
+                            {% for s in categoria.1 %}
+                                <option value="{{s.pk}}" categoria="{{categoria.0.nombre}}_({{categoria.1|length}})">{{s.nombre}}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+
+                <input type="button" id="btn_agregar_suministro" value="Agregar"> 
+
+                <input type="button" id="btn_ver_capitulos" value="Ver capitulos">
+            </p>
+
+
+        </div>
+
+        <div id="modal_capitulos" title="Capitulos de obra" style="display:none">
+            
+
+            <div id="tabs">
+                <ul>
+                    {% for categoria in todos_suministros %}
+                        <li><a href="#tabs-{{forloop.counter}}">{{categoria.0.nombre}} ({{categoria.1|length}})</a></li>
+                    {% endfor %}
+                </ul>
+                {% for categoria in todos_suministros %}
+                    <div id="tabs-{{forloop.counter}}">
+                        <table class="tablaReportes">
+                            <tr>
+                                <th><input type="checkbox" categoria="{{categoria.0.nombre}}" 
+                                    class="activar_todo"></th>
+                                <th>Nombre</th>
+                            </tr>
+                             {% for s in categoria.1 %}
+                                <tr>
+                                    <td><input categoria="{{categoria.0.nombre}}" type="checkbox" class="add_suministro" suministro="{{s.pk}}"></td>
+                                    <td>{{s.nombre}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+            <p style="text-align:right">
+                <button id="btn_agregar_lista_suministro"> Guardar </button>
+            </p>
+        </div>
+
+        {% if 'inverboy.add_ordenservicio' in user.get_all_permissions %}
+            <input type="submit" id="id_guardar" value="Realizar orden de servicio" onclick="this.disabled=true;">
+        {% endif %}
+        <a href="/inverboy/home/imprimircotizacion/{{ cotizacion.id }}/{{ proyecto.id }}/">Imprimir</a>
+    </form>
+
+<style>
+  .ui-tabs-vertical { width: 65em; }
+  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 18em; }
+  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
+  .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+  </style>
+
+
+
+<script type="text/javascript">
+    jQuery(document).ajaxSend(function(event, xhr, settings) {
+        function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+        }
+        function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+        }
+        function safeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    });
+    
+
+    $("#agregar_suministro").chosen();
+
+    $("#agregar_suministro").val("");
+
+
+
+    var cot_id = {{cotizacion.id}};
+    var pro_id = {{proyecto.id}};
+
+
+
+    function actualizar_agregados(actual,tope){
+        if(actual == tope){
+            location.reload();
+        }
+    }
+
+    $("#btn_agregar_suministro").on("click",function(){
+
+        if($("#agregar_suministro").val()){
+            var valores = $("#agregar_suministro").val();
+            var actual = 0;
+            for (var i = 0; i < valores.length; i++) {
+                
+                $.post("/inverboy/home/cotizacionesproyectodetails/agregar_suministro_a_cotizacion/",
+                    { "cotizacion_id":cot_id,
+                    "proyecto_id":pro_id,
+                    "suministro_id":parseInt(valores[i])}
+                    ,function (response){
+                        if(response){
+                            //$(".tabla_suministros_cotizacion").append(response);
+                            actual++;
+                            actualizar_agregados(actual,valores.length);
+                        }else{
+
+                        alert("El suministro \"  "+$("#agregar_suministro option:selected").text()+"  \" no esta pendiente por requerir.");
+                        }
+                    });
+            };
+        }
+    });
+
+    function actualizar(){
+
+        location.reload();
+    }
+
+    $(document).on("ready",function(){
+    
+        $("#btn_ver_capitulos").on("click",function(){
+            $( "#modal_capitulos" ).dialog({
+              height: 560,
+              width:880,
+              modal: true
+            });
+        });
+
+
+        
+        $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+        $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+
+       
+
+        $(".activar_todo, .add_suministro").each(function(event){
+            this.checked = false;
+        });
+        
+        $(".activar_todo").on("click",function(event){
+            if(this.checked){
+                $(".add_suministro[categoria='"+$(this).attr("categoria")+"']").each(function(){
+                    this.checked = true;
+                });
+            }else{
+            
+                $(".add_suministro[categoria='"+$(this).attr("categoria")+"']").each(function(){
+                    this.checked = false;
+                });
+            }
+        });
+
+        $("#btn_agregar_lista_suministro").button().on("click",function(){
+            $(this).text("Guardando...");
+            var cant = $(".add_suministro:checked").length;
+            var cont = 0;
+            $(".add_suministro:checked").each(function(){
+                $.post("/inverboy/home/cotizacionesproyectodetails/agregar_suministro_a_cotizacion/",
+                    { "cotizacion_id":cot_id,
+                    "proyecto_id":pro_id,
+                    "suministro_id":parseInt($(this).attr("suministro"))}
+                    ,function (response){
+                        cont++;
+                        actualizar_agregados(cont,cant);
+
+                    });
+            });
+        });
+
+    });
+    
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load humanize %}
+
+<h3>Inmuebles</h3>
+<table border="1" align="center">
+    <tbody>
+        <tr>
+            <th>Principal</th>
+            <th>Tipo</th>
+            <th>Identificaci&oacute;n</th>
+            <th>Area construida</th>
+            <th>Area privada</th>
+            <th>Precio</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for inmueble in inmuebles_agrupacion %}
+            <tr>
+                <td><input type="radio" name="inmueble_principal" value="{{ inmueble.id }}"{% if inmueble.id == inmueble_principal %} checked="checked"{% endif %}></td>
+                <td>{{ inmueble.tipo_inmueble.nombre }}</td>
+                <td>{{ inmueble.str_identificacion }}</td>
+                <td>{{ inmueble.area_construida|force_escape|intcomma }}</td>
+                <td>{{ inmueble.area_privada|force_escape|intcomma }}</td>
+                <td>{{ inmueble.valor|force_escape|intcomma }}</td>
+                <td>{% if 'inverboy.change_inmueble' in user.get_all_permissions %}<a href="/inverboy/home/modificarinmueble/{{ inmueble.id }}/{{ proyecto.id }}/">Modificar</a>{% endif %}</td>
+                <td><a href = "javascript:void(0)" inmueble_id="{{ inmueble.id }}" onclick="eliminar_inmueble_lista(this);">Borrar</a></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="5"><label>Total</label></th>
+            <td colspan="3"><label>{{ valor_total|force_escape|intcomma }}</label></td>
+        </tr>
+    </tbody>
+</table>

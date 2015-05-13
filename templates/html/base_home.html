@@ -1,0 +1,217 @@
+{% load dajaxice_templatetags %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+        <title> Inversiones Boyac&aacute; {% block titulo_pagina %} {% endblock %}</title>
+
+        <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+        <script src="{% admin_media_prefix %}js/prototype.js" type="text/javascript"></script>
+
+        <link href="{{ static_prefix }}css/style.css" rel="stylesheet" type="text/css"/>
+        
+        {% dajaxice_js_import %}
+        <script type="text/javascript" charset="utf-8">
+            var Dajax = Class.create();
+            Dajax.prototype = {
+                initialize: function(){},
+                process: function(data)
+                {
+                    if(data==Dajaxice.EXCEPTION){
+                        alert('Something went wrong, please reload the page.');
+                    }
+                    else{
+                        data.each(function(elem){
+                        switch(elem.cmd)
+                        {
+                            case 'alert':
+                                alert(elem.val)
+                            break;
+
+                            case 'data':
+                                eval( elem.fun+"(elem.val);" );
+                            break;
+
+                            case 'as':
+                                $$(elem.id).each(function(e){e[elem.prop] = elem.val;});
+                            break;
+
+                            case 'addcc':
+                                elem.val.each(function(cssclass){
+                                    $$(elem.id).each(function(e){ e.addClassName(cssclass);});
+                                });
+                            break;
+
+                            case 'remcc':
+                                elem.val.each(function(cssclass){
+                                    $$(elem.id).each(function(e){ e.removeClassName(cssclass);});
+                                });
+                            break;
+
+                            case 'ap':
+                                $$(elem.id).each(function(e){ e[elem.prop] += elem.val;});
+                            break;
+
+                            case 'pp':
+                                $$(elem.id).each(function(e){ e[elem.prop] = elem.val + e[elem.prop];});
+                            break;
+
+                            case 'clr':
+                                $$(elem.id).each(function(e){e[elem.prop] = "";});
+                            break;
+
+                            case 'red':
+                                window.setTimeout('window.location="'+elem.url+'";',elem.delay);
+                            break;
+
+                            case 'js':
+                                eval(elem.val);
+                            break;
+
+                            case 'rm':
+                                $$(elem.id).each(function(e){e.remove();});
+                            break;
+
+                            default:
+                                alert('Unknown action!');
+                            }
+                        });
+                    }
+                }
+            };
+            Dajax = new Dajax();
+
+            {% if mensaje %}
+                alert('{{ mensaje }}');
+            {% endif %}
+        </script>
+        {% block script %}  {% endblock %}
+        {% block css %}  {% endblock %}
+        <style type="text/css" charset="utf-8">
+            .transparente{
+            /*El color puede variar*/
+            background:#000000;
+            /*MIentras menos, mas transparente es la pagina*/
+            filter:Alpha(opacity=90);
+            }
+            {% block style %} {% endblock %}
+        </style>
+    </head>
+    <body id="id_body">
+        <div id="pantalla"><!---------------------------------------Pantalla---------------------------------------->
+            <div id="contenedorGlobal"><!--ContenedorGlobal-->
+                <div id="encabezado"><!--------------------------------Encabezado----------------------------------->
+                <div id="logoInverboy"><!--Logo-->
+                    <img src="{{ static_prefix }}ima/logoInverBoy.jpg">
+                </div><!--Logo/Fin-->
+                <div id="labelUsuario"><!--LabelUsuario-->
+                </div><!--LabelUsuario/Fin-->
+                <div><li><a href="/inverboy/home/usuariochange/" id="linkUsuario">{{ user.username }}</a></li><!--LinkUsuario-->
+                </div><!--LinkUsuario/Fin-->
+                <div><li><a href="/logout/"  id="linkSalir">Salir</a></li><!--LinkSalir-->
+                </div><!--LinkSalir/Fin-->
+            </div><!---------------------------------------------Encabezado/Fin--------------------------------->
+            <div id=""><li><a href="/inverboy/home/" id="linkInicio">INICIO</a></li><!--Linkinicio/Fin-->
+            </div><!--LinkInicio/Fin-->
+            <div id="navegacion"><!--Navegacion-->
+                <label>
+                    {% block titulo %}
+                    {% endblock %}
+                </label>
+            </div><!--Navegacion/Fin-->
+            <div id="colum_izq"><!--ColumnaIzquierda-->
+                <div id="menu"><!--Menu-->
+                    <ul>
+                        {% if 'inverboy.add_usuario' in user.get_all_permissions or 'inverboy.view_usuario' in user.get_all_permissions or 'auth.add_group' in user.get_all_permissions or 'auth.view_group' in user.get_all_permissions %}
+                            <li class="nivel1 primera" tabindex="1"><span class="nivel1">Usuarios y Grupos</span>
+                                <ul>
+                                    {% if 'inverboy.add_usuario' in user.get_all_permissions %}
+                                        <li class="primera"><a href="/inverboy/home/usuarioadd/"> Nuevo usuario</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_usuario' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/usuariossearch/"> Ver usuarios</a></li>
+                                    {% endif %}
+                                    {% if 'auth.add_group' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/gruposadd/"> Nuevo grupo</a></li>
+                                    {% endif %}
+                                    {% if 'auth.view_group' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/grupossearch/"> Ver grupos de usuario</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if 'inverboy.add_proveedor' in user.get_all_permissions or 'inverboy.view_proveedor' in user.get_all_permissions %}
+                            <li class="nivel1" tabindex="2"><span class="nivel1">Proveedores</span>
+                                <ul>
+                                    {% if 'inverboy.add_proveedor' in user.get_all_permissions %}
+                                        <li class="primera"><a href="/inverboy/home/proveedoradd/"> Nuevo proveedor</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_proveedor' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/proveedoressearch/"> Ver proveedores</a></li>
+                                    {% endif %}
+                                </ul>
+                             </li>
+                        {% endif %}
+                        {% if 'inverboy.add_suministro' in user.get_all_permissions or 'inverboy.view_suministro' in user.get_all_permissions or 'inverboy.view_categoria' in user.get_all_permissions %}
+                            <li class="nivel1" tabindex="3"><span class="nivel1">Suministros</span>
+                                <ul>
+                                    {% if 'inverboy.add_suministro' in user.get_all_permissions %}
+                                        <li class="primera"><a href="/inverboy/home/suministroadd/"> Nuevo suministro</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_suministro' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/suministrossearch/"> Ver suministros</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_categoria' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/categoriassearch/">Clasificaci&oacute;n de suministros</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if 'inverboy.add_apu' in user.get_all_permissions or 'inverboy.view_apu' in user.get_all_permissions %}
+                            <li class="nivel1" tabindex="4"><span class="nivel1">APU´s maestros</span>
+                                <ul>
+                                    {% if 'inverboy.add_apu' in user.get_all_permissions %}
+                                        <li class="primera"><a href="/inverboy/home/apuadd/"> Nuevo apu</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_apu' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/apussearch/"> Ver APU's</a></li>
+                                    {% endif %}
+                                    {% if 'inverboy.view_capitulo' in user.get_all_permissions %}
+                                        <li><a href="/inverboy/home/capitulossearch/">Clasificaci&oacute;n de APU's</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if 'inverboy.add_proyecto' in user.get_all_permissions or 'inverboy.view_proyecto' in user.get_all_permissions %}
+                            <li class="nivel1" tabindex="5"><span class="nivel1">Proyectos de construcci&oacute;n</span>
+                                <ul>
+                                {% if 'inverboy.add_proyecto' in user.get_all_permissions %}
+                                    <li class="primera"><a href="/inverboy/home/proyectoadd/"> Nuevo proyecto</a></li>
+                                {% endif %}
+                                {% if 'inverboy.view_proyecto' in user.get_all_permissions %}
+                                    <li><a href="/inverboy/home/proyectosview/"> Ver proyectos</a></li>
+                                {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="nivel1 primera" tabindex="2"><span class="nivel1">Buz&oacute;n de sugerencias</span>
+                            <ul>
+                                <li class="primera"><a href="/inverboy/home/sugerencias/">Buz&oacute;n de sugerencias</a></li>
+                            </ul>
+                         </li>
+                    </ul>
+                </div><!--Menu/Fin-->
+            </div><!--ColumnaIzquierda/Fin-->
+
+            <div id="colum_cen"><!--ColumnaCentral-->
+                {%  block contenido %} {% endblock %}
+            </div><!-- == Fin/ColumnaCentral == -->
+            </div><!--ContenedorGlobal/Fin-->
+        </div><!------------------------------------------------------Pantalla/Fin---------------------------------->
+    </body>
+</html>

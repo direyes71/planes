@@ -1,0 +1,49 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_busqueda_clientes">
+    <table>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio" id="id_criterio_proveedor" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table id="tablaReportes">
+    <tr>
+        <th>Sel.</th>
+        <th scope="col">Tipo Id.</th>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Primer  nombre</th>
+        <th scope="col">Segundo nombre</th>
+        <th scope="col">Apellidos</th>
+        <th scope="col">Telefono</th>
+    </tr>
+    {% for cliente in clientes.modelo %}
+        <tr>
+            <td><input type="checkbox" value="{{ cliente.id }}" criterio="{{ criterio }}" pagina="{{ clientes.page }}" id="id_select_cliente" {% if cliente in clientes_seleccionados %} checked="checked"{% endif %}></td>
+            <td><label>{{ cliente.str_abreviatura_tipo_identificacion }}</label></td>
+            <td><label>{{ cliente.identificacion }}</label></td>
+            <td><label>{{ cliente.nombre_1 }}</label></td>
+            <td><label>{{ cliente.nombre_2 }}</label></td>
+            <td><label>{{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+            <td><label>{{ cliente.telefono_1 }}</label></td>
+        </tr>
+    {% endfor %}
+</table>
+{% if clientes.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_clientes_nuevo_contrato_venta('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_clientes_nuevo_contrato_venta('Dajax.process',{'pagina': {{ clientes.prev_page }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ clientes.page }} de {{ clientes.pages }}
+{% if clientes.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_clientes_nuevo_contrato_venta('Dajax.process',{'pagina': {{ clientes.next_page }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_clientes_nuevo_contrato_venta('Dajax.process',{'pagina': {{ clientes.pages }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<input type="submit" value="Agregar clientes" id="id_btn_agregar_clientes">
+<input type="button" value="Cancelar" id="id_btn_cancelar_agregar">

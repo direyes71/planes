@@ -1,0 +1,54 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad contratada</th>
+        <th>Cantidad entregada</th>
+        <th>Unidad de medida</th>
+        <th>Precio/Unitario</th>
+        <th>Observaciones</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                <label>{{ suministro.suministro.clasificacion_general }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.sinonimos }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_total_contratada|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_total_entregada|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.precio|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                {% if suministro.observaciones != None %}
+                    <label>{{ suministro.observaciones }}</label>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_servicio('Dajax.process',{'pagina': 1, 'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_servicio('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'orden_servicio_id': '{{ orden_servicio.id }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros.page }} de {{ suministros.pages }}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_servicio('Dajax.process',{'pagina': {{ suministros.next_page }}, 'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_servicio('Dajax.process',{'pagina': {{ suministros.pages }}, 'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,65 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}{% endblock %}
+{% block titulo %}Detalles apu maestro{% endblock %}
+{% block contenido %}
+    <table id="tablaReportes" align="center">
+        <tr>
+            <th><label>Capitulo:</label></th>
+            <td>
+                {% if apu.capitulo.tipo_capitulo == 2 %}
+                    {{ apu.capitulo.capitulo_asociado.nombre_capitulo }}
+                {% else %}
+                    {{ apu.capitulo.nombre_capitulo }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th><label>Subcapitulo:</label></th>
+            <td>
+                {% if apu.capitulo.tipo_capitulo == 2 %}
+                    {{ apu.capitulo.nombre_capitulo }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th><label>Nombre:</label></th>
+            <td>
+                {{ apu.nombre_apu }}
+            </td>
+        </tr>
+        <tr>
+            <th><label>Unidad medida:</label></th>
+            <td>
+                {{ apu.unidad_medida_apu }}
+            </td>
+        </tr>
+        <tr>
+            <th><label>Activo:</label></th>
+            <td>
+                {% if apu.estado_apu %}
+                    Si
+                {% else %}
+                    No
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th><label>Valor:</label></th>
+            <td>
+                {{ apu.precio_apu }}
+            </td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                {% if 'inverboy.change_apu' in user.get_all_permissions %}
+                    <a href="/inverboy/home/apuschange/{{ apu.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <p align="center">Suministros</p>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosapudetails.html' %}
+    </div>
+{% endblock %}

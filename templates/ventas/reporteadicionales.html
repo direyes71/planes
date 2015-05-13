@@ -1,0 +1,33 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+{% block script %}
+    <link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - adicionales{% endblock %}
+{% block contenido %}
+    {% if 'inverboy.add_adicionalagrupacion' in user.get_all_permissions %}
+        <a href="/inverboy/home/nuevoadicional/{{ proyecto.id }}/">Nuevo adicional</a>
+    {% endif %}
+    <form action="." method="POST">
+        <div id="id_reporte_adicionales">
+            {% include 'ajax/ventas/busquedaadicional.html' %}
+        </div>
+    </form>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>
+{% endblock %}

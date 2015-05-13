@@ -1,0 +1,36 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Minimal Django File Upload Example</title>	
+	</head>
+
+	<body>
+		<!-- List of uploaded documents -->
+		{% if images %}
+			<ul>
+			{% for image in images %}
+				<li><a href="{{ image.thumb_image_file.url }}">{{ image.thumb_image_file.name }}</a><img src="{{ static_prefix }}{{ image.thumb_image_file.url }}" alt="Null"> <img src="{{ static_prefix }}{{ image.thumb_image_file.url_120x90 }}" alt="Null"></li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>No images.</p>
+		{% endif %}
+
+		<!-- Upload form. Note enctype attribute! -->
+		<form action="{% url list %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<p>{{ form.non_field_errors }}</p>
+			<p>{{ form.image_file.label_tag }} {{ form.image_file.help_text }}</p>
+			<p>
+				{{ form.image_file.errors }}
+				{# { form.docfile } #}
+                <input type="file" id="id_image_file" name="image_file" multiple="true">
+			</p>
+			<p><input type="submit" value="Upload"/></p>
+		</form>
+	</body>
+
+</html> 

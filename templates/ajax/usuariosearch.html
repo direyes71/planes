@@ -1,0 +1,77 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Nombre de usuario</th>
+        <th scope="col">Nombres</th>
+        <th scope="col">Apellidos</th>
+        <th scope="col">Ciudad</th>
+        <th scope="col">Fecha de nacimiento</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Cargo</th>
+        <th scope="col">Telefono movil</th>
+        <th scope="col">Telefono de contacto</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+
+    {% for usuario in usuarios.modelo %}
+        <tr>
+            <td>
+                {{ usuario.identificacion|intcomma }}
+            </td>
+            <td>
+                {{ usuario.username }}
+            </td>
+            <td>
+                {{ usuario.first_name }}
+            </td>
+            <td>
+                {{ usuario.last_name }}
+            </td>
+            <td>
+                {{ usuario.municipio.departamento.nombre }}, {{ usuario.municipio.nombre }}
+            </td>
+            <td>
+                {{ usuario.fecha_nacimiento }}
+            </td>
+            <td>
+                {{ usuario.direccion }}
+            </td>
+            <td>
+                {{ usuario.cargo }}
+            </td>
+            <td>
+                {{ usuario.celular }}
+            </td>
+            <td>
+                {% if usuario.telefono != None %}
+                    {{ usuario.telefono }}
+                {% endif %}
+            </td>
+            <td>
+                {% if usuario.is_active == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_usuario' in user.get_all_permissions %}
+                    <a href="/inverboy/home/usuarioschange/{{ usuario.id }}">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if usuarios.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_usuarios('Dajax.process',{'pagina': 1, 'html': 'reporteusuarios.html', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_usuarios('Dajax.process',{'pagina': {{ usuarios.prev_page }}, 'html': 'reporteusuarios.html', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ usuarios.page }} de {{ usuarios.pages }}
+{% if usuarios.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_usuarios('Dajax.process',{'pagina': {{ usuarios.next_page }}, 'html': 'reporteusuarios.html', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_usuarios('Dajax.process',{'pagina': {{ usuarios.pages }}, 'html': 'reporteusuarios.html', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,114 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles orden de compra
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th><label>No.:</label></th>
+            <td colspan="3"><label></label>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</td>
+        </tr>
+        <tr>
+            <th><label>Fecha de creaci&oacute;n</label></th>
+            <td><label>{{ orden_compra.fecha_creacion|date:'Y-m-d' }}</label></td>
+            <th><label>Fecha de arribo</label></th>
+            <td><label>{{ orden_compra.fecha_arribo|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor</th>
+            <td colspan="3"><label>{{ orden_compra.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Forma de pago:</th>
+            <td>
+                {% if orden_compra.forma_pago == 1 %}
+                    <label>Credito</label>
+                {% endif %}
+                {% if orden_compra.forma_pago == 2 %}
+                    <label>Contra-entrega</label>
+                {% endif %}
+                {% if orden_compra.forma_pago == 3 %}
+                    <label>Anticipado</label>
+                {% endif %}
+                {% if orden_compra.forma_pago == 4 %}
+                    <label>% Anticipo</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if orden_compra.forma_pago == 1 %}
+                    <label>Dias credito:</label>
+                {% endif %}
+                {% if orden_compra.forma_pago == 4 %}
+                    <label>% Anticipo:</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if orden_compra.forma_pago == 1 %}
+                    <label>{{ orden_compra.dias_credito }}</label>
+                {% endif %}
+                {% if orden_compra.forma_pago == 4 %}
+                    <label>{{ orden_compra.porcentaje_anticipo }}</label>
+                {% endif %}
+            </td>
+        <tr>
+            <th>Observaciones:</th>
+            <td>
+                <label>{{ orden_compra.observaciones }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Observaciones registro:</th>
+            <td>
+                <label>{{ orden_compra.observaciones_registro }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Persona</th>
+            <td>
+                <label>{{ orden_compra.persona }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Opciones</th>
+            <td>
+                {% if orden_compra.permiso_modificar %}
+                    {% if 'inverboy.assignchangepermission_ordencompra' in user.get_all_permissions and orden_compra.permite_modificar == 1 and orden_compra.permiso_modificar == 1 %}
+                        {% if orden_compra.forma_pago == 3 or orden_compra.forma_pago == 4 %}
+                            <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_orden_compra('Dajax.process',{'permiso': 0, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} });">Cancelar permitir modificaci&oacute;n</a>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if 'inverboy.assignchangepermission_ordencompra' in user.get_all_permissions and orden_compra.permite_modificar == 1 and orden_compra.permiso_modificar == 0 %}
+                        <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_orden_compra('Dajax.process',{'permiso': 1, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} });">Permitir modificaci&oacute;n</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosordencomprasearch.html' %}
+    </div>
+    <div>
+        <table class="tablaReportes" align="center">
+            <tr>
+                <th colspan="2">Valores</th>
+            </tr>
+            <tr>
+                <th>Subtotal</th>
+                <td><label>{{ orden_compra.valor_total_sin_iva|force_escape|intcomma }}</label></td>
+            </tr>
+            <tr>
+                <th>IVA</th>
+                <td><label>{{ orden_compra.valor_iva|force_escape|intcomma }}</label></td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td><label>{{ orden_compra.valor_total|force_escape|intcomma }}</label></td>
+            </tr>
+        </table>
+    </div>
+    <a href="/inverboy/home/imprimirordencompra/{{ orden_compra.id }}/{{ proyecto.id }}/">Imprimir</a>
+{% endblock %}

@@ -1,0 +1,37 @@
+ {% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles requisici&oacute;n {% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th colspan="2">No.</th>
+            <td colspan="2"><label>RE{{ requisicion.proyecto.id }}-{{ requisicion.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha de creaci&oacute;n:</th>
+            <td><label>{{ requisicion.fecha_creacion|date:'Y-m-d' }}</label></td>
+            <th>Fecha de arribo:</th>
+            <td><label>{{ requisicion.fecha_arribo|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Tipo:</th>
+            <td><label>{{ requisicion.str_tipo_requisicion }}</label></td>
+            <th>Estado:</th>
+            <td><label>{{ requisicion.str_estado_requisicion }}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosrequisicionsearch.html' %}
+    </div>
+	<a href="/inverboy/home/imprimirrequisicion/{{ requisicion.id }}/{{ proyecto.id }}/">Imprimir</a>
+    {% if requisicion.estado == 1 %}
+        {% if 'inverboy.change_requisicion' in user.get_all_permissions %}
+            <a href="/inverboy/home/requisicionproyectochange/{{ requisicion.id }}/{{ proyecto.id }}/">Modificar</a>
+        {% endif %}
+        {% if 'inverboy.approve_requisicion' in user.get_all_permissions %}
+            <a href="/inverboy/home/requisicionaprobar/{{ requisicion.id }}/{{ proyecto.id }}/">Aprobar</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}

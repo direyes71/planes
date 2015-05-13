@@ -1,0 +1,25 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/"> Proyecto: {{ proyecto.nombre }}</a> - Capitulos APU's {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/capitulosapuproyectosearch/{{ proyecto.id }}/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    {% if 'inverboy.add_capituloapuproyecto' in user.get_all_permissions %}
+        <a href="/inverboy/home/capituloapuproyectoadd/{{ proyecto.id }}/">Nuevo capitulo</a>
+    {% endif %}
+    <div id="id_reporte_capitulos">
+        {% include 'ajax/capitulosapuproyectosearch.html' %}
+    </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "html/base.html" %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block contenido %}
+    <p align="center">
+        {{ db }}
+    </p>
+
+    <div id="login_bar"></div>
+        <section id="login">
+            <div id="logo">
+                <img src="{{ static_prefix }}dedalo/img/logo1.png">
+            </div>
+            <form action="." method="post">
+                <span class="icon_user"></span><input type="text" id="id_user" name="user" placeholder="Usuario">
+                <span class="icon_pass"></span><input type="password" id="id_clave" name="clave" placeholder="********">
+                <input type="submit" id="btn_send" name="btn_send" value="Ingresar">
+            </form>
+            <div id="login_message">
+                <p><span class="icon_message">!</span>
+                    <span id="login_message_content">{{ error }}</span>
+                </p>
+            </div>
+        </section>
+
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <script src="{{ static_prefix }}dedalo/js/plugins.js"></script>
+        <script src="{{ static_prefix }}dedalo/js/main.js"></script>
+        <script src="{{ static_prefix }}dedalo/js/login.js"></script>
+    </div>
+{% endblock contenido %}

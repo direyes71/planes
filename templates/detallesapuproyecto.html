@@ -1,0 +1,59 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles APU proyecto {% endblock %}
+{% block contenido %}
+    <table id="tablaReportes" align="center">
+        <tr>
+            <th>Capitulo</th>
+            <td><label>{% if apu.capitulo.tipo_capitulo == 1 %}{{ apu.capitulo.nombre_capitulo }}{% else %}{{ apu.capitulo.capitulo_asociado.nombre_capitulo }}{% endif %}</label></td>
+        </tr>
+        <tr>
+            <th>Subcapitulo</th>
+            <td><label>{% if apu.capitulo.tipo_capitulo == 2%}{{ apu.capitulo.nombre_capitulo }}{% endif %}</label></td>
+        </tr>
+        <tr>
+            <th>Nombre apu</th>
+            <td><label>{{ apu.nombre_apu }}</label></td>
+        </tr>
+        <tr>
+            <th>Unidad de medida</th>
+            <td><label>{{ apu.unidad_medida_apu }}</label></td>
+        </tr>
+        <tr>
+            <th>Cantidad proyecto</th>
+            <td><label>{{ apu.cantidad_proyecto|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Cantidad APU</th>
+            <td><label>{{ apu.cantidad_apu|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Cantidad Total</th>
+            <td><label>{{ apu.cantidad_total|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Valor Unitario</th>
+            <td><label>{{ apu.valor_unitario|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Valor Total</th>
+            <td><label>{{ apu.valor_total|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Manejo apu estandar</th>
+            <td><label>{% if apu.apu_manejo_estandar %}SI{% else %}NO{% endif %}</label></td>
+        </tr>
+        <tr>
+            <th>Activo</th>
+            <td><label>{% if apu.estado_apu %}SI{% else %}NO{% endif %}</label></td>
+        </tr>
+    </table>
+
+    <p align="center">Suministros</p>
+
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosapuproyectodetalles.html' %}
+    </div>
+{% endblock %}

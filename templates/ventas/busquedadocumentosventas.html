@@ -1,0 +1,13 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load l10n %}
+{% block titulo %} Documentos ventas {% endblock %}
+{% block contenido %}
+    <table align="center">
+        <tr>
+            <td><a href="/inverboy/home/detallesdocumentoventas/aperturafiducuenta/{{ proyecto.id }}/"><img src="{{ static_prefix }}ima/reportusers.jpg" width="80" height="80">Documento apertura fiducuenta</a></td>
+            <td><a href="/inverboy/home/detallesdocumentoventas/cartainstrucciones/{{ proyecto.id }}/"><img src="{{ static_prefix }}ima/reportusers.jpg" width="80" height="80">Carta instrucciones</a></td>
+            <td><a href="/inverboy/home/detallesdocumentoventas/promesacompraventa/{{ proyecto.id }}/"><img src="{{ static_prefix }}ima/reportusers.jpg" width="80" height="80">Promesa de compraventa</a></td>
+        </tr>
+    </table>
+{% endblock %}

@@ -1,0 +1,23 @@
+<table>
+    <tr>
+        <th>NIT:</th>
+        <td>
+            {% if proveedor != None %}
+                {{ proveedor.identificacion }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Razon social:</th>
+        <td>
+            {% if proveedor != None %}
+                {{ proveedor.razon_social }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center">
+            <button onclick="ventanaBuscarProveedores({{ proyecto.id }});">Cambiar</button>
+        </td>
+    </tr>
+</table>

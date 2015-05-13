@@ -1,0 +1,27 @@
+{% load humanize %}
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Inmuebles de interes</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Inmueble</th>
+                    <th>Descripci&oacute;n</th>
+                </tr>
+                {% for item in prospecto_venta.agrupacionesinmuebleprospectoventa_set.all %}
+                    <tr>
+                        <td><label>{{ item.agrupacion_inmueble.identificacion }}</label></td>
+                        <td>{{ item.agrupacion_inmueble.str_descripcion|escape|safe }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>

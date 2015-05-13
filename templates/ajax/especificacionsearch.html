@@ -1,0 +1,41 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for especificacion in especificaciones.modelo %}
+        <tr>
+            <td>
+                {{ especificacion.id }}
+            </td>
+            <td>
+                <a href="/inverboy/home/tipossearch/{{ especificacion.id }}/">{{ especificacion.nombre }}</a>
+            </td>
+            <td>
+                {% if especificacion.estado == 0 %}
+                    Inactiva
+                {% else %}
+                    Activa
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_categoria' in user.get_all_permissions %}
+                    <a href="/inverboy/home/especificacioneschange/{{ especificacion.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if especificaciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_especificaciones_suministro('Dajax.process',{'pagina': 1, 'html': 'reporteespecificaciones.html', 'categoria_id': '{{ categoria.id }}', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_especificaciones_suministro('Dajax.process',{'pagina': {{ especificaciones.prev_page }}, 'html': 'reporteespecificaciones.html', 'categoria_id': '{{ categoria.id }}', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ especificaciones.page }} de {{ especificaciones.pages }}
+{% if especificaciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_especificaciones_suministro('Dajax.process',{'pagina': {{ especificaciones.next_page }}, 'html': 'reporteespecificaciones.html', 'categoria_id': '{{ categoria.id }}', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_especificaciones_suministro('Dajax.process',{'pagina': {{ especificaciones.pages }}, 'html': 'reporteespecificaciones.html', 'categoria_id': '{{ categoria.id }}', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

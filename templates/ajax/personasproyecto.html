@@ -1,0 +1,32 @@
+<label id="error_contacto" class="mensajeErrorContacto"></label>
+<table id="tablapersonas" border="1" align="center">
+    <tbody id="cuerpoTabla">
+        <tr>
+            <th>Identificaci&oacute;n</th>
+            <th>Nombres</th>
+            <th>Cargo</th>
+            <th>Telefono</th>
+            <th>Contratista</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for persona in personas %}
+            <tr>
+                <td>{{ persona.identificacion }}</td>
+                <td>{{ persona.nombre }}</td>
+                <td>{{ persona.cargo }}</td>
+                <td>{{ persona.telefono }}</td>
+                <td>{{ persona.proveedor.razon_social }}</td>
+                <td>
+                    {% if 'inverboy.change_personaproyecto' in user.get_all_permissions %}
+                        <a href = "javascript:void(0)" onclick="modificarFila( {{ persona.id }}, {{ proyecto.id }} );">Modificar</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if 'inverboy.change_personaproyecto' in user.get_all_permissions %}
+                        <a href = "javascript:void(0)" onclick="borrarFila( {{ persona.id }}, {{ proyecto.id }} );">Borrar</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

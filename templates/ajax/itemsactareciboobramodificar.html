@@ -1,0 +1,33 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        {% for etiqueta_cabecera in items_acta_recibo_obra.etiquetas_cabecera %}
+            <th>{{ etiqueta_cabecera }}</th>
+        {% endfor %}
+    </tr>
+    {% for item in items_acta_recibo_obra.lista_items %}
+        <tr>
+            {% for etiqueta_cabecera in items_acta_recibo_obra.etiquetas_cabecera %}
+                <td>
+                    {% if etiqueta_cabecera == 'Suministro' %}
+                        {{ item.suministro.nombre }}
+                    {% else %}
+                        {% if etiqueta_cabecera == 'Cantidad' %}
+                            {{ item.cantidad|force_escape|intcomma }}
+                        {% else %}
+                            {% if etiqueta_cabecera == 'U. medida' %}
+                                {{ item.suministro.unidad_medida }}
+                            {% else %}
+                                {% for registro in item.registros %}
+                                    {% if registro.fecha_registro == etiqueta_cabecera %}
+                                        <a href="#" id="id_detalles_suministro" suministro_id="{{ item.suministro.id }}" fecha_especifica="{{ etiqueta_cabecera }}">{{ registro.cantidad|force_escape|intcomma }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

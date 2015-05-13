@@ -1,0 +1,46 @@
+<table>
+    <tr>
+        <td>Criterio</td>
+        <td><input type="text" name="criterio" value="{{ criterio }}"></td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Fecha de arribo</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for requisicion in requisiciones.modelo %}
+        <tr>
+            <td>
+                <label>RE{{ requisicion.proyecto.id }}-{{ requisicion.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ requisicion.fecha_creacion|date:'Y-m-d' }}<label>
+            </td>
+            <td>
+                <label>{{ requisicion.fecha_arribo }}</label>
+            </td>
+            <td>
+                <label>{{ requisicion.persona }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/requisicionesproyectodetails/{{ requisicion.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if requisiciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones_aprobar('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones_aprobar('Dajax.process',{'pagina': {{ requisiciones.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ requisiciones.page }} de {{ requisiciones.pages }}
+{% if requisiciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones_aprobar('Dajax.process',{'pagina': {{ requisiciones.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones_aprobar('Dajax.process',{'pagina': {{ requisiciones.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

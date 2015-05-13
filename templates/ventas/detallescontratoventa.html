@@ -1,0 +1,813 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load adminmedia admin_list i18n %}
+
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles contrato venta
+{% endblock %}
+{% block script %}
+    <!-- Calendario -->
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+
+    <!-- Calculadora 
+    <link rel="stylesheet" href="{{ static_prefix }}css/jquery-ui.css">
+-->
+
+    <link rel="stylesheet" href="{{ static_prefix }}css/personalizado.css">
+
+    <link rel="stylesheet" href="{{ static_prefix }}css/custom-theme/jquery-ui-1.10.4.custom.min.css">
+    <script src="{{ static_prefix }}js/jquery.1.11.0.min.js"></script>
+    <script type="text/javascript" src="{{ static_prefix }}js/jquery-ui-1.10.4.custom.min.js"></script>
+
+<link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+<script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+{% endblock %} 
+
+{% block css %}
+    <style type="text/css">
+
+        #colum_cen {
+            font-size: 11px;
+        }
+
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 580px;
+            height: 320px;
+            left: 50%;
+            top: 50%;
+            margin-left: -290px;  /*Tamaño del DIV entre 2*/
+            margin-top: -160px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        /* estilo para el mensaje de error del contacto */
+        .mensajeErrorContacto {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/ventas/nuevoabonopagoentidadcontratoventa.html' %}
+        {% include 'ajax/ventas/nuevoabonopagoefectivocontratoventa.html' %}
+    </div>
+    <!-- fin ventana modal -->
+
+    <!-- contenido página -->
+    <table style="width: 100%">
+        <thead>
+        <tr>
+            <td>
+                <h3>Detalles del inmueble</h3>
+            </td>
+        </tr>
+        </thead>
+        <tr>
+            <td id="grupo_valores_enviar">
+                <table>
+                    <tr>
+                        <td><label>Identificaci&oacute;n contrato:</label></td>
+                        <td><label>{{ contrato_venta.identificacion }}</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Identificaci&oacute;n inmueble:</label></td>
+                        <td><label>{{ contrato_venta.agrupacion_contrato_venta.identificacion }}</label></td>
+                    </tr>
+                </table>
+
+                <table class="tabla_dedalo" align="center">
+                    <tbody>
+                        <tr>
+                            <th>Principal</th>
+                            <th>Tipo</th>
+                            <th>Id</th>
+                            <th>Area C</th>
+                            <th>Area P</th>
+                            <th>Valor</th>
+                        </tr>
+                        {% for itemagrupacioninmueble in contrato_venta.agrupacion_contrato_venta.itemagrupacioninmueble_set.all %}
+                            <tr>
+                                <td align="center">{% if itemagrupacioninmueble.id == contrato_venta.agrupacion_contrato_venta.inmueble_principal.id %}&#8730;{% endif %}</td>
+                                <td>{{ itemagrupacioninmueble.inmueble.tipo_inmueble.nombre }}</td>
+                                <td>{{ itemagrupacioninmueble.inmueble.identificacion }}</td>
+                                <td>{{ itemagrupacioninmueble.inmueble.area_construida }}</td>
+                                <td>{{ itemagrupacioninmueble.inmueble.area_privada }}</td>
+                                <td>{{ itemagrupacioninmueble.inmueble.valor|force_escape|intcomma }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <th colspan="5"><label>Total</label></th>
+                            <td><label>{{ contrato_venta.agrupacion_contrato_venta.str_valor|force_escape|intcomma }}</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div id="id_adicionales">
+        <p align="center">Adicionales</p>
+        <table class="tabla_dedalo" border="1" align="center">
+            <tbody id="cuerpoTabla" >
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Valor</th>
+                </tr>
+                {% for adicional in contrato_venta.adicionalagrupacioncontratoventa_set.all %}
+                    <tr>
+                        <td><label>{{ adicional.nombre }}</label></td>
+                        <td><label>{{ adicional.descripcion }} {{ cliente.nombre_2 }} {{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+                        <td><label>{{ adicional.valor|escape|intcomma }}</label></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 id="id_valor_inmueble" align="center">VALOR INMUEBLE ${{ contrato_venta.str_valor_agrupacion_inmueble|force_escape|intcomma }}</h2>
+
+    <div id="id_clientes">
+        <h2>
+        <p align="center">Clientes</p>
+        </h2>
+        <table class="tabla_dedalo" border="1" align="center">
+            <tbody id="cuerpoTabla">
+                <tr>
+                    <th>N&deg;.</th>
+                    <th>Tipo</th>
+                    <th>Tipo Id.</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Telefono</th>
+                    <th>Departamento</th>
+                    <th>Municipio</th>
+                    <th>Residencia</th>
+                    <th>Email</th>
+                </tr>
+                {% for cliente_contrato in contrato_venta.clientecontratoventa_set.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><label>{% if contrato_venta.cliente_principal.cliente.id == cliente_contrato.cliente.id %}Principal{% endif %}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.str_abreviatura_tipo_identificacion }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.identificacion }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.nombre_1 }} {{ cliente_contrato.cliente.nombre_2 }} {{ cliente_contrato.cliente.apellido_1 }} {{ cliente_contrato.cliente.apellido_2 }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.telefono_1 }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.municipio_residencia.departamento }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.municipio_residencia }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.direccion_residencia }}</label></td>
+                        <td><label>{{ cliente_contrato.cliente.email }}</label></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <br>
+
+    <table>
+        <tr>
+            <th>Estado:</th>
+            <td>
+                <label>{{ contrato_venta.str_estado_contrato_venta }}{% if contrato_venta.estado_contrato_venta.estado_contrato == 1 %}: Hasta {{ contrato_venta.estado_contrato_venta.fecha_limite_estado|date:'Y-m-d' }}{% endif %}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Numero fiducuenta:</th>
+            <td>
+                <label id="id_error_numero_cuenta_fiducia"></label>
+                <input type="text" name="numero_cuenta_fiducia"{% if contrato_venta.numero_cuenta_fiducia %} value="{{ contrato_venta.numero_cuenta_fiducia }}"{% endif %} id="id_numero_cuenta_fiducia" readonly="readonly">
+                {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+                    <img id="id_btn_asignar_numero_fiducuenta" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px; display: none;"/>
+                    <img id="id_btn_modificar_numero_fiducuenta" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;"/>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Fecha de escritura:</th>
+            <td>
+                <label id="id_error_fecha_escritura"></label>
+                <input type="text" name="fecha_escritura"{% if contrato_venta.agrupacion_contrato_venta.inmueble_principal.inmueble.fecha_escritura %} value="{{ contrato_venta.agrupacion_contrato_venta.inmueble_principal.inmueble.fecha_escritura }}"{% endif %} id="id_fecha_escritura" readonly="readonly">
+                {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+                    <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha escritura" id="lanzador_fecha_escritura" style="display: none;">
+                    <img id="id_btn_asignar_fecha_escritura" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px; display: none;"/>
+                    <img id="id_btn_modificar_fecha_escritura" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;"/>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Forma de pago:</th>
+            <td>
+                {{ contrato_venta.str_forma_pago }}
+            </td>
+        </tr>
+    </table>
+
+    {% if contrato_venta.forma_pago %}
+        <div id="id_panel_forma_pago">
+            {% if contrato_venta.forma_pago == 1 %}
+                <table>
+                    <tr>
+                        <th>
+                            Entidad bancaria:
+                        </th>
+                        <td>
+                            <label>{% if contrato_venta.entidad_bancaria_credito %}{{ contrato_venta.entidad_bancaria_credito }}{% endif %}</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Monto credito:
+                        </th>
+                        <td>
+                            <label>{{ contrato_venta.monto_credito|force_escape|intcomma }}</label>
+                        </td>
+                    </tr>
+                </table>
+            {% endif %}
+
+            <h2>Pagos entidades</h2>
+            <table>
+                <tr>
+                    <td>
+                        <div id="id_reporte_pagos_entidad">
+                            <table class="tabla_dedalo" border="1" align="center">
+                                <tbody id=cuerpoTabla >
+                                    <tr>
+                                        <th>N&deg;</th>
+                                        <th>Tipo</th>
+                                        <th>Entidad</th>
+                                        <th>Cuenta</th>
+                                        <th>F. desembolso</th>
+                                        <th>Valor</th>
+                                        <th>Valor desembolsado</th>
+                                        <th>Fecha</th>
+                                        <th colspan="3">Opciones</th>
+                                    </tr>
+                                    {% for pago_entidad_contrato in contrato_venta.pagoentidadcontratoventa_set.all %}
+                                        <tr>
+                                            <td><label>{{ forloop.counter }}</label></td>
+                                            <td><label>{{ pago_entidad_contrato.str_tipo_cuenta }}</label></td>
+                                            <td><label>{% if pago_entidad_contrato.entidad %}{{ pago_entidad_contrato.entidad }}{% endif %}</label></td>
+                                            <td><label>{% if pago_entidad_contrato.numero_cuenta %}{{ pago_entidad_contrato.numero_cuenta }}{% endif %}</label></td>
+                                            <td><label>{% if pago_entidad_contrato.fecha_desembolso %}{{ pago_entidad_contrato.fecha_desembolso }}{% endif %}</label></td>
+                                            <td><label>{{ pago_entidad_contrato.valor|force_escape|intcomma }}</label></td>
+                                            <td><label>{% if pago_entidad_contrato.valor_desembolsado %}{{ pago_entidad_contrato.valor_desembolsado|force_escape|intcomma }}{% endif %}</label></td>
+                                            <td><label>{% if pago_entidad_contrato.fecha_registro_desembolso %}{{ pago_entidad_contrato.fecha_registro_desembolso }}{% endif %}</label></td>
+                                            <td>
+                                                {% if 'inverboy.add_contratoventa' in user.get_all_permissions and pago_entidad_contrato.permite_registrar_abono %}
+                                                    <a href="#" class="id_registrar_abono_entidad_contrato_venta" pago_entidad_contrato_venta_id="{{ pago_entidad_contrato.id }}">Reg. pago</a>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if 'inverboy.add_contratoventa' in user.get_all_permissions and pago_entidad_contrato.permite_registrar_abono and pago_entidad_contrato.existe_abono %}
+                                                    <a href="#" id="id_eliminar_pago_entidad" pago_entidad_contrato_venta_id="{{ pago_entidad_contrato.id }}">Eliminar pago</a>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if 'inverboy.validate_paymentcontratoventa' in user.get_all_permissions and pago_entidad_contrato.existe_abono and not pago_entidad_contrato.verificado %}
+                                                    <a href="#" id="id_validar_pago_entidad" pago_entidad_contrato_venta_id="{{ pago_entidad_contrato.id }}">Validar</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <th colspan="5">Total</th>
+                                        <td><label>${{ contrato_venta.str_valor_pagar_entidades_bancarias|force_escape|intcomma }}</label></td>
+                                        <td><label>${{ contrato_venta.str_valor_pagado_entidades_bancarias|force_escape|intcomma }}</label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <h2 id="id_valor_excedente_pagar_efectivo">Pagos en efectivo</h2>
+            <table>
+                <tr>
+                    <th>N&deg; cuotas:</th>
+                    <td>
+                        <label>{{ contrato_venta.str_numero_pagos_efectivo }}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="id_panel_numero_cuotas">
+                            <table class="tabla_dedalo" border="1" align="center">
+                                <tbody id="cuerpoTabla" >
+                                    <tr>
+                                        <th>N&deg;</th>
+                                        <th>Feha pago</th>
+                                        <th>Valor</th>
+                                        <th>Saldo pendiente</th>
+                                    </tr>
+                                    {% for cuota_efectivo_contrato in contrato_venta.consolidado_pagos_efectivo %}
+                                        <tr>
+                                            <td><label>{{ forloop.counter }}</label></td>
+                                            <td><label>{{ cuota_efectivo_contrato.fecha_desembolso|date:"d/m/Y" }}</label></td>
+                                            <td><label>{{ cuota_efectivo_contrato.valor|force_escape|intcomma }}</label></td>
+                                            <td><label>{{ cuota_efectivo_contrato.saldo_pendiente_pagar|force_escape|intcomma }}</label></td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <th colspan="2">Total</th>
+                                        <td><label>${{ contrato_venta.str_valor_pagar_efectivo|force_escape|intcomma }}</label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+            <a href="#" id="id_registrar_abono_efectivo_contrato_venta">Registrar pago efectivo</a>
+        {% endif %}
+        <h2>Pagos en efectivo realizados</h2>
+        <table class="tabla_dedalo" align="center" id="tabla_aprobar">
+            <tr>
+                <th>N&deg;.</th>
+                <th>F Registro</th>
+                <th>F Consignaci&oacute;n</th>
+                <th>N&deg; consignaci&oacute;n</th>
+                <th>Banco</th>
+                <th>Cuenta Nº</th>
+                <th>Valor</th>
+                <th>Validado</th>
+                <th colspan="2">Opciones</th>
+            </tr>
+            {% for abono_efectivo_contrato_venta in contrato_venta.abonopagoefectivocontratoventa_set.all %}
+                <tr>
+                    <td><label>{{ forloop.counter }}</label></td>
+                    <td><label>{{ abono_efectivo_contrato_venta.fecha_registro.date|date:"d/m/Y" }}</label></td>
+                    <td><label>{{ abono_efectivo_contrato_venta.fecha_consignacion|date:"d/m/Y"  }}</label></td>
+                    <td><label>{{ abono_efectivo_contrato_venta.numero_consignacion }}</label></td>
+                    <td>
+                        <label>
+                            {% if abono_efectivo_contrato_venta.entidad_bancaria %}
+                                {{ abono_efectivo_contrato_venta.entidad_bancaria.nombre }}
+                            {% endif %}
+                            
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            {% if abono_efectivo_contrato_venta.cuenta %}
+                                {{ abono_efectivo_contrato_venta.cuenta.numero }}
+                            {% endif %}
+                        </label>
+                    </td>
+
+
+                    <td><label>{{ abono_efectivo_contrato_venta.valor|force_escape|intcomma }}</label></td>
+                    <td align="center"><label>{% if abono_efectivo_contrato_venta.verificado %}&radic;{% endif %}</label></td>
+                    <td>
+                        {% if 'inverboy.add_contratoventa' in user.get_all_permissions and not abono_efectivo_contrato_venta.verificado %}
+                            <a href="#" class="id_eliminar_abono_efectivo_contrato_venta" 
+                            abono_efectivo_contrato_venta_id="{{ abono_efectivo_contrato_venta.id }}"> 
+                            <button class="add_button ui-icon ui-icon-closethick">
+                            </button>
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if 'inverboy.validate_paymentcontratoventa' in user.get_all_permissions and not abono_efectivo_contrato_venta.verificado %}
+                            <a href="#tabla_aprobar" class="id_validar_abono_efectivo_contrato_venta" abono_efectivo_contrato_venta_id="{{ abono_efectivo_contrato_venta.id }}">
+                                <button class="add_button ui-icon ui-icon-check">
+                                    
+                                </button>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th colspan="2">Total</th>
+                <td colspan="6"><label>${{ contrato_venta.str_valor_pagado_efectivo|force_escape|intcomma }}</label></td>
+            </tr>
+        </table>
+
+        <h2 id="id_valor_pagar" align="center">VALOR ACTUAL PAGADO ${{ contrato_venta.str_valor_actual_pagado|force_escape|intcomma }}</h2>
+        
+    {% endif %}
+
+    <a id="showCalc" href="javascript:void(0)">Calculadora</a>
+
+    {% if 'inverboy.change_contratoventa' in user.get_all_permissions and contrato_venta.permiso_modificar %}
+        <a href="/inverboy/home/modificarcontratoventa/{{ contrato_venta.id }}/{{ proyecto.id }}/">Modificar</a>
+    {% endif %}
+
+    {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+        {% if not contrato_venta.permite_imprimir_carta_apertura_fiducuenta %}
+            <label title="Asegurese de: &#13; 1-Este registrado el texto de la carta de instrucciones en el proyecto &#13; 2-Este registrado el numero de fiducuenta"><u>Imprimir apertura fiducuenta</u></label>
+        {% else %}
+            <a href="/inverboy/home/imprimirdocumentoaperturafiducuenta/{{ contrato_venta.id }}/{{ proyecto.id }}/">Imprimir apertura fiducuenta</a>
+        {% endif %}
+    {% endif %}
+
+    {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+        {% if not contrato_venta.permite_imprimir_carta_instrucciones %}
+            <label title="Asegurese de: &#13; 1-Este registrado el texto de la carta de instrucciones en el proyecto &#13; 2-La venta este en estado separado"><u>Imprimir carta de instrucciones</u></label>
+        {% else %}
+            <a href="/inverboy/home/imprimirdocumentocartainstrucciones/{{ contrato_venta.id }}/{{ proyecto.id }}/">Imprimir carta de instrucciones</a>
+        {% endif %}
+    {% endif %}
+
+    {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+        {% if not contrato_venta.permite_imprimir_promesa_compraventa %}
+            <label title="Asegurese de: &#13; 1-Este registrado el texto de la promesa de compraventa en el proyecto &#13; 2-Tener permiso para imprimir promesas de compraventa &#13; 3-La promesa no haya sido impresa para este contrato &#13; 4-Se haya registrado la fecha de escrituración &#13; 5-Se haya registrado la entidad bancaria del credito &#13; 6-Se hayan registrado las entidades bancarias y numeros de cuenta para (OTROS PAGOS) &#13; 7-La venta este en estado separado"><u>Imprimir promesa compraventa</u></label>
+        {% else %}
+            <a href="/inverboy/home/imprimirdocumentopromesacompraventa/{{ contrato_venta.id }}/{{ proyecto.id }}/" >Imprimir promesa compraventa</a>
+        {% endif %}
+    {% endif %}
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div id="calc"></div>
+    
+    <style>
+
+        select#id_inmuebles{
+            width: 80%;
+            min-height: 100px;
+        }
+
+        #grupo_agregar_inmueble{
+            float: right;
+            width: 50px;
+            height: 24px;
+            font-size: 16px;
+            text-align: center;
+            padding-top: 6px;
+            border: 1px solid #333;
+            background-color: #dcdcdc;
+            text-decoration: none;
+            color: black;
+            margin-right: 20px;
+            margin-top: 30px;
+        }
+
+        #grupo_agregar_inmueble:hover{
+            background-color: #808080;
+            color: white;
+        }
+
+        #grupo_valores_enviar  table#grupo_valores tbody tr th {
+            text-align: left;
+            font-weight: 100;
+
+        }
+        table th td{
+
+            text-align: left;
+        }
+
+        .error_inmueble{
+
+            display: none;
+            width: 78%;
+            padding: 3px;
+            padding-top: 5px;
+            margin: 0px auto 0px 0px;
+            margin-bottom: 10px;
+            color: red;
+            height: 22px;
+            border: 1px solid #ccc;
+            text-align: center;
+
+        }
+    </style>
+
+    <!-- fin contenido página 
+
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+-->
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.id_registrar_abono_entidad_contrato_venta').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.registrar_abono_entidad_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'pago_entidad_contrato_venta_id': $(this).attr('pago_entidad_contrato_venta_id')});
+            });
+
+            $('#light').on("submit", "#id_form_abono_pago_entidad", function(e) {
+                e.preventDefault();
+                var datos = $(this).serialize(true);
+                Dajaxice.aplicacion.inverboy.registrar_abono_entidad_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+            });
+
+            $('#light').on("click", "#id_btn_cancelar_agregar", function(e) {
+                e.preventDefault();
+                document.getElementById('light').style.display='none';
+                document.getElementById('fade').style.display='none';
+            });
+
+            $('#id_reporte_pagos_entidad').on("click", '#id_eliminar_pago_entidad', function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.eliminar_abono_entidad_contrato_venta('Dajax.process', {'pago_entidad_contrato_venta_id': $(this).attr('pago_entidad_contrato_venta_id'), 'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#id_reporte_pagos_entidad').on("click", '#id_validar_pago_entidad', function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.validar_abono_entidad_contrato_venta('Dajax.process', {'pago_entidad_contrato_venta_id': $(this).attr('pago_entidad_contrato_venta_id'), 'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            
+
+            $('.id_eliminar_abono_efectivo_contrato_venta').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.eliminar_abono_efectivo_contrato_venta('Dajax.process', {'abono_pago_efectivo_contrato_venta_id': $(this).attr('abono_efectivo_contrato_venta_id'), 'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('.id_validar_abono_efectivo_contrato_venta').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.validar_abono_efectivo_contrato_venta('Dajax.process', {'abono_pago_efectivo_contrato_venta_id': $(this).attr('abono_efectivo_contrato_venta_id'), 'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#id_btn_modificar_numero_fiducuenta').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.asignar_numero_cuenta_fiducia_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#id_btn_asignar_numero_fiducuenta').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.asignar_numero_cuenta_fiducia_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'numero_fiducuenta': $("#id_numero_cuenta_fiducia").val()});
+            })
+
+            $('#id_btn_modificar_fecha_escritura').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.asignar_fecha_escritura_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#id_btn_asignar_fecha_escritura').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.asignar_fecha_escritura_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'fecha_escritura': $("#id_fecha_escritura").val()});
+            })
+        });
+    </script>
+
+    <div id="modal_regisgrar_pago" style="display:none">
+         <form id="formulario_registrar_pago">{% csrf_token %}
+            <table>
+                <tr>
+                    <td>
+                        <label>Fecha Actual</label>
+                    </td>
+                    <td>    
+                        {{hoy|date:"d/m/Y"}}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label>Fecha de consignación: </label>
+                    </td>
+                    <td>
+                        <input type="text" name="fecha_consignacion" id="fecha_consignacion" value="" class="fecha text ui-widget-content ui-corner-all">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label>Número consignación: </label>
+                    </td>
+                    <td>
+                        <input type="text" name="numero_consignacion" value="" class="text ui-widget-content ui-corner-all">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label>Valor: </label>
+                    </td>
+                    <td>
+                        <input type="text" name="valor" value="" class="text ui-widget-content ui-corner-all">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Entidad bancaria:</td>
+                    <td>
+                        <select class="text ui-widget-content ui-corner-all" name="entidad_bancaria" id="entidad_bancaria">
+                            {% for b in entidades_bancarias %}
+                                <option value="{{b.pk}}">{{b.nombre}}</option>
+                            {% endfor %}
+                        </select>
+
+                        <!--<a class="add_button" href="/inverboy/home/nuevaentidadbancaria/" target="_blank">
+                            +
+                        </a>
+
+                        <button class="add_button" id="recargar_entidades">
+                            <span class="ui-icon ui-icon-refresh"></span>
+                        </button>
+                    -->
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td>
+                        Cuenta:
+                    </td>
+
+                    <td >
+                        <select name="cuenta" id="lista_cuentas">
+                        </select>
+                    </td>
+                </tr>
+            </table>
+       
+        </form>
+    </div>
+
+    
+
+    <script type="text/javascript">
+    jQuery(document).ajaxSend(function(event, xhr, settings) {
+        function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+        }
+        function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+        }
+        function safeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    });
+
+        $("#modal_regisgrar_pago").dialog({
+            title:"Registrar pago en efectivo",
+            autoOpen: false,
+            height: 350,
+            width: 500,
+            modal: true,
+            buttons: {
+            "Guardar": guardar,
+            "Cancelar" : 
+                function()
+                {
+                    $( this ).dialog( "close" );
+                }
+            }
+        }); 
+        $('#id_registrar_abono_efectivo_contrato_venta').on("click", function(e) {
+            e.preventDefault();
+                 //Dajaxice.aplicacion.inverboy.registrar_abono_efectivo_contrato_venta('Dajax.process', {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}});
+            $("#modal_regisgrar_pago").dialog("open");
+
+        });
+
+        $(".fecha").datepicker({dayNames:['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sábado'],
+                dayNamesMin: [ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
+                monthNames: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+        });
+        $(".fecha").datepicker("option","dateFormat",'yy-mm-dd');
+        var myDate = new Date();
+        var prettyDate =myDate.getFullYear()+ '-' +(myDate.getMonth()+1) + '-' + 
+                myDate.getDate() ;
+
+        
+
+
+        $("#entidad_bancaria").on("change",function(){
+            $.post("/inverboy/home/cuentas_banco/",{"entidad_bancaria":$(this).val()},function(respuesta){
+                if(respuesta){
+                    $("#lista_cuentas").empty();
+                    for (var i = 0; i < respuesta.length; i++) {
+                        $("#lista_cuentas").append('<option value="'+respuesta[i].id+'">'
+                            +respuesta[i].numero+'</option>');
+                    };
+                }else{
+                    $("#lista_cuentas").append('<option value="">...</option>');
+                }
+            });
+        });
+
+        $("#recargar_entidades").on("click",function(e){
+            e.preventDefault();
+            $.post("/inverboy/home/lista_entidades_bancarias/",{},function(respuesta){
+                if(respuesta){
+                    $("#entidad_bancaria").empty();
+                    for (var i = 0; i < respuesta.length; i++) {
+                        $("#entidad_bancaria").append('<option value="'+respuesta[i].id+'">'
+                            +respuesta[i].nombre+'</option>');
+                    };
+                    
+                    $("#entidad_bancaria").val($('#entidad_bancaria option:last-child').val());
+                    $("#entidad_bancaria").change();
+                }
+            });
+        });
+
+        $("#entidad_bancaria").change();
+
+
+        $('#light').on("submit", "#id_form_abono_pago_efectivo", function(e) {
+            e.preventDefault();
+            var datos = $(this).serialize(true);
+            Dajaxice.aplicacion.inverboy.registrar_abono_efectivo_contrato_venta('Dajax.process', 
+                {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+        });
+
+        function guardar(){
+            var datos = $("#formulario_registrar_pago").serialize(true);
+            Dajaxice.aplicacion.inverboy.registrar_abono_efectivo_contrato_venta('Dajax.process', 
+                {'contrato_venta_id': {{ contrato_venta.id }}, 'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+        }
+
+    </script>
+
+
+    <!-- Calendario -->
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+    
+    <!-- Calculadora -->
+    
+    <script type="text/javascript" src="{% admin_media_prefix %}js/jquery-1.4.4.min.js"></script>
+    <script src="{{ static_prefix }}js/calculator.js" type="text/javascript"></script>
+    <script src="{{ static_prefix }}js/jquery-ui.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+		jquery_1_4_4 = $.noConflict();
+	</script>
+
+    <script type="text/javascript">
+        // Funciones para inicializar la calculadora
+        jquery_1_4_4(function(){
+			jquery_1_4_4.fn.calculator.hide = function(calc) {
+				calc.fadeOut(500);
+			};
+
+			jquery_1_4_4('#calc').calculator({movable:true,resizable:true, width:260, height:280,defaultOpen:false});
+			jquery_1_4_4('#showCalc').click(function(){
+				jquery_1_4_4('#calc').show();
+			})
+		})
+    </script>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+<p align="center">Contactos</p>
+<table id="tablacontactos" border="1" align="center">
+    <tbody id=cuerpoTabla >
+        <tr>
+            <th>Nombre</th>
+            <th>Cargo</th>
+            <th>Telefono</th>
+            <th>Ext</th>
+            <th>Celular</th>
+            <th>Email</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for contacto in contactos %}
+            <tr>
+                <td>{{ contacto.nombre_contacto }}</td>
+                <td>
+                    {% if contacto.cargo_contacto == 1 %} Gerente {% endif %}
+                    {% if contacto.cargo_contacto == 2 %} Subgerente {% endif %}
+                    {% if contacto.cargo_contacto == 3 %} Asesor comercial {% endif %}
+                    {% if contacto.cargo_contacto == 4 %} Gerente comercial {% endif %}
+                    {% if contacto.cargo_contacto == 5 %} Director de departamento {% endif %}
+                    {% if contacto.cargo_contacto == 6 %} Vendedor {% endif %}
+                    {% if contacto.cargo_contacto == 7 %} Secretaria {% endif %}
+                </td>
+                <td>{{ contacto.telefono_contacto }}</td>
+                <td>{% if contacto.ext_contacto %} {{ contacto.ext_contacto }} {% endif %}</td>
+                <td>{% if contacto.celular_contacto %} {{ contacto.celular_contacto }} {% endif %}</td>
+                <td>{% if contacto.email_contacto %} {{ contacto.email_contacto }} {% endif %}</td>
+                <td><a href = "javascript:void(0)" onclick="modificarFila( {{ forloop.counter0 }} );">Modificar</a></td>
+                <td><a href = "javascript:void(0)" onclick="borrarFila( {{ forloop.counter0 }} );">Borrar</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

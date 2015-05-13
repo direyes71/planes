@@ -1,0 +1,45 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        // Ventana emergente cliente
+        function detalles_cliente(cliente_id, indice) {
+            Dajaxice.aplicacion.inverboy.informacion_cliente('Dajax.process',{'cliente_id': cliente_id, 'indice': indice });
+        }
+
+        function cerrarVentanaCliente(){
+            document.getElementById('flotanteClientes').style.display='none';
+        }
+        // Ventana emergente cliente
+    </script>
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Inmuebles del proyecto{% endblock %}
+{% block contenido %}
+    <div id='flotanteClientes' class="border">
+        {% include 'ajax/ventas/informacioncliente.html' %}
+    </div>
+    <form action="." method="POST">
+        <div id="id_reporte_agrupacion_inmuebles">
+            {% include 'ajax/ventas/busquedaagrupacioninmueblesproyecto.html' %}
+        </div>
+    </form>
+{% endblock %}

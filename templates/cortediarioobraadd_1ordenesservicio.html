@@ -1,0 +1,10 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nuevo corte diario de obra ordenes de servicio proyecto {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/cortediarioobraaddordenesservicio/{{ proyecto.id }}/" method="POST">
+        <div id="id_reporte_ordenes_servicio">
+            {% include 'ajax/ordenesserviciosearchcortediarioobraadd.html' %}
+        </div>
+    </form>
+{% endblock %}

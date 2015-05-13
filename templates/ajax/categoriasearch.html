@@ -1,0 +1,41 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for categoria in categorias.modelo %}
+        <tr>
+            <td>
+                {{ categoria.id }}
+            </td>
+            <td>
+                <a href="/inverboy/home/especificacionessearch/{{ categoria.id }}/">{{ categoria.nombre }}</a>
+            </td>
+            <td>
+                {% if categoria.estado == 0 %}
+                    Inactiva
+                {% else %}
+                    Activa
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_categoria' in user.get_all_permissions %}
+                    <a href="/inverboy/home/categoriaschange/{{ categoria.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if categorias.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_categorias_suministro('Dajax.process',{'pagina': 1, 'html': 'reportecategorias.html', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_categorias_suministro('Dajax.process',{'pagina': {{ categorias.prev_page }}, 'html': 'reportecategorias.html', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ categorias.page }} de {{ categorias.pages }}
+{% if categorias.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_categorias_suministro('Dajax.process',{'pagina': {{ categorias.next_page }}, 'html': 'reportecategorias.html', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_categorias_suministro('Dajax.process',{'pagina': {{ categorias.pages }}, 'html': 'reportecategorias.html', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

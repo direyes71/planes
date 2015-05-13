@@ -1,0 +1,83 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+
+{% block titulo_pagina %}{% if modificar %}Modificar proyecto{% else %}Nuevo proyecto{% endif %}{% endblock %}
+
+{% block script %}
+    <link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+    <link rel="stylesheet" href="{{ static_prefix }}css/jquery-ui.css">
+{% endblock %}
+
+{% block titulo %}{% if modificar %}Modificar proyecto{% else %}Nuevo proyecto{% endif %}{% endblock %}
+
+{% block contenido %}
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <!-- contenido página -->
+    <form action="." METHOD="POST">
+        <label>{{ form.non_field_errors }}</label>
+        <table align="center" id="tablaForm">
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>{{ form.nombre.errors }} {{ form.nombre }}</td>
+            </tr>
+            <tr>
+                <th><label>Tipo proyecto:</label></th>
+                <td>{{ form.tipo_proyecto.errors }} {{ form.tipo_proyecto }}</td>
+            </tr>
+            <tr>
+                <th><label>Iniciales:</label></th>
+                <td>{{ form.iniciales.errors }} {{ form.iniciales }}</td>
+            </tr>
+            <tr>
+                <th><label>Direcci&oacute;n:</label></th>
+                <td>{{ form.direccion.errors }} {{ form.direccion }}</td>
+            </tr>
+            <tr>
+                <th><label>Departamento:</label></th>
+                <td>
+                    {{ form.departamento.errors }} {{ form.departamento }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Municipio:</label></th>
+                <td>
+                    {{ form.municipio.errors }} {{ form.municipio }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Extension</label></th>
+                <td>{{ form.ext.errors }} {{ form.ext }}</td>
+            </tr>
+            <tr>
+                <th><label>Rete_ica</label></th>
+                <td>{{ form.rete_ica.errors }} {{ form.rete_ica }}</td>
+            </tr>
+            <tr>
+                <th><label>Rete_fuente</label></th>
+                <td>{{ form.rete_fuente.errors }} {{ form.rete_fuente }}</td>
+            </tr>
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+        </div>
+    </form>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+    <script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>
+
+{% endblock %}

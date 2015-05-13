@@ -1,0 +1,21 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nuevo informe de recepci&oacute;n ordenes de compra proyecto {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/informerecepcionaddordenescompra/{{ proyecto.id }}/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    <div id="id_reporte_ordenes_compra">
+        {% include 'ajax/ordenescomprasearchinformerecepcionadd.html' %}
+    </div>
+{% endblock %}

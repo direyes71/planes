@@ -1,0 +1,45 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th><label>Criterio</label></th>
+        <td><input type="text" name="criterio" id="id_criterio" value="{{ criterio }}"></td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="id_tabla_proveedores_busqueda">
+    <tr>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Razon social</th>
+        <th scope="col">Nombre comercial</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Tipo de proveedor</th>
+        <th scope="col">Telefono 1</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for proveedor in proveedores.modelo %}
+        <tr>
+            <td><label id="id_label_identificacion_{{ forloop.counter }}" title="{{ proveedor.identificacion }}">{{ proveedor.identificacion }}</label></td>
+            <td><label id="id_label_razon_social_{{ forloop.counter }}" title="{{ proveedor.razon_social }}">{{ proveedor.razon_social }}</label></td>
+            <td><label id="id_label_nombre_comercial_{{ forloop.counter }}" title="{{ proveedor.nombre_comercial }}">{{ proveedor.nombre_comercial }}</label></td>
+            <td><label id="id_label_direccion_{{ forloop.counter }}" title="{{ proveedor.direccion }}">{{ proveedor.direccion }}</label></td>
+            <td><label id="id_label_tipo_{{ forloop.counter }}" {% if proveedor.tipo == 1 %} title="Persona Natural" {% else %} title="Juridica" {% endif %}>{% if proveedor.tipo == 1 %} Persona Natural {% else %} Juridica {% endif %}</label></td>
+            <td><label id="id_label_telefono_1_{{ forloop.counter }}" title="{{ proveedor.telefono_1 }}">{{ proveedor.telefono_1 }}</label></td>
+            <td>
+                <a href="/inverboy/home/actareciboobraproyectoaddordenessericioproveedor/{{ proveedor.id }}/{{ proyecto.id }}/">Ordenes de servicio</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if proveedores.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_acta_recibo_obra_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_acta_recibo_obra_add('Dajax.process',{'pagina': {{ proveedores.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ proveedores.page }} de {{ proveedores.pages }}
+{% if proveedores.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_acta_recibo_obra_add('Dajax.process',{'pagina': {{ proveedores.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_acta_recibo_obra_add('Dajax.process',{'pagina': {{ proveedores.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

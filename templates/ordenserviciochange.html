@@ -1,0 +1,433 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Modificar orden de servicio{% endblock %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function formaPago() {
+            opcion = document.getElementById('id_forma_pago').value;
+            document.getElementById('id_parametro_forma_pago').style.display = 'block';
+            document.getElementById('id_parametro_pago').value = '';
+            if(opcion=='4'){
+                document.getElementById('id_label_parametro_pago').innerHTML = 'Cual?';
+                document.getElementById('id_label_parametro_pago').style.display = 'block';
+            }
+            else {
+                document.getElementById('id_parametro_forma_pago').style.display = 'none';
+                document.getElementById('id_label_parametro_pago').style.display = 'none';
+            }
+        }
+        function eliminar_suministro(suministro_id, orden_servicio_id, proyecto_id) {
+            if (confirm("¿Realmente desea eliminar este item?"))
+                Dajaxice.aplicacion.inverboy.eliminar_suministro_orden_servicio('Dajax.process', {'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id});
+        }
+        function activarInput(pagina, suministro_id, orden_servicio_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_orden_servicio_change('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id});
+        }
+        function modificarCantidad(pagina, suministro_id, orden_servicio_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_cantidad_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_cantidad_suministro_orden_servicio_change('Dajax.process', { 'suministro_id': suministro_id, 'cantidad': valorcampo, 'orden_servicio_id': orden_servicio_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function activarInputPrecio(pagina, suministro_id, orden_servicio_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_precio_suministro_orden_servicio_change('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id });
+        }
+        function modificarPrecio(pagina, suministro_id, orden_servicio_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_precio_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_suministro_orden_servicio_change('Dajax.process', { 'suministro_id': suministro_id, 'precio': valorcampo, 'orden_servicio_id': orden_servicio_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function activarInputObservaciones(pagina, suministro_id, orden_servicio_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_observaciones_suministro_orden_servicio_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id});
+        }
+        function modificarObservaciones(pagina, suministro_id, orden_servicio_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_observaciones_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_observaciones_suministro_orden_servicio_change('Dajax.process', {'suministro_id': suministro_id, 'observaciones': valorcampo, 'orden_servicio_id': orden_servicio_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function modificarIva(pagina, suministro_id, cotizacion_id, proyecto_id){
+            var valorcampo = document.getElementById('id_check_iva_'+(suministro_id)).checked;
+            Dajaxice.aplicacion.inverboy.modificar_iva_suministro_cotizacion('Dajax.process', { 'suministro_id': suministro_id, 'cotizacion_id': cotizacion_id, 'iva': valorcampo, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function cambiarTipoIva(parametro, proyecto_id){
+            Dajaxice.aplicacion.inverboy.cambiar_tipo_iva_cotizacion_orden_servicio_add('Dajax.process', { 'parametro': parametro, 'proyecto_id': proyecto_id });
+        }
+        function panelAplicaCooperativa(elemento){
+            if (elemento.checked == true) {
+                document.getElementById('id_panel_aplica_cooperativa').style.display = 'block';
+                document.getElementById('id_base_gravable_cooperativa').value = '';
+                document.getElementById('id_porcentaje_iva_cooperativa').value = '';
+            } else if (elemento.checked == false) {
+                document.getElementById('id_panel_aplica_cooperativa').style.display = 'none';
+            }
+        }
+
+        function panelAplicaTercero(elemento, proveedor_id, proyecto_id){
+            if (elemento.checked == true) {
+                Dajaxice.aplicacion.inverboy.cargar_terceros_orden_servicio_add('Dajax.process', {'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+            } else if (elemento.checked == false) {
+                document.getElementById('id_panel_aplica_tercero').style.display = 'none';
+            }
+        }
+
+        function anadirSuministro(pagina, suministro_id, orden_servicio_id, criterio, proyecto_id) {
+            cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            precio = document.getElementById('id_text_precio_'+suministro_id).value;
+            observaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            document.getElementById('ahref_agregar_suministro_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_agregar_suministro_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_orden_servicio_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'cantidad': cantidad, 'precio': precio, 'observaciones': observaciones, 'orden_servicio_id': orden_servicio_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+
+        function buscarSuministrosProveedor(orden_servicio_id, proyecto_id) {
+            var criterio = document.getElementById('id_text_busqueda').value;
+            Dajaxice.aplicacion.inverboy.suministros_proveedor_orden_servicio_change('Dajax.process',{'orden_servicio_id': orden_servicio_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+
+        function activarInputSuministroAgregar(pagina, suministro_id, orden_servicio_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_suministro_agregar_orden_servicio_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_servicio_id': orden_servicio_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+
+        function anadirSuministros(orden_servicio_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.anadir_suministros_orden_servicio_change('Dajax.process',{'orden_servicio_id': orden_servicio_id, 'proyecto_id': proyecto_id});
+        }
+
+        function cancelarAnadirSuministros(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_anadir_suministros_orden_servicio_change('Dajax.process',{'proyecto_id': proyecto_id});
+        }
+    </script>
+
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#id_btn_agregar_suministros").click(function(event) {
+                event.preventDefault();
+                Dajaxice.aplicacion.inverboy.suministros_proveedor_orden_servicio_change('Dajax.process',{'orden_servicio_id': {{ orden_servicio.id }}, 'proyecto_id': {{ proyecto.id }}});
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 1100px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -550px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/suministrosrequisicionesproveedorsearchordenserviciochange.html' %}
+    </div>
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <td><label>Orden de servicio No.: OS{{ orden_servicio.proyecto.id }}-{{ orden_servicio.consecutivo }}</label></td>
+                <td>Fecha de creaci&oacute;n: <label>{{ orden_servicio.fecha_creacion|date:'Y-m-d' }}</label></td>
+            </tr>
+            <tr>
+                <td colspan="2">Proveedor: <label>{{ orden_servicio.proveedor.razon_social }}</label></td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.fecha_entrega.errors }}
+                    Fecha de entrega:
+                    <input type="text" id="id_fecha_entrega" name="fecha_entrega" placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual" value="{{ form.fecha_entrega.value|force_escape }}"/>
+                    <!-- <input type="text" id="id_fecha_arribo" name="fecha_arribo" onkeyup="validar_fecha(this);" onkeypress="return validar_teclado_fecha(event)" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual"/> -->
+                    <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                    <script type="text/javascript" charset="utf-8">
+                        Calendar.setup({inputField:"id_fecha_entrega",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.amortizacion_anticipo.errors }}
+                    <label>Amortizaci&oacute;n anticipo: </label>
+                    {% if orden_servicio.permite_modificar_propiedades %}
+                        <input type="text" id="id_amortizacion_anticipo" name="amortizacion_anticipo" value="{{ form.amortizacion_anticipo.value|force_escape }}"> %
+                    {% else %}
+                        <label>{{ orden_servicio.amortizacion|force_escape|intcomma }} %</label>
+                        <input type="hidden" name="amortizacion_anticipo" value="{{ orden_servicio.amortizacion|force_escape }}">
+                    {% endif %}
+                </td>
+                <td>
+                    {{ form.retencion_garantia.errors }}
+                    <label>Retenci&oacute;n de garantia: </label>
+                    {% if orden_servicio.permite_modificar_propiedades %}
+                        <input type="text" id="id_retencion_garantia" name="retencion_garantia" value="{{ form.retencion_garantia.value|force_escape }}"> %
+                    {% else %}
+                        <label>{{ orden_servicio.retencion_garantia|force_escape|intcomma }} %</label>
+                        <input type="hidden" name="retencion_garantia" value="{{ orden_servicio.retencion_garantia|force_escape }}">
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.rete_ica.errors }}
+                    <label>Reteica: </label>
+                    {% if orden_servicio.permite_modificar_propiedades %}
+                        <input type="text" id="id_rete_ica" name="rete_ica" value="{{ form.rete_ica.value|force_escape }}">
+                    {% else %}
+                        <label>{{ orden_servicio.rete_ica|force_escape|intcomma }}</label>
+                        <input type="hidden" name="rete_ica" value="{{ orden_servicio.rete_ica|force_escape }}">
+                    {% endif %}
+                </td>
+                <td>
+                    {{ form.rete_fuente.errors }}
+                    <label>Retefuente: </label>
+                    {% if orden_servicio.permite_modificar_propiedades %}
+                        <input type="text" id="id_rete_fuente" name="rete_fuente" value="{{ form.rete_fuente.value|force_escape }}">
+                    {% else %}
+                        <label>{{ orden_servicio.rete_fuente|force_escape|intcomma }}</label>
+                        <input type="hidden" name="rete_fuente" value="{{ orden_servicio.rete_fuente|force_escape }}">
+                    {% endif %} %
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Forma de pago: </label>
+                    {% if orden_servicio.permite_modificar_propiedades == 1 %}
+                        {{ form.forma_pago.errors }}
+                        <select id="id_forma_pago" name="forma_pago" onchange="formaPago();">
+                            <option value="0">----</option>
+                            <option value="2" {% if form.forma_pago.value == '2' %}selected="selected" {% endif %}>Contra-entrega</option>
+                            <option value="3" {% if form.forma_pago.value == '3' %}selected="selected" {% endif %}>Cortes-obra</option>
+                            <option value="4" {% if form.forma_pago.value == '4' %}selected="selected" {% endif %}>Otro</option>
+                        </select>
+                        <div id="id_parametro_forma_pago" {% if form.forma_pago.value != '4' %}style="display: none;"{% endif %}>
+                            <label id="id_label_parametro_pago">Cual?</label>
+                            <textarea id="id_parametro_pago" name="parametro_pago">{{ form.parametro_pago.value }}</textarea>
+                        </div>
+                    {% else %}
+                        <label>{% if orden_servicio.forma_pago == 2 %}Contra-entrega<input type="hidden" name="forma_pago" value="2">{% endif %}{% if orden_servicio.forma_pago == 3 %}Cortes-obra<input type="hidden" name="forma_pago" value="3">{% endif %}{% if orden_servicio.forma_pago == 4 %}Otro: {{ orden_servicio.parametro_pago }}<input type="hidden" name="forma_pago" value="4">{% endif %}</label>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Observaciones:
+                    <textarea id="id_observaciones" name="observaciones">{{ form.observaciones.value }}</textarea>
+                </td>
+            </tr>
+        </table>
+
+        {% if orden_servicio.permite_modificar_propiedades == 1 %}
+            {% if orden_servicio.proveedor.regimen_tributario == 1 %}
+                <div>
+                    <table>
+                        <tr>
+                            <td><label>Tipo de IVA: </label></td>
+                            <td>
+                                <select name="tipo_iva" onchange="cambiarTipoIva(this.value, {{ proyecto.id }});">
+                                    <option value="1">IVA / Utilidad</option>
+                                    <option value="2"{% if form.tipo_iva.value == '2' %} selected="selected"{% endif %}>Porcentaje</option>
+                                    <option value="3"{% if form.tipo_iva.value == '3' %} selected="selected"{% endif %}>IVA / AIU</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <table>
+                        <tr>
+                            <td>
+                                {{ form.porcentaje_iva.errors }}
+                                <label>Iva: </label>
+                                <input type="text" id="id_porcentaje_iva" name="porcentaje_iva" value="{{ form.porcentaje_iva.value|force_escape }}">
+                            </td>
+                            <td>
+                                <div id="id_parametros_iva_aiu"{% if form.tipo_iva.value == '2' %} style="display: none;"{% endif %}>
+                                    {{ form.porcentaje_a_i_u.errors }}
+                                    <label>Porcentaje aiu: </label>
+                                    <input type="text" id="id_porcentaje_a_i_u" name="porcentaje_a_i_u" value="{% if form.porcentaje_a_i_u.value != None %}{{ form.porcentaje_a_i_u.value|force_escape }}{% endif %}">
+                                </div>
+                            </td>
+                            <td>
+                                <div id="id_parametros_iva_utilidad"{% if form.tipo_iva.value == '2' or form.tipo_iva.value == '3' %} style="display: none;"{% endif %}>
+                                    {{ form.porcentaje_utilidad.errors }}
+                                    <label>Utilidad: </label>
+                                    <input type="text" id="id_porcentaje_utilidad" name="porcentaje_utilidad" value="{% if form.porcentaje_utilidad.value != None %}{{ form.porcentaje_utilidad.value|force_escape }}{% endif %}">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            {% endif %}
+        {% else %}
+            {% if orden_servicio.tipo_iva != None %}
+                <table>
+                    <td><label>Tipo de IVA: </label></td>
+                    <td>
+                        <label>
+                            {{ orden_servicio.str_tipo_iva }} : 
+                            {% if orden_servicio.tipo_iva == 1 %}
+                                % aiu = {{ orden_servicio.porcentaje_a_i_u }},
+                                % utilidad = {{ orden_servicio.porcentaje_utilidad }},
+                                <input type="hidden" name="porcentaje_a_i_u" value="{{ orden_servicio.porcentaje_a_i_u|force_escape }}">
+                                <input type="hidden" name="porcentaje_utilidad" value="{{ orden_servicio.porcentaje_utilidad|force_escape }}">
+                            {% endif %}
+                            {% if orden_servicio.tipo_iva == 3 %}
+                                % aiu = {{ orden_servicio.porcentaje_a_i_u }},
+                                <input type="hidden" name="porcentaje_a_i_u" value="{{ orden_servicio.porcentaje_a_i_u|force_escape }}">
+                            {% endif %}
+                            % iva = {{ orden_servicio.porcentaje_iva }}
+                        </label>
+                        <input type="hidden" name="porcentaje_iva" value="{{ orden_servicio.porcentaje_iva|force_escape }}">
+                    </td>
+                </table>
+            {% endif %}
+        {% endif %}
+        
+        {% if orden_servicio.permite_modificar_propiedades == 1 %}
+            <table>
+                <tr>
+                    <td>
+                        <label>Aplica tercero: </label>
+                        <input type="checkbox" name="aplica_tercero" value="1"{% if form.aplica_tercero.value %} checked="checked"{% endif %} onchange="panelAplicaTercero(this, {{ orden_servicio.proveedor.id }}, {{ proyecto.id }});">
+                    </td>
+                    <td>
+                        <div id="id_panel_aplica_tercero" {% if form.aplica_tercero.value == False %}style="display: none;"{% endif %}>
+                            <table>
+                                <tr>
+                                    <td>
+                                        {{ form.tercero.errors }}
+                                        {{ form.tercero }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        {% else %}
+            <table>
+                <tr>
+                    <td>
+                        <label>Aplica tercero: </label>
+                    </td>
+                    <td>
+                        {% if orden_servicio.tercero != None %}
+                            Si, {{ orden_servicio.tercero.razon_social }}
+                        {% else %}
+                            No.
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        {% endif %}
+        {% if orden_servicio.permite_modificar_propiedades == 1 %}
+            <table>
+                <tr>
+                    <td>
+                        <label>Aplica cooperativa: </label>
+                        <input type="checkbox" name="aplica_cooperativa" value="1"{% if form.aplica_cooperativa.value %} checked="checked"{% endif %} onchange="panelAplicaCooperativa(this);">
+                    </td>
+                    <td>
+                        <div id="id_panel_aplica_cooperativa" {% if not form.aplica_cooperativa.value %}style="display: none;"{% endif %}>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>Base gravable: </label>
+                                    </td>
+                                    <td>
+                                        {{ form.base_gravable_cooperativa.errors }}
+                                        <input type="text" id="id_base_gravable_cooperativa" name="base_gravable_cooperativa" value="{% if form.base_gravable_cooperativa.value != None %}{{ form.base_gravable_cooperativa.value|force_escape }}{% endif %}">
+                                    </td>
+                                    <td>
+                                        <label>IVA: </label>
+                                    </td>
+                                    <td>
+                                        {{ form.porcentaje_iva_cooperativa.errors }}
+                                        <input type="text" id="id_porcentaje_iva_cooperativa" name="porcentaje_iva_cooperativa" value="{% if form.porcentaje_iva_cooperativa.value != None %}{{ form.porcentaje_iva_cooperativa.value|force_escape }}{% endif %}">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        {% else %}
+            {% if orden_servicio.aplica_cooperativa %}
+                <table>
+                    <tr>
+                        <td>
+                            <label>Aplica cooperativa: </label>
+                        </td>
+                        <td>
+                            <label>Si, % base gravable = {{ orden_servicio.base_gravable_cooperativa }}, % iva = {{ orden_servicio.porcentaje_iva_cooperativa }}</label>
+                            <input type="hidden" name="base_gravable_cooperativa" value="{{ form.base_gravable_cooperativa.value|force_escape }}">
+                            <input type="hidden" name="porcentaje_iva_cooperativa" value="{{ form.porcentaje_iva_cooperativa.value|force_escape }}">
+                        </td>
+                    </tr>
+                </table>
+            {% endif %}
+        {% endif %}
+        <a href="#" id="id_btn_agregar_suministros">Agregar suministros</a>
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministrosordenserviciochange.html' %}
+        </div>
+        {% if 'inverboy.add_ordenservicio' in user.get_all_permissions %}
+            <input type="submit" id="id_guardar" value="Guardar" onclick="this.disabled=true;">
+        {% endif %}
+    </form>
+{% endblock %}

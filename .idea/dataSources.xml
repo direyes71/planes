@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="4118198306">
+    <data-source source="LOCAL" name="Django default" uuid="6cee4ec7-5aaa-4bea-8557-cb2ab2ea7f76">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/planes</jdbc-url>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

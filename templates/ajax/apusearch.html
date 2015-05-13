@@ -1,0 +1,65 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Clasificacion</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Unidad <br> medida</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Fecha creacion</th>
+        <th scope="col">Fecha actualizaci&oacute;n</th>
+        <th scope="col">Usuario</th>
+        <th scope="col" colspan="2">Opciones</th>
+    </tr>
+    {% for apu in apus.modelo %}
+        <tr>
+            <td>
+                {{ apu.capitulo.capitulo_asociado.nombre_capitulo }}
+                <br>
+                {{ apu.capitulo.nombre_capitulo }}
+            </td>
+            <td>
+                {{ apu.nombre_apu }}
+            </td>
+            <td>
+                {{ apu.unidad_medida_apu }}
+            </td>
+            <td>
+                {% if apu.estado_apu == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {{ apu.fecha_creacion_apu }}
+            </td>
+            <td>
+                {{ apu.fecha_actualizacion_apu }}
+            </td>
+            <td>
+                {{ apu.usuario.first_name }} {{ apu.usuario.last_name }}
+            </td>
+            <td>
+                {% if 'inverboy.change_apu' in user.get_all_permissions %}
+                    <a href="/inverboy/home/apuschange/{{ apu.id }}/">Modificar</a>
+                {% endif %}
+
+            </td>
+            <td>
+                {% if 'inverboy.view_apu' in user.get_all_permissions %}
+                    <a href="/inverboy/home/apusdetails/{{ apu.id }}/">Detalles</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if apus.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus('Dajax.process',{'pagina': 1, 'html': 'reporteapus.html', 'criterio': '{{ criterio }}', 'capitulo_id': '{{ capitulo_actual.id }}', 'subcapitulo_id': '{{ subcapitulo_actual.id }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus('Dajax.process',{'pagina': {{ apus.prev_page }}, 'html': 'reporteapus.html', 'criterio': '{{ criterio }}', 'capitulo_id': '{{ capitulo_actual.id }}', 'subcapitulo_id': '{{ subcapitulo_actual.id }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{apus.page}} de {{apus.pages}}
+{% if apus.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus('Dajax.process',{'pagina': {{ apus.next_page }}, 'html': 'reporteapus.html', 'criterio': '{{ criterio }}', 'capitulo_id': '{{ capitulo_actual.id }}', 'subcapitulo_id': '{{ subcapitulo_actual.id }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus('Dajax.process',{'pagina': {{ apus.pages }}, 'html': 'reporteapus.html', 'criterio': '{{ criterio }}', 'capitulo_id': '{{ capitulo_actual.id }}', 'subcapitulo_id': '{{ subcapitulo_actual.id }}' })"> >> </a>
+{% else %}
+{% endif %}

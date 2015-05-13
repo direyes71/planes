@@ -1,0 +1,40 @@
+{% extends 'html/planes/base_home.html' %}
+
+{% block content %}
+    <form action="../" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>Nombre</td>
+                <td>
+                    {{ form.name.errors }}
+                    <input type="text" name="name" value="{% if form.name.value != None %}{{ form.name.value }}{% endif %}">
+                </td>
+            </tr>
+            <tr>
+                <td>Descripci&oacute;n</td>
+                <td>
+                    {{ form.description.errors }}
+                    <textarea name="description">{% if form.description.value != None %}{{ form.description.value }}{% endif %}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Imagen
+                </td>
+                <td>
+                    <p>{{ form.non_field_errors }}</p>
+                    <p>{{ form.image_file.label_tag }} {{ form.image_file.help_text }}</p>
+                    <p>
+                        {{ form.image_file.errors }}
+                        {# { form.docfile } #}
+                        <input type="file" id="id_image_file" name="image_file">
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Upload"/></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

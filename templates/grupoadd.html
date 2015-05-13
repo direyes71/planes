@@ -1,0 +1,942 @@
+{% extends "html/base_home.html" %}
+
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function seleccionarTodo() {
+            opcion = 0
+            if(document.getElementById("id_option_seleccionar_todo").checked)
+                opcion = 1
+            seleccionarTodoModuloOpcion('id_modulo_usuarios', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_grupos', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_proveedores', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_categorias', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_suministros', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_capitulos', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_apu', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_proyectos', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_personal_administrativo_proyecto', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_personal_anexo_proyecto', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_capitulos_apu_proyecto', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_apu_proyecto', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_requisiciones', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_cotizaciones', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_orden_compra', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_informe_recepcion', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_almacen', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_informe_salida', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_orden_servicio', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_corte_diario_obra', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_acta_recibo_obra', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_requisiciones_indirectos', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_orden_giro', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_acta_conformidad', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_factura_orden_compra', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_encuestas', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_entidad_bancaria', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_seccion_proyecto', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_tipo_inmueble', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_inmuebles', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_agrupacion_inmuebles', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_adicionales_agrupacion_inmueble', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_contrato_venta', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_clientes', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_documentos_venta', opcion);
+            seleccionarTodoModuloOpcion('id_modulo_reporte_fotografico', opcion);
+        }
+
+        function seleccionarTodoModulo(modulo) {
+            opcion = document.getElementById((modulo+'_3')).checked;
+            seleccionarTodoModuloOpcion(modulo, opcion);
+        }
+
+        function seleccionarTodoModuloOpcion(modulo, opcion) {
+            for(i=0; i<5; i++) {
+                document.getElementById(modulo+"_"+i).checked = opcion;
+            }
+            
+            /* Valida si es el modulo de requisiciones (Si es cambia estado de checkbox aprobar requisiciones) */
+            if(modulo == 'id_modulo_requisiciones' || modulo == 'id_modulo_orden_compra' || modulo == 'id_modulo_orden_servicio' || modulo == 'id_modulo_acta_recibo_obra' || modulo == 'id_modulo_reporte_fotografico' || modulo == 'id_modulo_contrato_venta'){
+                document.getElementById(modulo+"_"+5).checked = opcion;
+                if(modulo == 'id_modulo_acta_recibo_obra' || modulo == 'id_modulo_contrato_venta'){
+                    document.getElementById(modulo+"_"+6).checked = opcion;
+                }
+            }
+            if(opcion==1) {
+                document.getElementById(modulo+"_"+4).disabled = true;
+            } else {
+                document.getElementById(modulo+"_"+4).disabled = false;
+            }
+        }
+
+        function cambiarEstado(modulo) {
+            elemento1 = document.getElementById(modulo+"_"+0);
+            elemento2 = document.getElementById(modulo+"_"+1);
+            elemento3 = document.getElementById(modulo+"_"+2);
+            elemento4 = document.getElementById(modulo+"_"+4);
+            elemento5 = document.getElementById(modulo+"_"+1);
+            elemento6 = document.getElementById(modulo+"_"+1);
+
+            /* Valida si es el modulo de requisiciones (Si es cambia estado de checkbox aprobar requisiciones) */
+            if(modulo == 'id_modulo_requisiciones' || modulo == 'id_modulo_orden_compra' || modulo == 'id_modulo_orden_servicio' || modulo == 'id_modulo_acta_recibo_obra' || modulo == 'id_modulo_reporte_fotografico' || modulo == 'id_modulo_contrato_venta'){
+                elemento5 = document.getElementById(modulo+"_"+5);
+                if(modulo == 'id_modulo_acta_recibo_obra' || modulo == 'id_modulo_contrato_venta'){
+                    elemento6 = document.getElementById(modulo+"_"+6);
+                }
+            }
+            if (elemento1.checked || elemento2.checked || elemento5.checked || elemento6.checked) {
+                elemento3.checked = 1;
+                elemento4.checked = 1;
+                elemento4.disabled = true;
+            }
+            else {
+                elemento3.checked = 0;
+                elemento4.checked = 0;
+                elemento4.disabled = false;
+            }
+        }
+
+        function cambiarCheck2(modulo) {
+            document.getElementById(modulo+"_"+2).checked = document.getElementById(modulo+"_"+4).checked;
+        }
+
+    </script>
+{% endblock %}
+{% block titulo %} Nuevo grupo de usuarios {% endblock %}
+{% block contenido %}
+    {% if error %}
+        <ul><li>{{ error }}</li></ul>
+    {% endif %}
+    {{ form.errors }}
+    <form action="." METHOD="POST">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th colspan="2" align="right"><label>Nombre grupo:</label></th>
+                <td colspan="2">{{ form.nombre_grupo.errors }}
+                <!-- <input id="id_nombre_grupo" name="nombre_grupo" maxlength="40" onkeyup="validar_vacio_solo_espacios(this)" onkeypress="return validar_teclado_numerosLetrasEspacios(event)" required pattern="^[A-Za-z0-9\s\xF1\xD1\Á\É\Í\Ó\Ú\á\é\í\ó\ú]+$"/> -->
+                    <input id="id_nombre_grupo" name="nombre_grupo" maxlength="40" value="{% if form.nombre_grupo.value != None %}{{ form.nombre_grupo.value }}{% endif %}"/>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2" align="right"><label>Seleccionar todos los permisos</label></th>
+                <td colspan="2"><input type="checkbox" name="option_seleccionar_todo" id="id_option_seleccionar_todo" onchange="javascript:seleccionarTodo();"></td>
+            </tr>
+            <tr>
+                <th><label>Modulo usuarios:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_usuarios_3" id="id_modulo_usuarios_3" onchange="javascript:seleccionarTodoModulo('id_modulo_usuarios');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_usuarios" value="add_usuario" id="id_modulo_usuarios_0" {% if 'add_usuario' in form.modulo_usuarios.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_usuarios');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_usuarios" value="change_usuario" id="id_modulo_usuarios_1" {% if 'change_usuario' in form.modulo_usuarios.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_usuarios');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_usuarios" value="view_usuario" id="id_modulo_usuarios_2" {% if 'view_usuario' in form.modulo_usuarios.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_usuarios" value="view_usuario" id="id_modulo_usuarios_4" {% if 'view_usuario' in form.modulo_usuarios.value %} checked="checked" {% endif %} {% if 'add_usuario' in form.modulo_usuarios.value or 'change_usuario' in form.modulo_usuarios.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_usuarios');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo grupos de usuario:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_grupos_3" id="id_modulo_grupos_3" onchange="javascript:seleccionarTodoModulo('id_modulo_grupos');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_grupos" value="add_group" id="id_modulo_grupos_0" {% if 'add_group' in form.modulo_grupos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_grupos');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_grupos" value="change_group" id="id_modulo_grupos_1" {% if 'change_group' in form.modulo_grupos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_grupos');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_grupos" value="view_group" id="id_modulo_grupos_2" {% if 'view_group' in form.modulo_grupos.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_grupos" value="view_group" id="id_modulo_grupos_4" {% if 'view_group' in form.modulo_grupos.value %} checked="checked" {% endif %} {% if 'add_group' in form.modulo_grupos.value or 'change_group' in form.modulo_grupos.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_grupos');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo proveedores:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proveedores_3" id="id_modulo_proveedores_3" onchange="javascript:seleccionarTodoModulo('id_modulo_proveedores');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proveedores" value="add_proveedor" id="id_modulo_proveedores_0" {% if 'add_proveedor' in form.modulo_proveedores.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_proveedores');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proveedores" value="change_proveedor" id="id_modulo_proveedores_1" {% if 'change_proveedor' in form.modulo_proveedores.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_proveedores');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_proveedores" value="view_proveedor" id="id_modulo_proveedores_2" {% if 'view_proveedor' in form.modulo_proveedores.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_proveedores" value="view_proveedor" id="id_modulo_proveedores_4" {% if 'view_proveedor' in form.modulo_proveedores.value %} checked="checked" {% endif %} {% if 'add_proveedor' in form.modulo_proveedores.value or 'change_proveedor' in form.modulo_proveedores.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_proveedores');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo clasificacion de suministros:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_categorias_3" id="id_modulo_categorias_3" onchange="javascript:seleccionarTodoModulo('id_modulo_categorias');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_categorias" value="add_categoria" id="id_modulo_categorias_0" {% if 'add_categoria' in form.modulo_categorias.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_categorias');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_categorias" value="change_categoria" id="id_modulo_categorias_1" {% if 'change_categoria' in form.modulo_categorias.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_categorias');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_categorias" value="view_categoria" id="id_modulo_categorias_2" {% if 'view_categoria' in form.modulo_categorias.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_categorias" value="view_categoria" id="id_modulo_categorias_4" {% if 'view_categoria' in form.modulo_categorias.value %} checked="checked" {% endif %} {% if 'add_categoria' in form.modulo_categorias.value or 'change_categoria' in form.modulo_categorias.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_categorias');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo suministros:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_suministros_3" id="id_modulo_suministros_3" onchange="javascript:seleccionarTodoModulo('id_modulo_suministros');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_suministros" value="add_suministro" id="id_modulo_suministros_0" {% if 'add_suministro' in form.modulo_suministros.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_suministros');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_suministros" value="change_suministro" id="id_modulo_suministros_1" {% if 'change_suministro' in form.modulo_suministros.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_suministros');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_suministros" value="view_suministro" id="id_modulo_suministros_2" {% if 'view_suministro' in form.modulo_suministros.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_suministros" value="view_suministro" id="id_modulo_suministros_4" {% if 'view_suministro' in form.modulo_suministros.value %} checked="checked" {% endif %} {% if 'add_suministro' in form.modulo_suministros.value or 'change_suministro' in form.modulo_suministros.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_suministros');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            
+                <th><label>Modulo clasificacion de APU's:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos_3" id="id_modulo_capitulos_3" onchange="javascript:seleccionarTodoModulo('id_modulo_capitulos');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos" value="add_capitulo" id="id_modulo_capitulos_0" {% if 'add_capitulo' in form.modulo_capitulos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_capitulos');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos" value="change_capitulo" id="id_modulo_capitulos_1" {% if 'change_capitulo' in form.modulo_capitulos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_capitulos');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_capitulos" value="view_capitulo" id="id_modulo_capitulos_2" {% if 'view_capitulo' in form.modulo_capitulos.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_capitulos" value="view_capitulo" id="id_modulo_capitulos_4" {% if 'view_capitulo' in form.modulo_capitulos.value %} checked="checked" {% endif %} {% if 'add_capitulo' in form.modulo_capitulos.value or 'change_capitulo' in form.modulo_capitulos.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_capitulos');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo APU's maestros:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu_3" id="id_modulo_apu_3" onchange="javascript:seleccionarTodoModulo('id_modulo_apu');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu" value="add_apu" id="id_modulo_apu_0" {% if 'add_apu' in form.modulo_apu.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_apu');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu" value="change_apu" id="id_modulo_apu_1" {% if 'change_apu' in form.modulo_apu.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_apu');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_apu" value="view_apu" id="id_modulo_apu_2" {% if 'view_apu' in form.modulo_apu.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_apu" value="view_apu" id="id_modulo_apu_4" {% if 'view_apu' in form.modulo_apu.value %} checked="checked" {% endif %} {% if 'add_apu' in form.modulo_apu.value or 'change_apu' in form.modulo_apu.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_apu');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo proyectos de construcci&oacute;n:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proyectos_3" id="id_modulo_proyectos_3" onchange="javascript:seleccionarTodoModulo('id_modulo_proyectos');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proyectos" value="add_proyecto" id="id_modulo_proyectos_0" {% if 'add_proyecto' in form.modulo_proyectos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_proyectos');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_proyectos" value="change_proyecto" id="id_modulo_proyectos_1" {% if 'change_proyecto' in form.modulo_proyectos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_proyectos');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_proyectos" value="view_proyecto" id="id_modulo_proyectos_2" {% if 'view_proyecto' in form.modulo_proyectos.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_proyectos" value="view_proyecto" id="id_modulo_proyectos_4" {% if 'view_proyecto' in form.modulo_proyectos.value %} checked="checked" {% endif %} {% if 'add_proyecto' in form.modulo_proyectos.value or 'change_proyecto' in form.modulo_proyectos.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_proyectos');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo personal administrativo proyectos:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu_3" id="id_modulo_personal_administrativo_proyecto_3" onchange="javascript:seleccionarTodoModulo('id_modulo_personal_administrativo_proyecto');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_personal_administrativo_proyecto" value="add_personaadministrativoproyecto" id="id_modulo_personal_administrativo_proyecto_0" {% if 'add_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_personal_administrativo_proyecto');"/> Vincular </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_personal_administrativo_proyecto" value="change_personaadministrativoproyecto" id="id_modulo_personal_administrativo_proyecto_1" {% if 'change_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_personal_administrativo_proyecto');"/> Desvincular </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_personal_administrativo_proyecto" value="view_personaadministrativoproyecto" id="id_modulo_personal_administrativo_proyecto_2" {% if 'view_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_personal_administrativo_proyecto" value="view_personaadministrativoproyecto" id="id_modulo_personal_administrativo_proyecto_4" {% if 'view_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value %} checked="checked" {% endif %} {% if 'add_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value or 'change_personaadministrativoproyecto' in form.modulo_personal_administrativo_proyecto.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_personal_administrativo_proyecto');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo personal anexo proyectos:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_personal_anexo_proyecto_3" id="id_modulo_personal_anexo_proyecto_3" onchange="javascript:seleccionarTodoModulo('id_modulo_personal_anexo_proyecto');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_personal_anexo_proyecto" value="add_personaproyecto" id="id_modulo_personal_anexo_proyecto_0" {% if 'add_personaproyecto' in form.modulo_personal_anexo_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_personal_anexo_proyecto');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_personal_anexo_proyecto" value="change_personaproyecto" id="id_modulo_personal_anexo_proyecto_1" {% if 'change_personaproyecto' in form.modulo_personal_anexo_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_personal_anexo_proyecto');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_personal_anexo_proyecto" value="view_personaproyecto" id="id_modulo_personal_anexo_proyecto_2" {% if 'view_personaproyecto' in form.modulo_personal_anexo_proyecto.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_personal_anexo_proyecto" value="view_personaproyecto" id="id_modulo_personal_anexo_proyecto_4" {% if 'view_personaproyecto' in form.modulo_personal_anexo_proyecto.value %} checked="checked" {% endif %} {% if 'add_personaproyecto' in form.modulo_personal_anexo_proyecto.value or 'change_personaproyecto' in form.modulo_personal_anexo_proyecto.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_personal_anexo_proyecto');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo capitulos APU's proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos_apu_proyecto_3" id="id_modulo_capitulos_apu_proyecto_3" onchange="javascript:seleccionarTodoModulo('id_modulo_capitulos_apu_proyecto');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos_apu_proyecto" value="add_capituloapuproyecto" id="id_modulo_capitulos_apu_proyecto_0" {% if 'add_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_capitulos_apu_proyecto');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_capitulos_apu_proyecto" value="change_capituloapuproyecto" id="id_modulo_capitulos_apu_proyecto_1" {% if 'change_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_capitulos_apu_proyecto');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_capitulos_apu_proyecto" value="view_capituloapuproyecto" id="id_modulo_capitulos_apu_proyecto_2" {% if 'view_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_capitulos_apu_proyecto" value="view_capituloapuproyecto" id="id_modulo_capitulos_apu_proyecto_4" {% if 'view_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value %} checked="checked" {% endif %} {% if 'add_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value or 'change_capituloapuproyecto' in form.modulo_capitulos_apu_proyecto.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_capitulos_apu_proyecto');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo APU's proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu_proyecto_3" id="id_modulo_apu_proyecto_3" onchange="javascript:seleccionarTodoModulo('id_modulo_apu_proyecto');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu_proyecto" value="add_apuproyecto" id="id_modulo_apu_proyecto_0" {% if 'add_apuproyecto' in form.modulo_apu_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_apu_proyecto');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_apu_proyecto" value="change_apuproyecto" id="id_modulo_apu_proyecto_1" {% if 'change_apuproyecto' in form.modulo_apu_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_apu_proyecto');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_apu_proyecto" value="view_apuproyecto" id="id_modulo_apu_proyecto_2" {% if 'view_apuproyecto' in form.modulo_apu_proyecto.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_apu_proyecto" value="view_apuproyecto" id="id_modulo_apu_proyecto_4" {% if 'view_apuproyecto' in form.modulo_apu_proyecto.value %} checked="checked" {% endif %} {% if 'add_apuproyecto' in form.modulo_apu_proyecto.value or 'change_apuproyecto' in form.modulo_apu_proyecto.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_apu_proyecto');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo requisiciones proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones_3" id="id_modulo_requisiciones_3" onchange="javascript:seleccionarTodoModulo('id_modulo_requisiciones');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones" value="add_requisicion" id="id_modulo_requisiciones_0" {% if 'add_requisicion' in form.modulo_requisiciones.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_requisiciones');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones" value="change_requisicion" id="id_modulo_requisiciones_1" {% if 'change_requisicion' in form.modulo_requisiciones.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_requisiciones');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_requisiciones" value="view_requisicion" id="id_modulo_requisiciones_2" {% if 'view_requisicion' in form.modulo_requisiciones.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_requisiciones" value="view_requisicion" id="id_modulo_requisiciones_4" {% if 'view_requisicion' in form.modulo_requisiciones.value %} checked="checked" {% endif %} {% if 'add_requisicion' in form.modulo_requisiciones.value or 'change_requisicion' in form.modulo_requisiciones.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_requisiciones');"/> Lectura </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones" value="approve_requisicion" id="id_modulo_requisiciones_5" {% if 'approve_requisicion' in form.modulo_requisiciones.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_requisiciones');"/> Aprobar </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo cotizaciones proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_cotizaciones_3" id="id_modulo_cotizaciones_3" onchange="javascript:seleccionarTodoModulo('id_modulo_cotizaciones');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_cotizaciones" value="add_cotizacion" id="id_modulo_cotizaciones_0" {% if 'add_cotizacion' in form.modulo_cotizaciones.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_cotizaciones');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_cotizaciones" value="change_cotizacion" id="id_modulo_cotizaciones_1" {% if 'change_cotizacion' in form.modulo_cotizaciones.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_cotizaciones');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_cotizaciones" value="view_cotizacion" id="id_modulo_cotizaciones_2" {% if 'view_cotizacion' in form.modulo_cotizaciones.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_cotizaciones" value="view_cotizacion" id="id_modulo_cotizaciones_4" {% if 'view_cotizacion' in form.modulo_cotizaciones.value %} checked="checked" {% endif %} {% if 'add_cotizacion' in form.modulo_cotizaciones.value or 'change_cotizacion' in form.modulo_cotizaciones.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_cotizaciones');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo orden de compra proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_compra_3" id="id_modulo_orden_compra_3" onchange="javascript:seleccionarTodoModulo('id_modulo_orden_compra');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_compra" value="add_ordencompra" id="id_modulo_orden_compra_0" {% if 'add_ordencompra' in form.modulo_orden_compra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_compra');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_compra" value="change_ordencompra" id="id_modulo_orden_compra_1" {% if 'change_ordencompra' in form.modulo_orden_compra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_compra');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_orden_compra" value="view_ordencompra" id="id_modulo_orden_compra_2" {% if 'view_ordencompra' in form.modulo_orden_compra.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_orden_compra" value="view_ordencompra" id="id_modulo_orden_compra_4" {% if 'view_ordencompra' in form.modulo_orden_compra.value %} checked="checked" {% endif %} {% if 'add_ordencompra' in form.modulo_orden_compra.value or 'change_ordencompra' in form.modulo_orden_compra.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_orden_compra');"/> Lectura </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_compra" value="assignchangepermission_ordencompra" id="id_modulo_orden_compra_5" {% if 'assignchangepermission_ordencompra' in form.modulo_orden_compra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_compra');"/> Asignar permiso para modificar (O.C. Anticipo) </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo informe de recepci&oacute;n proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_informe_recepcion_3" id="id_modulo_informe_recepcion_3" onchange="javascript:seleccionarTodoModulo('id_modulo_informe_recepcion');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_informe_recepcion" value="add_informerecepcion" id="id_modulo_informe_recepcion_0" {% if 'add_informerecepcion' in form.modulo_informe_recepcion.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_informe_recepcion');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_informe_recepcion_change" value="change_informerecepcion" id="id_modulo_informe_recepcion_1" {% if 'change_informerecepcion' in form.modulo_informe_recepcion.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_informe_recepcion');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_informe_recepcion" value="view_informerecepcion" id="id_modulo_informe_recepcion_2" {% if 'view_informerecepcion' in form.modulo_informe_recepcion.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_informe_recepcion" value="view_informerecepcion" id="id_modulo_informe_recepcion_4" {% if 'view_informerecepcion' in form.modulo_informe_recepcion.value %} checked="checked" {% endif %} {% if 'add_informerecepcion' in form.modulo_informe_recepcion.value or 'change_informerecepcion' in form.modulo_informe_recepcion.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_informe_recepcion');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo almacen proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_almacen_3" id="id_modulo_almacen_3" onchange="javascript:seleccionarTodoModulo('id_modulo_almacen');" style="display: none;"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_almacen_change" value="add_almacen" id="id_modulo_almacen_0" {% if 'add_almacen' in form.modulo_almacen.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_almacen');" style="display: none;"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_almacen_change" value="change_almacen" id="id_modulo_almacen_1" {% if 'change_almacen' in form.modulo_almacen.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_almacen');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_almacen" value="view_suministroalmacen" id="id_modulo_almacen_2" {% if 'view_suministroalmacen' in form.modulo_almacen.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_almacen" value="view_suministroalmacen" id="id_modulo_almacen_4" {% if 'view_suministroalmacen' in form.modulo_almacen.value %} checked="checked" {% endif %} {% if 'add_almacen' in form.modulo_almacen.value or 'change_almacen' in form.modulo_almacen.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_almacen');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo informe de salida proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_informe_salida_3" id="id_modulo_informe_salida_3" onchange="javascript:seleccionarTodoModulo('id_modulo_informe_salida');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_informe_salida" value="add_informesalida" id="id_modulo_informe_salida_0" {% if 'add_informesalida' in form.modulo_informe_salida.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_informe_salida');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_informe_salida_change" value="change_informesalida" id="id_modulo_informe_salida_1" {% if 'change_informesalida' in form.modulo_informe_salida.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_informe_salida');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_informe_salida" value="view_informesalida" id="id_modulo_informe_salida_2" {% if 'view_informesalida' in form.modulo_informe_salida.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_informe_salida" value="view_informesalida" id="id_modulo_informe_salida_4" {% if 'view_informesalida' in form.modulo_informe_salida.value %} checked="checked" {% endif %} {% if 'add_informesalida' in form.modulo_informe_salida.value or 'change_informesalida' in form.modulo_informe_salida.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_informe_salida');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo orden de servicio proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_servicio_3" id="id_modulo_orden_servicio_3" onchange="javascript:seleccionarTodoModulo('id_modulo_orden_servicio');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_servicio" value="add_ordenservicio" id="id_modulo_orden_servicio_0" {% if 'add_ordenservicio' in form.modulo_orden_servicio.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_servicio');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_servicio" value="change_ordenservicio" id="id_modulo_orden_servicio_1" {% if 'change_ordenservicio' in form.modulo_orden_servicio.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_servicio');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_orden_servicio" value="view_ordenservicio" id="id_modulo_orden_servicio_2" {% if 'view_ordenservicio' in form.modulo_orden_servicio.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_orden_servicio" value="view_ordenservicio" id="id_modulo_orden_servicio_4" {% if 'view_ordenservicio' in form.modulo_orden_servicio.value %} checked="checked" {% endif %} {% if 'add_ordenservicio' in form.modulo_orden_servicio.value or 'change_ordenservicio' in form.modulo_orden_servicio.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_orden_servicio');"/> Lectura </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_servicio" value="assignchangepermission_ordenservicio" id="id_modulo_orden_servicio_5" {% if 'assignchangepermission_ordenservicio' in form.modulo_orden_servicio.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_servicio');"/> Asignar permiso para modificar (O.S. Anticipo) </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo corte diario de obra proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_corte_diario_obra_3" id="id_modulo_corte_diario_obra_3" onchange="javascript:seleccionarTodoModulo('id_modulo_corte_diario_obra');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_corte_diario_obra" value="add_cortediarioobra" id="id_modulo_corte_diario_obra_0" {% if 'add_cortediarioobra' in form.modulo_corte_diario_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_corte_diario_obra');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_corte_diario_obra_change" value="change_cortediarioobra" id="id_modulo_corte_diario_obra_1" {% if 'change_cortediarioobra' in form.modulo_corte_diario_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_corte_diario_obra');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_corte_diario_obra" value="view_cortediarioobra" id="id_modulo_corte_diario_obra_2" {% if 'view_cortediarioobra' in form.modulo_corte_diario_obra.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_corte_diario_obra" value="view_cortediarioobra" id="id_modulo_corte_diario_obra_4" {% if 'view_cortediarioobra' in form.modulo_corte_diario_obra.value %} checked="checked" {% endif %} {% if 'add_cortediarioobra' in form.modulo_corte_diario_obra.value or 'change_cortediarioobra' in form.modulo_corte_diario_obra.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_corte_diario_obra');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo acta recibo de obra proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra_3" id="id_modulo_acta_recibo_obra_3" onchange="javascript:seleccionarTodoModulo('id_modulo_acta_recibo_obra');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra" value="add_actareciboobra" id="id_modulo_acta_recibo_obra_0" {% if 'add_actareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_recibo_obra');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra" value="change_actareciboobra" id="id_modulo_acta_recibo_obra_1" {% if 'change_actareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_recibo_obra');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_acta_recibo_obra" value="view_actareciboobra" id="id_modulo_acta_recibo_obra_2" {% if 'view_actareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra" value="view_actareciboobra" id="id_modulo_acta_recibo_obra_4" {% if 'view_actareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} {% if 'add_actareciboobra' in form.modulo_acta_recibo_obra.value or 'change_actareciboobra' in form.modulo_acta_recibo_obra.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_acta_recibo_obra');"/> Lectura </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra" value="approve_cooperativaactareciboobra" id="id_modulo_acta_recibo_obra_5" {% if 'approve_cooperativaactareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_recibo_obra');"/> Asignar valor cooperativa </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_recibo_obra" value="approve_actareciboobra" id="id_modulo_acta_recibo_obra_6" {% if 'approve_actareciboobra' in form.modulo_acta_recibo_obra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_recibo_obra');"/> Aprobar </label>
+                        </li>
+                    </ul>
+                </td>
+                
+                <th><label>Modulo requisiciones indirectos proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones_indirectos_3" id="id_modulo_requisiciones_indirectos_3" onchange="javascript:seleccionarTodoModulo('id_modulo_requisiciones_indirectos');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_requisiciones_indirectos" value="add_requisicionindirectos" id="id_modulo_requisiciones_indirectos_0" {% if 'add_requisicionindirectos' in form.modulo_requisiciones_indirectos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_requisiciones_indirectos');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_requisiciones_indirectos_change" value="change_requisicionindirectos" id="id_modulo_requisiciones_indirectos_1" {% if 'change_requisicionindirectos' in form.modulo_requisiciones_indirectos.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_requisiciones_indirectos');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input style="display: none;" type="checkbox" name="modulo_requisiciones_indirectos_view" value="view_requisicionindirectos" id="id_modulo_requisiciones_indirectos_2" {% if 'view_requisicionindirectos' in form.modulo_requisiciones_indirectos.value %} checked="checked" {% endif %}/>
+                            <label style="display: none;"><input style="display: none;" type="checkbox" name="modulo_requisicionesindirectos_view" value="view_requisicionindirectos" id="id_modulo_requisiciones_indirectos_4" {% if 'view_requisicionindirectos' in form.modulo_requisiciones.value %} checked="checked" {% endif %} {% if 'add_requisicionindirectos' in form.modulo_requisiciones_indirectos.value or 'change_requisicionindirectos' in form.modulo_requisiciones_indirectos.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_requisiciones_indirectos');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo ordenes de giro proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_giro_3" id="id_modulo_orden_giro_3" onchange="javascript:seleccionarTodoModulo('id_modulo_orden_giro');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_orden_giro" value="add_ordengiro" id="id_modulo_orden_giro_0" {% if 'add_ordengiro' in form.modulo_orden_giro.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_giro');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_orden_giro_change" value="change_ordengiro" id="id_modulo_orden_giro_1" {% if 'change_ordengiro' in form.modulo_orden_giro.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_orden_giro');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_orden_giro" value="view_ordengiro" id="id_modulo_orden_giro_2" {% if 'view_ordengiro' in form.modulo_orden_giro.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_orden_giro" value="view_ordengiro" id="id_modulo_orden_giro_4" {% if 'view_ordengiro' in form.modulo_orden_giro.value %} checked="checked" {% endif %} {% if 'add_ordengiro' in form.modulo_orden_giro.value or 'change_ordengiro' in form.modulo_orden_giro.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_orden_giro');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo actas de conformidad proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_conformidad_3" id="id_modulo_acta_conformidad_3" onchange="javascript:seleccionarTodoModulo('id_modulo_acta_conformidad');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_acta_conformidad" value="add_actaconformidad" id="id_modulo_acta_conformidad_0" {% if 'add_actaconformidad' in form.modulo_acta_conformidad.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_conformidad');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_acta_conformidad_change" value="change_actaconformidad" id="id_modulo_acta_conformidad_1" {% if 'change_actaconformidad' in form.modulo_acta_conformidad_change.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_acta_conformidad');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_acta_conformidad" value="view_actaconformidad" id="id_modulo_acta_conformidad_2" {% if 'view_actaconformidad' in form.modulo_acta_conformidad.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_acta_conformidad" value="view_actaconformidad" id="id_modulo_acta_conformidad_4" {% if 'view_actaconformidad' in form.modulo_acta_conformidad.value %} checked="checked" {% endif %} {% if 'add_actaconformidad' in form.modulo_acta_conformidad.value or 'change_actaconformidad' in form.modulo_acta_conformidad.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_acta_conformidad');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo facturaci&oacute;n ordenes de compra proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_factura_orden_compra_3" id="id_modulo_factura_orden_compra_3" onchange="javascript:seleccionarTodoModulo('id_modulo_factura_orden_compra');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_factura_orden_compra" value="add_facturaordencompra" id="id_modulo_factura_orden_compra_0" {% if 'add_facturaordencompra' in form.modulo_factura_orden_compra.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_factura_orden_compra');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label style="display: none;"><input type="checkbox" name="modulo_factura_orden_compra_change" value="change_facturaordencompra" id="id_modulo_factura_orden_compra_1" {% if 'change_facturaordencompra' in form.modulo_factura_orden_compra_change.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_factura_orden_compra');" style="display: none;"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_factura_orden_compra" value="view_facturaordencompra" id="id_modulo_factura_orden_compra_2" {% if 'view_facturaordencompra' in form.modulo_factura_orden_compra.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_factura_orden_compra" value="view_facturaordencompra" id="id_modulo_factura_orden_compra_4" {% if 'view_facturaordencompra' in form.modulo_factura_orden_compra.value %} checked="checked" {% endif %} {% if 'add_facturaordencompra' in form.modulo_factura_orden_compra.value or 'change_facturaordencompra' in form.modulo_factura_orden_compra.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_factura_orden_compra');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo reporte fotogr&aacute;fico:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_reporte_fotografico_3" id="id_modulo_reporte_fotografico_3" onchange="javascript:seleccionarTodoModulo('id_modulo_reporte_fotografico');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_reporte_fotografico" value="create_setup" id="id_modulo_reporte_fotografico_0" {% if 'create_setup' in form.modulo_reporte_fotografico.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_reporte_fotografico');"/> Crear setup </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_reporte_fotografico" value="upload_chronologicalpicture" id="id_modulo_reporte_fotografico_1" {% if 'upload_chronologicalpicture' in form.modulo_reporte_fotografico.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_reporte_fotografico');"/> Actualizar fotografias </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_reporte_fotografico" value="delete_chronologicalpicture" id="id_modulo_reporte_fotografico_5" {% if 'delete_chronologicalpicture' in form.modulo_reporte_fotografico.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_reporte_fotografico');"/> Eliminar fotografias </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_reporte_fotografico" value="view_stage" id="id_modulo_reporte_fotografico_2" {% if 'view_stage' in form.modulo_reporte_fotografico.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_reporte_fotografico" value="view_stage" id="id_modulo_reporte_fotografico_4" {% if 'view_stage' in form.modulo_reporte_fotografico.value %} checked="checked" {% endif %} {% if 'create_setup' in form.modulo_reporte_fotografico.value or 'upload_chronologicalpicture' in form.modulo_reporte_fotografico.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_reporte_fotografico');"/> Visualizar reporte </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo encuestas:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_encuestas_3" id="id_modulo_encuestas_3" onchange="javascript:seleccionarTodoModulo('id_modulo_encuestas');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_encuestas" value="add_encuesta" id="id_modulo_encuestas_0" {% if 'add_encuesta' in form.modulo_encuestas.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_encuestas');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_encuestas" value="change_encuesta" id="id_modulo_encuestas_1" {% if 'change_encuesta' in form.modulo_encuestas.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_encuestas');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_encuestas" value="view_encuesta" id="id_modulo_encuestas_2" {% if 'view_encuesta' in form.modulo_encuestas.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_encuestas" value="view_encuesta" id="id_modulo_encuestas_4" {% if 'view_encuesta' in form.modulo_encuestas.value %} checked="checked" {% endif %} {% if 'add_encuesta' in form.modulo_encuestas.value or 'change_encuesta' in form.modulo_encuestas.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_encuestas');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo entidades bancarias:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_entidad_bancaria_3" id="id_modulo_entidad_bancaria_3" onchange="javascript:seleccionarTodoModulo('id_modulo_entidad_bancaria');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_entidad_bancaria" value="add_entidadbancaria" id="id_modulo_entidad_bancaria_0" {% if 'add_entidadbancaria' in form.modulo_entidad_bancaria.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_entidad_bancaria');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_entidad_bancaria" value="change_entidadbancaria" id="id_modulo_entidad_bancaria_1" {% if 'change_entidadbancaria' in form.modulo_entidad_bancaria.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_entidad_bancaria');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_entidad_bancaria" value="view_entidadbancaria" id="id_modulo_entidad_bancaria_2" {% if 'view_entidadbancaria' in form.modulo_entidad_bancaria.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_entidad_bancaria" value="view_entidadbancaria" id="id_modulo_entidad_bancaria_4" {% if 'view_entidadbancaria' in form.modulo_entidad_bancaria.value %} checked="checked" {% endif %} {% if 'add_entidadbancaria' in form.modulo_entidad_bancaria.value or 'change_entidadbancaria' in form.modulo_entidad_bancaria.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_entidad_bancaria');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo secciones proyecto:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_seccion_proyecto_3" id="id_modulo_seccion_proyecto_3" onchange="javascript:seleccionarTodoModulo('id_modulo_seccion_proyecto');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_seccion_proyecto" value="add_seccionproyecto" id="id_modulo_seccion_proyecto_0" {% if 'add_seccionproyecto' in form.modulo_seccion_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_seccion_proyecto');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_seccion_proyecto" value="change_seccionproyecto" id="id_modulo_seccion_proyecto_1" {% if 'change_seccionproyecto' in form.modulo_seccion_proyecto.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_seccion_proyecto');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_seccion_proyecto" value="view_seccionproyecto" id="id_modulo_seccion_proyecto_2" {% if 'view_seccionproyecto' in form.modulo_seccion_proyecto.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_seccion_proyecto" value="view_seccionproyecto" id="id_modulo_seccion_proyecto_4" {% if 'view_seccionproyecto' in form.modulo_seccion_proyecto.value %} checked="checked" {% endif %} {% if 'add_seccionproyecto' in form.modulo_seccion_proyecto.value or 'change_seccionproyecto' in form.modulo_seccion_proyecto.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_seccion_proyecto');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo tipo inmuebles:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_tipo_inmueble_3" id="id_modulo_tipo_inmueble_3" onchange="javascript:seleccionarTodoModulo('id_modulo_tipo_inmueble');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_tipo_inmueble" value="add_tipoinmueble" id="id_modulo_tipo_inmueble_0" {% if 'add_tipoinmueble' in form.modulo_tipo_inmueble.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_tipo_inmueble');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_tipo_inmueble" value="change_tipoinmueble" id="id_modulo_tipo_inmueble_1" {% if 'change_tipoinmueble' in form.modulo_tipo_inmueble.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_tipo_inmueble');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_tipo_inmueble" value="view_tipoinmueble" id="id_modulo_tipo_inmueble_2" {% if 'view_tipoinmueble' in form.modulo_tipo_inmueble.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_tipo_inmueble" value="view_tipoinmueble" id="id_modulo_tipo_inmueble_4" {% if 'view_tipoinmueble' in form.modulo_tipo_inmueble.value %} checked="checked" {% endif %} {% if 'add_tipoinmueble' in form.modulo_tipo_inmueble.value or 'change_tipoinmueble' in form.modulo_tipo_inmueble.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_tipo_inmueble');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo inmuebles:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_inmuebles_3" id="id_modulo_inmuebles_3" onchange="javascript:seleccionarTodoModulo('id_modulo_inmuebles');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_inmuebles" value="add_inmueble" id="id_modulo_inmuebles_0" {% if 'add_inmueble' in form.modulo_inmuebles.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_inmuebles');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_inmuebles" value="change_inmueble" id="id_modulo_inmuebles_1" {% if 'change_inmueble' in form.modulo_inmuebles.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_inmuebles');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_inmuebles" value="view_inmueble" id="id_modulo_inmuebles_2" {% if 'view_inmueble' in form.modulo_inmuebles.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_inmuebles" value="view_inmueble" id="id_modulo_inmuebles_4" {% if 'view_inmueble' in form.modulo_inmuebles.value %} checked="checked" {% endif %} {% if 'add_inmueble' in form.modulo_inmuebles.value or 'change_inmueble' in form.modulo_inmuebles.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_inmuebles');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo agrupaci&oacute;n inmuebles:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_agrupacion_inmuebles_3" id="id_modulo_agrupacion_inmuebles_3" onchange="javascript:seleccionarTodoModulo('id_modulo_agrupacion_inmuebles');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_agrupacion_inmuebles" value="add_agrupacioninmueble" id="id_modulo_agrupacion_inmuebles_0" {% if 'add_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_agrupacion_inmuebles');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_agrupacion_inmuebles" value="change_agrupacioninmueble" id="id_modulo_agrupacion_inmuebles_1" {% if 'change_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_agrupacion_inmuebles');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_agrupacion_inmuebles" value="view_agrupacioninmueble" id="id_modulo_agrupacion_inmuebles_2" {% if 'view_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_agrupacion_inmuebles" value="view_agrupacioninmueble" id="id_modulo_agrupacion_inmuebles_4" {% if 'view_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value %} checked="checked" {% endif %} {% if 'add_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value or 'change_agrupacioninmueble' in form.modulo_agrupacion_inmuebles.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_agrupacion_inmuebles');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo adicionales inmuebles:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_adicionales_agrupacion_inmueble_3" id="id_modulo_adicionales_agrupacion_inmueble_3" onchange="javascript:seleccionarTodoModulo('id_modulo_adicionales_agrupacion_inmueble');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_adicionales_agrupacion_inmueble" value="add_adicionalagrupacion" id="id_modulo_adicionales_agrupacion_inmueble_0" {% if 'add_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_adicionales_agrupacion_inmueble');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_adicionales_agrupacion_inmueble" value="change_adicionalagrupacion" id="id_modulo_adicionales_agrupacion_inmueble_1" {% if 'change_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_adicionales_agrupacion_inmueble');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_adicionales_agrupacion_inmueble" value="view_adicionalagrupacion" id="id_modulo_adicionales_agrupacion_inmueble_2" {% if 'view_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_adicionales_agrupacion_inmueble" value="view_adicionalagrupacion" id="id_modulo_adicionales_agrupacion_inmueble_4" {% if 'view_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value %} checked="checked" {% endif %} {% if 'add_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value or 'change_adicionalagrupacion' in form.modulo_adicionales_agrupacion_inmueble.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_adicionales_agrupacion_inmueble');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo clientes:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_clientes_3" id="id_modulo_clientes_3" onchange="javascript:seleccionarTodoModulo('id_modulo_clientes');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_clientes" value="add_cliente" id="id_modulo_clientes_0" {% if 'add_cliente' in form.modulo_clientes.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_clientes');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_clientes" value="change_cliente" id="id_modulo_clientes_1" {% if 'change_cliente' in form.modulo_clientes.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_clientes');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_clientes" value="view_cliente" id="id_modulo_clientes_2" {% if 'view_cliente' in form.modulo_clientes.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_clientes" value="view_cliente" id="id_modulo_clientes_4" {% if 'view_cliente' in form.modulo_clientes.value %} checked="checked" {% endif %} {% if 'add_cliente' in form.modulo_clientes.value or 'change_cliente' in form.modulo_clientes.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_clientes');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Modulo contratos de venta:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_contrato_venta_3" id="id_modulo_contrato_venta_3" onchange="javascript:seleccionarTodoModulo('id_modulo_contrato_venta');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_contrato_venta" value="add_contratoventa" id="id_modulo_contrato_venta_0" {% if 'add_contratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_contrato_venta');"/> Crear </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_contrato_venta" value="change_contratoventa" id="id_modulo_contrato_venta_1" {% if 'change_contratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_contrato_venta');"/> Modificar </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_contrato_venta" value="view_contratoventa" id="id_modulo_contrato_venta_2" {% if 'view_contratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_contrato_venta" value="view_contratoventa" id="id_modulo_contrato_venta_4" {% if 'view_contratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} {% if 'add_contratoventa' in form.modulo_contrato_venta.value or 'change_contratoventa' in form.modulo_contrato_venta.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_contrato_venta');"/> Lectura </label>
+                        </li>
+
+                        <li>
+                            <label><input type="checkbox" name="modulo_contrato_venta" value="assignchangepermission_contratoventa" id="id_modulo_contrato_venta_5" {% if 'assignchangepermission_contratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_contrato_venta');"/> Asignar permiso para modificar contratos (Estado vendido) </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_contrato_venta" value="validate_paymentcontratoventa" id="id_modulo_contrato_venta_6" {% if 'validate_paymentcontratoventa' in form.modulo_contrato_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_contrato_venta');"/> Validar pagos </label>
+                        </li>
+                    </ul>
+                </td>
+
+                <th><label>Modulo documentos ventas:</label></th>
+                <td>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_documentos_venta_3" id="id_modulo_documentos_venta_3" onchange="javascript:seleccionarTodoModulo('id_modulo_documentos_venta');"/> Seleccionar grupo de permisos</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <label><input type="checkbox" name="modulo_documentos_venta" value="add_documentoventa" id="id_modulo_documentos_venta_0" {% if 'add_documentoventa' in form.modulo_documentos_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_documentos_venta');"/> Editar </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="modulo_documentos_venta_3" value="change_contratoventa" id="id_modulo_documentos_venta_1" {% if 'change_documentoventa' in form.modulo_documentos_venta.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_documentos_venta');" style="display: none;"/> </label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="modulo_documentos_venta" value="view_documentoventa" id="id_modulo_documentos_venta_2" {% if 'view_documentoventa' in form.modulo_documentos_venta.value %} checked="checked" {% endif %} style="display: none;"/>
+                            <label><input type="checkbox" name="modulo_documentos_venta" value="view_documentoventa" id="id_modulo_documentos_venta_4" {% if 'view_documentoventa' in form.modulo_documentos_venta.value %} checked="checked" {% endif %} {% if 'add_documentoventa' in form.modulo_documentos_venta.value or 'change_documentoventa' in form.modulo_documentos_venta.value %} disabled="disabled" {% endif %} onchange="javascript:cambiarCheck2('id_modulo_documentos_venta');"/> Lectura </label>
+                        </li>
+                    </ul>
+                </td>
+                </tr>
+            <!-- Modulo Juridico -->
+            <tr>
+                <th><label>Modulo Juridico:</label></th>
+                <td>
+                    <ul>
+                       <li>
+                            <label><input type="checkbox" name="modulo_juridico" value="juridico" id="id_modulo_juridico_0" {% if 'juridico' in form.modulo_juridico.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_juridico');"/> Juridico </label>
+                       </li>
+                       <li>
+                            <label><input type="checkbox"name="modulo_juridico" value="modificar_juridico" id="id_modulo_juridico_1"  {% if 'modificar_juridico' in form.modulo_juridico.value %} checked="checked" {% endif %} onchange="javascript:cambiarEstado('id_modulo_juridico');"/> Modificar </label>
+                       </li>
+                    </ul>
+                </td>
+            </tr>
+            <!---- -->
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true"></p>
+        </div>
+    </form>
+{% endblock %}

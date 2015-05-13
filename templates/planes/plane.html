@@ -1,0 +1,251 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script_extra %}
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        $("#ajax_message").show();
+        var flagClick = {
+            optionAddZone:0,
+            optionDelZone:0
+        };
+
+        var points_marker = {
+            x:0,
+            y:0            
+        };
+
+                    var count =0; // fix clicks                 
+                    var width_opctions = 0;
+                    var height_opctions = 0;
+                    var flag_options = 0;
+                    var marker = -1;
+        
+        
+        //========
+
+                  $(document).ready(function(e){
+                     count =0; // fix clicks                 
+                     width_opctions = $(".choice_options").width();
+                     height_opctions = $(".choice_options").height();
+                     flag_options = 0;
+                     marker = -1;
+
+
+                     //-- Create marker
+                        $(document).on("click","a.camera",function(e){
+                            e.preventDefault();
+                            marker = $(this).attr('id_icon');
+                            marker = parseInt(marker);
+                            
+                            
+                            if (flagClick.optionAddZone == 1){
+                                $.post("/inverboy/home/ajax/photographiczonesplaneimageplaneadd/{{ image_plane.id }}/{{ image_plane.phase.stage.project.id }}/",{point_x: points_marker.x, point_y: points_marker.y, marker: marker},function(data){
+
+                                console.log("dta",data);
+                                data = JSON.parse(data);
+                                console.log("dta",data.data);
+                                message = data.message;
+                                if (data.result == '1') {
+                                    var details = data.data.details;
+                                    console.log(data.data);
+                                    ajax_message($("#ajax_message"), $("#ajax_message_content"), message, 1000, "message");
+                                    miObjeto.createMarker(data.data.point_x, data.data.point_y, data.data.label, data.data.url, data.data.label_url, data.data.id, data.data.details,data.data.marker);
+                                }
+                                if (data.result == '0') {
+                                    ajax_message($("#ajax_message"), $("#ajax_message_content"), message, 1000, "error");
+                                }
+                            });
+                                $(".choice_options").hide();
+                                $("#leaf").removeClass("cursor1");
+                                flagClick.optionAddZone = 0;
+                                flag_options = 0;
+                            }
+
+                            
+                            
+
+                            //alert(marker);
+                        });
+
+                          $('body').on("click",".marker_options",function(ev){
+                             
+                             
+                            if (flag_options == 1){
+                                  $('#coords2').html("Pos x : " + ev.pageX + " | Pos y : " + ev.pageY );                                  
+                                  $(".choice_options").css("top",(ev.pageY - (height_opctions/2)));
+                                  $(".choice_options").css("left",(ev.pageX - (width_opctions/2)));
+                                  $(".choice_options").show();                          
+                              }
+                             
+                            });
+
+        
+                  
+
+                    });
+                    
+
+
+        function onMapClick(e) {
+		 	if (flagClick.optionAddZone == 1) {
+                if (confirm("Desea crear este punto en el mapa")){                  
+                   
+                   points_marker.x =  e.latlng.lat;
+                   points_marker.y =  e.latlng.lng;
+                   
+                 
+                }else {
+                    $(".choice_options").hide();
+                    $("#leaf").removeClass("cursor1");
+                    flagClick.optionAddZone = 0;
+                    flag_options = 0;
+                    
+                }
+                
+            }
+ 		}
+
+        function ajax_message(element_div, element_message, message, time, type){
+            switch (type){
+                case "error":
+                    element_div.attr("class","");
+                    element_div.addClass("message_error");
+                    break;
+                case "warning":
+                    element_div.attr("class","");
+                    element_div.addClass("message_warning");
+                    break;
+                case "message":
+                    element_div.attr("class","");
+                    break;
+                default:
+                    element_div.attr("class","");
+                    break;
+            }
+
+            element_message.text(message);
+
+            setTimeout(function(){
+                element_div.slideDown();
+            }, time);
+
+            setTimeout(function(){
+                element_div.slideUp();
+            }, time * 4);
+        }
+
+        function my_callback(data){
+            points = data.data;
+            for (point in points){
+                miObjeto.createMarker(points[point].point_x, points[point].point_y, points[point].label, points[point].url, points[point].label_url, points[point].id,points[point].marker);
+                
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% comment %}
+    {% if 'inverboy.create_setup' in user.get_all_permissions %}
+    {% endcomment %}
+        <a href="#" class="buttom_add_stage create_marker">Agregar zona fotogr&aacute;fica</a>
+    {% comment %}
+    {% endif %}
+    {% endcomment %}
+        <!-- <div id="coords" style="color: red" >
+                posicion x: posicion y:
+            </div>
+        
+        <div id="coords2" style="color: red" >
+                posicion x: posicion y:
+            </div>
+            -->
+
+    <div id="leaf" class="marker_options">
+    </div>
+
+    <script src="{{ static_prefix }}planes/js/plugins.js"></script>
+    <script src="{{ static_prefix }}planes/js/leaflet.js" ></script>
+    <script src="{{ static_prefix }}planes/js/main.js"></script>
+
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        
+        var miObjeto  = new Planes("leaf"); // creacion de obejeto para el manejo del  mapa
+
+        miObjeto.setMap("{{ static_prefix }}{{ path_map }}", 2, 5); // 
+
+        var marker;
+
+        miObjeto.map.on('popupopen', function(e){
+           marker =  e.popup._source;
+        });
+
+        function onMapMouseMove(e) {
+		 	//console.log("movio mouse",e.latlng.lat + " " + e.latlng.lng);
+		 	//$('#coords').html('Coordenada x > '+e.latlng.lat +' Coordenada Y > '+e.latlng.lng);
+		 		//miObjeto.createMarker(e.latlng.lat,e.latlng.lng,"prueba","link","link");
+
+ 		};
+
+
+        //miObjeto.map.on('mousemove',onMapMouseMove);
+
+        $.get("/inverboy/home/ajax/getphotographiczonesplaneimageplane/{{ image_plane.id }}/{{ image_plane.phase.stage.project.id }}/",function(data){
+            data = JSON.parse(data);
+            points = data.data;
+            for (point in points){
+                miObjeto.createMarker(points[point].point_x, points[point].point_y, points[point].label, points[point].url, points[point].label_url, points[point].id, points[point].details,points[point].marker);
+                //console.log(points[point].marker);
+            }
+        }
+        );
+
+
+        //-- Create marker
+        $(document).on("click",".create_marker",function(e){
+            e.preventDefault();
+            if(confirm("Indique el punto donde desea crear la nueva zona fotografica")){
+                flagClick.optionAddZone = 1;
+                flag_options = 1;                
+                $("#leaf").addClass("cursor1");
+
+            }else{
+                flagClick.optionAddZone = 0;
+                flag_options = 0;
+            }
+            //alert(flag_options);
+        });
+
+
+
+
+
+        //-- Delete marker
+        $(document).on("click",".delete_marker",function(e){
+            e.preventDefault();
+            if(confirm("desea eliminar marker " + marker.label)){
+                $.post("/inverboy/home/ajax/photographiczonesplaneimageplaneremove/{{ image_plane.id }}/" + marker.id + "/{{ image_plane.phase.stage.project.id }}/",{ },function(data){
+                    data = JSON.parse(data);
+                    message = data.message;
+                    if (data.result == '1') {
+                        ajax_message($("#ajax_message"), $("#ajax_message_content"), message, 1000, "message");
+                        miObjeto.map.removeLayer(marker);
+                    }
+                    if (data.result == '0') {
+                        ajax_message($("#ajax_message"), $("#ajax_message_content"), message, 1000, "error");
+                    }
+                });
+            }
+
+
+
+        });
+
+            
+
+    </script>
+{% endblock %}

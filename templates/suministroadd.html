@@ -1,0 +1,283 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        {% if error != '' %}
+            /* alert('{{ error }}'); */
+        {% endif %}
+        function buscarProveedores(){
+            var criterio = document.getElementById('id_criterio_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_add('Dajax.process',{'pagina': 1, 'criterio': criterio });
+        }
+
+        // Función al seleccionar un check de proveedor
+        function seleccionar(check, proveedor_id, pagina, criterio){
+            Dajaxice.aplicacion.inverboy.seleccionar_proveedor_lista_proveedores_suministro_add('Dajax.process',{ 'parametro': check.checked, 'proveedor_id': proveedor_id, 'pagina': pagina, 'criterio': criterio });
+        }
+
+        function agregarProveedor(proveedor_id, pagina, criterio){
+            var precio = document.getElementById('id_precio_'+proveedor_id).value;
+            var iva = document.getElementById('id_option_iva_'+proveedor_id).checked;
+            document.getElementById('ahref_agregar_'+proveedor_id).style.display = 'none';
+            document.getElementById('id_cargando_'+proveedor_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.agregar_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'precio': precio, 'iva': iva, 'criterio':criterio, 'pagina': pagina });
+        }
+
+        function agregarProveedores(){
+            Dajaxice.aplicacion.inverboy.agregar_proveedores_suministro_add('Dajax.process');
+        }
+
+        // FUNCION PARA ELMIMINAR UN SUMINISTRO DE LA LISTA
+        function borrarFila(proveedor_id, pagina)	{
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                Dajaxice.aplicacion.inverboy.eliminar_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'pagina': pagina });
+            }
+        }
+
+        function activarInput(proveedor_id, pagina){
+            Dajaxice.aplicacion.inverboy.activar_input_precio_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'pagina': pagina });
+        }
+
+        function modificarPrecio(proveedor_id, pagina){
+            var valorcampo = document.getElementById('id_text_precio_'+proveedor_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'precio': valorcampo, 'pagina': pagina });
+        }
+
+        function activarSelectIva(proveedor_id, pagina){
+            Dajaxice.aplicacion.inverboy.activar_input_iva_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'pagina': pagina });
+        }
+
+        function modificarIva(proveedor_id, pagina){
+            var valorcampo = document.getElementById('id_opcion_iva_'+proveedor_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_iva_proveedor_suministro_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'iva': valorcampo, 'pagina': pagina });
+        }
+
+
+        function valorsincomas(numero){
+            var numconvertido = numero.replace(/[,]/g, '');
+            return numconvertido;
+        }
+
+        function valorconmiles(numero){
+            var n= numero % 1;
+            if(n == 0){
+               var preciomilestemp = numero.split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,'$1,');
+               var preciomiles = preciomilestemp.split("").reverse().join("").replace(/^([,])/, "");
+            }
+            else{
+               var numero1= parseFloat(numero).toFixed(2);
+               var preciomilestemp = numero1.split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,'$1,');
+               var preciomiles1 = preciomilestemp.split("").reverse().join("").replace(/^[\.]/, "");
+               var preciomiles = preciomiles1.replace(/^([,])/, "");
+            }
+               return preciomiles;
+        }
+
+        function redond(num) {
+          var fact = Math.pow(10, 2);
+          alert('num '+ num);
+          alert('fact ' + fact);
+          return Math.round(num * fact) / fact;
+        }
+
+
+        // FUNCION PARA LIMPIAR LA VENTANA DE BUSQUEDA DE PROVEEDORES
+        function limpiarBusquedaProveedores() {
+            Dajaxice.aplicacion.inverboy.cancelar_agregar_proveedores_suministro_add('Dajax.process');
+        }
+
+
+        function format(input) {
+            var num = input.value.replace(/\./g,'');
+            if(!isNaN(num)){
+                num = num.toString().split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,"$1.");
+                num = num.split("").reverse().join("").replace(/^[\.]/,"");
+                input.value = num;
+            } else{
+                alert("Solo se permiten numeros");
+                input.value = input.value.replace(/[^\d\.]*/g,"");
+            }
+        }
+
+    </script>
+
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+
+{% endblock %}
+{% block titulo %}{% if change %}Modificar suministro{% else %}Nuevo suministro{% endif %}{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/tabla_busqueda_proveedores.html' %}
+    </div>
+    <!-- fin ventana modal -->
+
+    <form id="form1" name="form1" method="post" action=".">
+    <div id="muestra">
+
+    </div>
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Categoria:</label></th>
+                <td>
+                    {{ form.categoria.errors }}
+                    <select name="categoria" id="id_categoria" onchange="Dajaxice.aplicacion.inverboy.cargar_especificaciones('Dajax.process',{'option':this.value, 'html': 'suministroadd.html'});">
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if categoria == categoria_actual %} selected="selected" {% endif %}> {{ categoria.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Especificacion:</label></th>
+                <td>
+                    {{ form.especificacion.errors }}
+                    <select name="especificacion" id="id_especificacion" onchange="Dajaxice.aplicacion.inverboy.cargar_tipos('Dajax.process',{'option': this.value, 'html': 'suministroadd.html'})">
+                    {% for especificacion in especificaciones %}
+                        <option value="{{ especificacion.id }}" {% if especificacion == especificacion_actual %} selected="selected" {% endif %}>{{ especificacion.nombre }} </option>   <!-- se le da el valor al combo del id de la categoria -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Tipo:</label></th>
+                <td>
+                    <select name="tipo" id="id_tipo">
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo.id }}" {% if tipo == tipo_actual %} selected="selected" {% endif %}>{{ tipo.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Clasificacion General:</label></th>
+                <td>
+                    {{ form.clasificacion_general.errors }} {{ form.clasificacion_general }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Sinonimos, recuerde separarlos por coma (,):</label></th>
+                <td>
+                    {{ form.sinonimos.errors }}
+                    <textarea rows="4" cols="25" style="resize: none;" id="id_sinonimos" name="sinonimos">{% if form.sinonimos.value %}{{ form.sinonimos.value }}{% endif %}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Representativo:</label></th>
+                <td>
+                    {{ form.representativo.errors }} {{ form.representativo }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad embalaje:</label></th>
+                    {# form.unidad_embalaje #} {# form.unidad_embalaje.errors #}
+                <td>
+                    {{ form.unidad_embalaje.errors }} <input name="unidad_embalaje" id="id_unidad_embalaje" value="{% if form.unidad_embalaje.value %}{{ form.unidad_embalaje.value|force_escape }}{% endif %}{# { form.unidad_embalaje.value|force_escape } #}" onkeyup="this.value=this.value.split(',').join('.')">
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad medida</label></th>
+                <td>
+                    {{ form.unidad_medida.errors }} {{ form.unidad_medida }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Dias para comprar</label></th>
+                <td>
+                    {{ form.dias_compra.errors }} {{ form.dias_compra }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Requiere cartilla (Al requerir)</label></th>
+                <td>
+                    {{ form.requiere_cartilla.errors }} {{ form.requiere_cartilla }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Peso:</label></th>
+                <td>
+                    {{ form.peso.errors }} {{ form.peso }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Largo:</label></th>
+                <td>
+                    {{ form.largo.errors }} {{ form.largo }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Alto</label></th>
+                <td>
+                    {{ form.alto.errors }} {{ form.alto }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Ancho</label></th>
+                <td>
+                    {{ form.ancho.errors }} {{ form.ancho }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <p align="center">Proveedores</p>
+        <div id="id_reporte_proveedores">
+            {% include 'ajax/proveedoressuministro.html' %}
+        </div>
+        <p align="center"><a href="javascript:void(0)" onclick="buscarProveedores();">Agregar Proveedor</a></p>
+        <br>
+        <p align ="center"><input type="submit" value="Guardar Suministro" onclick="this.disabled=true;"></p>
+    </form>
+{% endblock %}

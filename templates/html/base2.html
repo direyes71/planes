@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>{% block titulo %}  Inversiones Boyaca {% endblock %}</title>
+    {% block script %}
+
+    {% endblock %}
+    {% load static %}
+    {% get_static_prefix as static_prefix %}
+    <link href="{{ static_prefix }}css/templates.css" rel="stylesheet" type="text/css" />
+<!--<link href="http://127.0.0.1/support/media/css/template_css" rel="stylesheet" type="text/css" />-->
+</head>
+<body>
+<!--
+<div id="contenedor_log">
+    {% block log %}
+
+    {% endblock %}
+</div>
+
+<div id="menu">
+    <table>
+        <tr>
+            <td>
+                {% block menu %}
+
+                {% endblock %}
+            </td>
+        </tr>
+    </table>
+
+</div>
+-->
+<div id="contenedor_index">
+    {% block contenido %} {% endblock %}
+</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+{% extends "html/base_home.html"%}
+
+{% load humanize %}
+
+{% load adminmedia admin_list i18n %}
+
+{% block script %}
+
+    <link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+
+    <script type="text/javascript" charset="utf-8">
+
+        function cerrarVentanaContacto() {
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+    </script>
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Modificaci&oacute;n masiva de inmuebles{% endblock %}
+{% block contenido %}
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- contenido página -->
+    <form action="." method="POST" id="id_form_modificacion_masiva">
+        <label id="id_label_error"></label>
+        <table id="tablaReportes">
+            <tr>
+                <th>Tipo inmueble:</th>
+                <td><label>{{ inmueble.tipo_inmueble.nombre }}</label></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Secci&oacute;n proyecto:</th>
+                <td>{{ inmueble.seccion_proyecto.nombre }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Identificaci&oacute;n:</th>
+                <td><label>{{ inmueble.identificacion }}</label></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Area construida:</th>
+                <td><label>{{ inmueble.str_area_construida }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="area_construida"></td>
+            </tr>
+            <tr>
+                <th>Area privada:</th>
+                <td><label>{{ inmueble.str_area_privada }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="area_privada"></td>
+            </tr>
+            <tr>
+                <th>Fecha entrega obra:</th>
+                <td><label>{{ inmueble.str_fecha_entrega_obra|date:'Y-m-d' }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="fecha_entrega_obra"></td>
+            </tr>
+            <tr>
+                <th>Fecha escritura:</th>
+                <td><label>{{ inmueble.str_fecha_escritura|date:'Y-m-d' }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="fecha_escritura"></td>
+            </tr>
+            <tr>
+                <th>Fecha entrega:</th>
+                <td><label>{{ inmueble.str_fecha_entrega|date:'Y-m-d' }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="fecha_entrega"></td>
+            </tr>
+            <tr>
+                <th>Precio:</th>
+                <td><label>{{ inmueble.valor|force_escape|intcomma }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="valor"></td>
+            </tr>
+            <tr>
+                <th>Lista de precios:</th>
+                <td><label>{{ inmueble.str_lista_precios }}</label></td>
+                <td><input type="checkbox" name="propiedades_inmueble" value="lista_precios"></td>
+            </tr>
+        </table>
+
+        <a href="/inverboy/home/modificarinmueble/{{ inmueble.id }}/{{ proyecto.id }}/">Modificar inmueble</a>
+
+        <h2>Inmuebles</h2>
+                
+        <div id="id_reporte_inmuebles">
+            {% include 'ajax/ventas/busquedainmueblesmodificacionmasiva.html' %}
+        </div>
+
+        <input type="submit" value="Realizar cambios">
+
+    </form>
+
+    <!-- fin contenido página -->
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#id_reporte_inmuebles").on('click', '#id_btn_buscar', function(e) {
+                e.preventDefault();
+                var seccion_proyecto = $("#id_seccion_proyecto").val();
+                var criterio = $("#id_criterio").val();
+                Dajaxice.aplicacion.inverboy.busqueda_inmuebles_modificacion_masiva('Dajax.process',{'inmueble_id': {{ inmueble.id }}, 'seccion_proyecto_id': seccion_proyecto, 'criterio': criterio, 'proyecto_id': {{ proyecto.id }}});
+            });
+        });
+    </script>
+{% endblock %}

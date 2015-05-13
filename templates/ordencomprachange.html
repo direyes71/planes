@@ -1,0 +1,207 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Modificar orden de compra {% endblock %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function formaPago() {
+            opcion = document.getElementById('id_forma_pago').value;
+            document.getElementById('id_parametro_forma_pago').style.display = 'block';
+            document.getElementById('id_parametro_pago').value = '';
+            if(opcion=='1'){
+                document.getElementById('id_label_parametro_pago').innerHTML = 'dias';
+            } else if(opcion=='4'){
+                document.getElementById('id_label_parametro_pago').innerHTML = '%';
+            } else {
+                document.getElementById('id_parametro_forma_pago').style.display = 'none';
+            }
+        }
+        function eliminar_suministro(suministro_id, orden_compra_id, proyecto_id) {
+            if (confirm("¿Realmente desea eliminar este item?"))
+                Dajaxice.aplicacion.inverboy.eliminar_suministro_orden_compra('Dajax.process', {'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function activarInput(pagina, suministro_id, orden_compra_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_orden_compra_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function modificarCantidad(pagina, suministro_id, orden_compra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_cantidad_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_cantidad_suministro_orden_compra_change('Dajax.process', {'suministro_id': suministro_id, 'cantidad': valorcampo, 'orden_compra_id': orden_compra_id, 'pagina': pagina, 'proyecto_id': proyecto_id});
+        }
+        function activarInputPrecio(pagina, suministro_id, orden_compra_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_precio_suministro_orden_compra_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function modificarPrecio(pagina, suministro_id, orden_compra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_precio_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_suministro_orden_compra_change('Dajax.process', { 'suministro_id': suministro_id, 'precio': valorcampo, 'orden_compra_id': orden_compra_id, 'pagina': pagina, 'proyecto_id': proyecto_id});
+        }
+        function modificarIva(pagina, suministro_id, orden_compra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_check_iva_'+(suministro_id)).checked;
+            Dajaxice.aplicacion.inverboy.modificar_iva_suministro_orden_compra_change('Dajax.process', {'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'iva': valorcampo, 'pagina': pagina, 'proyecto_id': proyecto_id});
+        }
+        function activarInputObservaciones(pagina, suministro_id, orden_compra_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_observaciones_suministro_orden_compra_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function modificarObservaciones(pagina, suministro_id, orden_compra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_observaciones_'+ (suministro_id)).value;
+            Dajaxice.aplicacion.inverboy.modificar_observaciones_suministro_orden_compra_change('Dajax.process', {'suministro_id': suministro_id, 'observaciones': valorcampo, 'orden_compra_id': orden_compra_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function suministrosProveedor(orden_compra_id, proyecto_id){
+            Dajaxice.aplicacion.inverboy.suministros_proveedor_orden_compra_change('Dajax.process',{'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function buscarSuministrosProveedor(orden_compra_id, proyecto_id) {
+            var criterio = document.getElementById('id_text_busqueda').value;
+            Dajaxice.aplicacion.inverboy.suministros_proveedor_orden_compra_change('Dajax.process',{'orden_compra_id': orden_compra_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function anadirSuministro(pagina, suministro_id, orden_compra_id, criterio, proyecto_id) {
+            cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            precio = document.getElementById('id_text_precio_'+suministro_id).value;
+            iva_suministro = document.getElementById('id_iva_suministro_'+suministro_id).checked;
+            observaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            document.getElementById('ahref_agregar_suministro_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_agregar_suministro_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_orden_compra_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'cantidad': cantidad, 'precio': precio, 'iva_suministro': iva_suministro, 'observaciones': observaciones, 'orden_compra_id': orden_compra_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function activarInputSuministroAgregar(pagina, suministro_id, orden_compra_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_suministro_agregar_orden_compra_change('Dajax.process',{'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function anadirTodosSuministros(orden_compra_id, proyecto_id) {
+            document.getElementById('ahref_cotizar_todo_'+orden_compra_id).style.display = 'none';
+            document.getElementById('id_cargando_cotizar_todo_'+orden_compra_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.anadir_todos_suministros_orden_compra_change('Dajax.process',{'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function anadirSuministros(orden_compra_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.anadir_suministros_orden_compra_change('Dajax.process',{'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id});
+        }
+        function cancelarAnadirSuministros(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_anadir_suministros_orden_compra_change('Dajax.process',{'proyecto_id': proyecto_id});
+        }
+    </script>
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block css %}
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 1100px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -550px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+    </div>
+    <form action="." method="POST">
+        {% if error != '' %}
+            <label>{{ error }}</label>
+        {% endif %}
+        <table>
+            <tr>
+                <td>Orden compra No.</td>
+                <td>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de creaci&oacute;n: <label>{{ orden_compra.fecha_creacion|date:'Y-m-d' }}</label></td>
+                <td>proveedor: <label>{{ orden_compra.proveedor.razon_social }}</label></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {% if error_fecha_arribo != '' %}
+                        <label id="id_label_error_fecha_arribo">{{ error_fecha_arribo }}</label><br>
+                    {% endif %}
+                    Fecha de arribo:
+                    <!-- <input type="text" id="id_fecha_arribo" name="fecha_arribo" onkeyup="validar_fecha(this);" onkeypress="return validar_teclado_fecha(event)" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual"/> -->
+                    <input type="text" id="id_fecha_arribo" name="fecha_arribo" placeholder="aaaa-mm-dd" title="La fecha de arribo debe ser mayor o igual que la fecha actual" value="{{ orden_compra.fecha_arribo|force_escape }}"/>
+                    <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                    <script type="text/javascript" charset="utf-8">
+                        Calendar.setup({inputField:"id_fecha_arribo",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% if error_forma_pago != '' %}
+                        <label id="id_label_error_forma_pago">{{ error_forma_pago }}</label><br>
+                    {% endif %}
+                    Forma de pago
+                    <select id="id_forma_pago" name="forma_pago" onchange="formaPago();">
+                        <option value="0">----</option>
+                        <option value="1" {% if forma_pago == 1 %}selected="selected"{% endif %}>Credito</option>
+                        <option value="2" {% if forma_pago == 2 %}selected="selected"{% endif %}>Contra-entrega</option>
+                        <option value="3" {% if forma_pago == 3 %}selected="selected"{% endif %}>Anticipado</option>
+                        <option value="4" {% if forma_pago == 4 %}selected="selected"{% endif %}>% Anticipo</option>
+                    </select>
+                </td>
+                <td>
+                    <div id="id_parametro_forma_pago" {% if forma_pago != 1 and forma_pago != 4 %}style="display: None" {% endif %}>
+                        {% if error_parametro_pago != '' %}
+                            <label id="id_label_error_parametro_pago">{{ error_parametro_pago }}</label><br>
+                        {% endif %}
+                        <input type="text" id="id_parametro_pago" name="parametro_pago" value="{{ parametro_pago }}"/><label id="id_label_parametro_pago">{% if forma_pago == 1 %}dias{% endif %}{% if forma_pago == 4 %}%{% endif %}</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Observaciones
+                <textarea id="id_observaciones" name="observaciones" rows="4" cols="20">{{ observaciones }}</textarea></td>
+            </tr>
+        </table>
+        <a href="javascript:suministrosProveedor({{ orden_compra.id }}, {{ proyecto.id }});">Agregar suministros</a>
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministrosordencomprachange.html' %}
+        </div>
+        {% if 'inverboy.change_ordencompra' in user.get_all_permissions %}
+            <input type="submit" id="id_guardar" value="Guardar cambios orden de compra" onclick="this.disabled=true;">
+        {% endif %}
+    </form>
+{% endblock %}

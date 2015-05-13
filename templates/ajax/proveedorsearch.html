@@ -1,0 +1,73 @@
+<table id="tablaReportes"  align="center">
+    <tr>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Razon social</th>
+        <th scope="col">Nombre comercial</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Regimen tributario</th>
+        <th scope="col">Telefono 1</th>
+        <th scope="col">Web</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for proveedor in proveedores.modelo %}
+        <tr id="fila_proveedor_{{ forloop.counter0 }}">
+            <td>
+                <a href="javascript:void(0)" onclick ="detalles_proveedor({{ proveedor.id }}, {{ forloop.counter0}});">{{ proveedor.identificacion }}</a>
+            </td>
+            <td>
+                {{ proveedor.razon_social }}
+            </td>
+            <td>
+                {{ proveedor.nombre_comercial }}
+            </td>
+            <td>
+                {{ proveedor.municipio.departamento.nombre }}, {{ proveedor.municipio.nombre }}, {{ proveedor.direccion }}
+            </td>
+            <td>
+                {% if proveedor.tipo == 1 %}
+                    Persona Natural
+                {% else %}
+                    Juridica
+                {% endif %}
+            </td>
+            <td>
+                {% if proveedor.regimen_tributario == 1 %}
+                    Com&uacute;n
+                {% else %}
+                    Simplificado
+                {% endif %}
+            </td>
+            <td>
+                {{ proveedor.telefono_1 }}
+            </td>
+            <td>
+                <a href="{{ proveedor.web_site }}">{{ proveedor.web_site }}</a>
+            </td>
+            <td>
+                {% if proveedor.estado_proveedor == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_proveedor' in user.get_all_permissions %}
+                    <a href="/inverboy/home/proveedoreschange/{{ proveedor.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if proveedores.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores('Dajax.process',{'pagina': 1, 'html': 'reporteproveedores.html', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores('Dajax.process',{'pagina': {{ proveedores.prev_page }}, 'html': 'reporteproveedores.html', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{proveedores.page}} de {{proveedores.pages}}
+{% if proveedores.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores('Dajax.process',{'pagina': {{ proveedores.next_page }}, 'html': 'reporteproveedores.html', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores('Dajax.process',{'pagina': {{ proveedores.pages }}, 'html': 'reporteproveedores.html', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

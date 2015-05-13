@@ -1,0 +1,33 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+
+<table>
+    <tr>
+        <td><label>Tipo de notificaci&oacute;n:</label></td>
+        <td><label>{{ notificacion_prospecto.str_tipo_notificacion }}</label></td>
+    </tr>
+    <tr>
+        <td><label>Fecha:</label></td>
+        <td><label>{{ notificacion_prospecto.fecha_limite_notificacion }}</label></td>
+    </tr>
+    <tr>
+        <td><label>Descripci&oacute;n:</label></td>
+        <td><label>{{ notificacion_prospecto.descripcion }}</label></td>
+    </tr>
+</table>
+
+<form action="#" id="id_form_respuesta_notificacion_venta">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td align="center">
+                <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+            </td>
+            <td align="center">
+                <input type="button" value="Cancelar" id="id_btn_cancelar_nueva_notificacion">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" value="{{ notificacion_prospecto.id }}" name="notificacion_id">
+</form>

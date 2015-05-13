@@ -1,0 +1,63 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad recibida</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Cant. fact.</th>
+        <th>Discriminaci&oacute;n por capitulos</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                <label>{{ suministro.suministro.suministro.suministro.suministro.clasificacion_general }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.suministro.suministro.suministro.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.suministro.suministro.suministro.sinonimos }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.suministro.suministro.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.suministro.suministro.suministro.unidad_embalaje|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_facturada|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <div>
+                    {% for capitulo in suministro.get_discriminacion_capitulos_apus_proyecto %}
+                        <ul>
+                            {% if capitulo.tipo_capitulo == 1 %}
+                                <li>Capitulo: {{ capitulo.nombre_capitulo }}</li>
+                            {% else %}
+                                <li>Capitulo: {{ capitulo.capitulo_asociado.nombre_capitulo }}</li>
+                                <li>Subcapitulo: {{ capitulo.nombre_capitulo }}</li>
+                            {% endif %}
+                        </ul>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_informe_recepcion('Dajax.process',{'pagina': 1, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_informe_recepcion('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_informe_recepcion('Dajax.process',{'pagina': {{ suministros.next_page }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_informe_recepcion('Dajax.process',{'pagina': {{ suministros.pages }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

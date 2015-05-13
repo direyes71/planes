@@ -1,0 +1,23 @@
+{% extends "html/base_home.html" %}
+
+{% block titulo_pagina %}{% endblock %}
+
+{% block titulo %}Nueva sugerencia{% endblock %}
+
+{% block contenido %}
+    <br>
+    <div>
+        Para nosotros es de gran importancia sus inquietudes, por favor describa en detalle la nueva sugerencia, esta sera revisada y analizada por el equipo de sistemas para luego realizar dicha modificaci&oacute;n.
+    </div>
+    <br>
+    <form action="." METHOD="POST">
+        <table id="tablaFormulario">
+            {{ form.as_table }}
+            <tr>
+                <td colspan="2" align="center">
+                    <p><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles acta de conformidad
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th>
+                Acta de conformidad No.
+            </th>
+            <td colspan="3">
+                <label>AC{{ acta_conformidad.orden_giro.proyecto.id }}-{{ acta_conformidad.consecutivo }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Fecha registro</th>
+            <td><label>{{ acta_conformidad.fecha_registro|date:'Y-m-d' }}</label></td>
+            <th>Proveedor</th>
+            <td><label>{{ acta_conformidad.orden_giro.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Persona</th>
+            <td colspan="3"><label>{{ acta_conformidad.persona.first_name }}, {{ acta_conformidad.persona.last_name }}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_items">
+        {% include 'ajax/itemsactaconformidadsearch.html' %}
+    </div>
+    <a href="/inverboy/home/imprimiractaconformidad/{{ acta_conformidad.id }}/{{ proyecto.id }}/">Imprimir</a>
+{% endblock %}

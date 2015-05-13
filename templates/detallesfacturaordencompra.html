@@ -1,0 +1,329 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles Factura orden de compra
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function detallesSuministroDiscriminadoOrdenCompra(suministro_id, factura_orden_compra_id, proyecto_id){
+            //document.getElementById('ventana-flotante').style.top = document.getElementById('tablaReportes').offsetTop + document.getElementById('if_fila_suministro_' + suministro_id).offsetTop + document.getElementById('if_fila_suministro_' + suministro_id).offsetHeight + 60 + 'px';
+            document.getElementById('ventana-flotante').style.top = document.getElementById('tablaReportes').offsetTop + document.getElementById('if_fila_suministro_' + suministro_id).offsetTop + document.getElementById('if_fila_suministro_' + suministro_id).offsetHeight + 'px';
+            document.getElementById('ventana-flotante').style.display = 'block';
+        }
+        function cerrarDetallesSuministroDiscriminadoOrdenCompra(){
+            document.getElementById('light').style.display = 'none' ;
+        }
+    </script>
+    
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 10px;
+            position:absolute;
+            color: #008844;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+
+        .modal2 {
+            position:fixed !important;
+            position: absolute; /*ie6 */
+            bottom: 0;
+        }
+
+        #ventana-flotante {
+            display: none;
+            width: 360px;  /* Ancho de la ventana */
+            height: 90px;  /* Alto de la ventana */
+            background: #ceffad;  /* Color de fondo */
+            position: absolute;
+            border: 1px solid #adffad;  /* Borde de la ventana */
+            box-shadow: 0 5px 25px rgba(0,0,0,.1);  /* Sombra */
+        }
+        #ventana-flotante #contenedor {
+            padding: 25px 10px 10px 10px;
+        }
+        #ventana-flotante .cerrar {
+            float: right;
+            border-bottom: 1px solid #bbb;
+            border-left: 1px solid #bbb;
+            color: #999;
+            background: white;
+            line-height: 17px;
+            text-decoration: none;
+            padding: 0px 14px;
+            font-family: Arial;
+            border-radius: 0 0 0 5px;
+            box-shadow: -1px 1px white;
+            font-size: 18px;
+            -webkit-transition: .3s;
+            -moz-transition: .3s;
+            -o-transition: .3s;
+            -ms-transition: .3s;
+        }
+        #ventana-flotante .cerrar:hover {
+            background: #ff6868;
+            color: white;
+            text-decoration: none;
+            text-shadow: -1px -1px red;
+            border-bottom: 1px solid red;
+            border-left: 1px solid red;
+        }
+        #ventana-flotante #contenedor .contenido {
+            padding: 15px;
+            box-shadow: inset 1px 1px white;
+            background: #deffc4;  /* Fondo del mensaje */
+            border: 1px solid #9eff9e;  /* Borde del mensaje */
+            font-size: 20px;  /* Tamaño del texto del mensaje */
+            color: #555;  /* Color del texto del mensaje */
+            text-shadow: 1px 1px white;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+        .oculto {
+            -webkit-transition:1s;
+            -moz-transition:1s;
+            -o-transition:1s;
+            -ms-transition:1s;
+            opacity:0;
+            -ms-opacity:0;
+            -moz-opacity:0;
+            /*visibility:hidden;*/
+            display: none;
+        }
+
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    <!-- ventana modal -->
+    
+    <!--
+    <div id="light" class="modal2">
+        {% include 'ajax/detallessuministrofacturaordencompra.html' %}
+    </div>
+
+    <div id="ventana-flotante">
+
+        <a class="cerrar" href="javascript:void(0);" onclick="document.getElementById(&apos;ventana-flotante&apos;).className = &apos;oculto&apos;">x</a>
+
+        <div id="contenedor">
+
+           <div class="contenido">
+
+                {% include 'ajax/detallessuministrofacturaordencompra.html' %}
+
+           </div>
+
+        </div>
+
+    </div>
+    -->
+    
+    <!-- fin ventana modal -->
+    
+    <table>
+        <tr>
+            <th>Factura No.: </th>
+            <td colspan="3"><label>{{ factura_orden_compra.numero_factura }}</label></td>
+        </tr>
+        <tr>
+            <th>Factura orden de compra: </th>
+            <td colspan="3"><label>FOC{{ factura_orden_compra.proyecto.id }}-{{ factura_orden_compra.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor: </th>
+            <td colspan="3"><label>{{ factura_orden_compra.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha registro: </th>
+            <td><label>{{ factura_orden_compra.fecha_registro|date:'Y-m-d' }}</label></td>
+            <th>Persona: </th>
+            <td><label>{{ factura_orden_compra.persona }}</label></td>
+        </tr>
+        <tr>
+            <th>Ordenes de compra: </th>
+            <td colspan="3"><label>{% for orden_compra in factura.get_ordenes_compra %} OC{{ factura_orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}{% endfor %}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_items">
+        {% include 'ajax/itemsfacturaordencomprasearch.html' %}
+    </div>
+    <table id="tablaReportes" align="center">
+        <tr>
+            <th colspan="2">Totales factura</th>
+        </tr>
+        <tr>
+            <td>
+                <label>Subtotal:</label>
+            </td>
+            <td>
+                <label>{{ factura_orden_compra.subtotal|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Valor iva:</label>
+            </td>
+            <td>
+                <label>{{ factura_orden_compra.valor_iva|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Valor total:</label>
+            </td>
+            <td>
+                <label>{{ factura_orden_compra.valor_total|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    </table>
+
+    <h2 align="center">Valor discriminado por ordenes de compra</h2>
+
+    {% for valor_orden in valor_discriminado_ordenes_compra %}
+        <table id="tablaReportes" align="center">
+            <tr>
+                <th colspan="6">
+                    OC{{ valor_orden.orden_compra.proyecto.id }}-{{ valor_orden.orden_compra.consecutivo }}
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    Suministro
+                </th>
+                <th>
+                    Cantidad facturada
+                </th>
+                <th>
+                    Unidad de medida
+                </th>
+                <th>
+                    Subtotal
+                </th>
+                <th>
+                    Iva
+                </th>
+                <th>
+                    Total
+                </th>
+            </tr>
+            {% for suministro in valor_orden.suministros %}
+                <tr>
+                    <td>
+                        <label>{{ suministro.suministro.nombre }}</label>
+                    </td>
+                    <td>
+                        <label>{{ suministro.cantidad|force_escape|intcomma }}</label>
+                    </td>
+                    <td>
+                        <label>{{ suministro.suministro.unidad_medida }}</label>
+                    </td>
+                    <td>
+                        <label>{{ suministro.valor_sin_iva|force_escape|intcomma }}</label>
+                    </td>
+                    <td>
+                        <label>{{ suministro.valor_iva|force_escape|intcomma }}</label>
+                    </td>
+                    <td>
+                        <label>{{ suministro.valor_con_iva|force_escape|intcomma }}</label>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th colspan="3">Total</th>
+                <td>{{ valor_orden.valor_sin_iva|force_escape|intcomma }}</td>
+                <td>{{ valor_orden.valor_iva|force_escape|intcomma }}</td>
+                <td>{{ valor_orden.valor_con_iva|force_escape|intcomma }}</td>
+            </tr>
+        </table>
+        <br>
+    {% endfor %}
+
+    <h2 align="center">Valor discriminado por capitulos</h2>
+
+    <table id="tablaReportes" align="center">
+        <tr>
+            <th>
+                Cod.
+            </th>
+            <th>
+                Capitulo
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Iva
+            </th>
+            <th>
+                Total
+            </th>
+        </tr>
+        {% for valor_capitulo in valor_discriminado_capitulos %}
+            <tr>
+                <td>
+                    <label>
+                        {% if valor_capitulo.capitulo.tipo_capitulo == 1 %}
+                            {{ valor_capitulo.capitulo.codigo }}
+                        {% else %}
+                            {{ valor_capitulo.capitulo.capitulo_asociado.codigo }}
+                        {% endif %}
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        {% if valor_capitulo.capitulo.tipo_capitulo == 1 %}
+                            {{ valor_capitulo.capitulo.nombre_capitulo }}
+                        {% else %}
+                            {{ valor_capitulo.capitulo.capitulo_asociado.nombre_capitulo }}
+                        {% endif %}
+                    </label>
+                </td>
+                <td>
+                    <label>{{ valor_capitulo.valor_sin_iva|force_escape|intcomma }}</label>
+                </td>
+                <td>
+                    <label>{{ valor_capitulo.valor_iva|force_escape|intcomma }}</label>
+                </td>
+                <td>
+                    <label>{{ valor_capitulo.valor_con_iva|force_escape|intcomma }}</label>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="2">Total</th>
+            <td>{{ valor_factura_sin_iva|force_escape|intcomma }}</td>
+            <td>{{ valor_iva_factura|force_escape|intcomma }}</td>
+            <td>{{ valor_total_factura|force_escape|intcomma }}</td>
+        </tr>
+    </table>
+    <a href="/inverboy/home/pdffacturaordencompraproyecto/{{ factura_orden_compra.id }}/{{ proyecto.id }}/">Imprimir</a>
+{% endblock %}

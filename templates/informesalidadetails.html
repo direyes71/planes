@@ -1,0 +1,31 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles Informe de salida
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th>Informe de salida No.</th>
+            <td><label>SA{{ informe_salida.proyecto.id }}-{{ informe_salida.consecutivo }}</label></td>
+            <th>Fecha informe</th>
+            <td><label>{{ informe_salida.fecha_informe|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Persona responsable</th>
+            <td><label>{{ informe_salida.persona_proyecto.identificacion }} - {{ informe_salida.persona_proyecto.nombre }}</label></td>
+            <th>Persona</th>
+            <td><label>{{ informe_salida.persona.identificacion }} - {{ informe_salida.persona }}</label></td>
+        </tr>
+        <tr>
+            <th>Observaciones</th>
+            <td colspan="3"><label>{{ informe_salida.observaciones }}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosinformesalidasearch.html' %}
+    </div>
+    <a href="/inverboy/home/imprimirinformesalida/{{ informe_salida.id }}/{{ proyecto.id }}/">Imprimir</a>
+{% endblock %}

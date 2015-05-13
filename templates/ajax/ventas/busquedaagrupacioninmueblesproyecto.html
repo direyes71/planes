@@ -1,0 +1,50 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Valor</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for agrupacion_inmueble in agrupacion_inmuebles.modelo %}
+        <tr>
+            <td>
+                <label>{{ agrupacion_inmueble.identificacion }}</label>
+            </td>
+            <td>
+                <label>{{ agrupacion_inmueble.str_estado_agrupacion }}</label>
+            </td>
+            <td>
+                <label>{{ agrupacion_inmueble.str_valor|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.change_agrupacioninmueble' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificaragrupacioninmueble/{{ agrupacion_inmueble.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if agrupacion_inmuebles.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_agrupaciones('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_agrupaciones('Dajax.process',{'pagina': {{ agrupacion_inmuebles.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ agrupacion_inmuebles.page }} de {{ agrupacion_inmuebles.pages }}
+{% if agrupacion_inmuebles.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_agrupaciones('Dajax.process',{'pagina': {{ agrupacion_inmuebles.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_agrupaciones('Dajax.process',{'pagina': {{ agrupacion_inmuebles.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

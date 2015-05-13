@@ -1,0 +1,105 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Tipo inmueble
+        </td>
+        <td colspan="2">
+            <select name="tipo_inmueble" class="chosen-select" style="width: 350px;">
+                <option value="">----</option>
+                {% for tipo_inmueble in tipo_inmuebles %}
+                    <option value="{{ tipo_inmueble.id }}"{% if actual_tipo_inmueble.id == tipo_inmueble.id %} selected="selected"{% endif %}>{{ tipo_inmueble.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Seccion del proyecto
+        </td>
+        <td colspan="2">
+            <select name="seccion_proyecto" class="chosen-select" style="width: 350px;">
+                <option value="">----</option>
+                {% for seccion_proyecto in secciones_proyecto %}
+                    <option value="{{ seccion_proyecto.id }}"{% if actual_seccion_proyecto.id == seccion_proyecto.id %} selected="selected"{% endif %}>{{ seccion_proyecto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Tipo</th>
+        <th scope="col">Secci&oacute;n proy.</th>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Area construida</th>
+        <th scope="col">Area privada</th>
+        <th scope="col">Estado inmueble</th>
+        <th scope="col">Estado reg.</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Precio actual</th>
+        <th scope="col">Lista de precios</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for inmueble in inmuebles.modelo %}
+        <tr>
+            <td>
+                <label>{{ inmueble.tipo_inmueble.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.seccion_proyecto.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.identificacion }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_construida }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_privada }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_estado_inmueble }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_estado_registro }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.usuario_registro }}</label>
+            </td>
+            <td>
+                {% if error.id == inmueble.id %}
+                    <label>{{ error.error_precio }}</label>
+                    <input type="text" name="precio" id="id_text_precio_{{ inmueble.id }}" value="{{ error.value_precio }}" style="width: 100px;">
+                {% else %}
+                    <label>{{ inmueble.valor|force_escape|intcomma }}</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if error.id == inmueble.id %}
+                    <label>{{ error.error_lista_precios }}</label>
+                    <input type="text" name="lista_precios" id="id_text_lista_precios_{{ inmueble.id }}" value="{{ error.value_lista_precios }}" style="width: 100px;">
+                {% else %}
+                    <label>{{ inmueble.str_lista_precios }}</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if error.id == inmueble.id %}
+                    <a href="#" id="id_btn_asignar_precio" inmueble_id="{{ inmueble.id }}" tipo_inmueble="{% if actual_tipo_inmueble.id != None %}{{ actual_tipo_inmueble.id }}{% endif %}" seccion_proyecto="{% if actual_seccion_proyecto.id %}{{ actual_seccion_proyecto.id }}{% endif %}" criterio="{{ criterio }}">Guardar</a>
+                {% else %}
+                    <a href="#" id="id_btn_modificar_precio" inmueble_id="{{ inmueble.id }}" tipo_inmueble="{% if actual_tipo_inmueble.id != None %}{{ actual_tipo_inmueble.id }}{% endif %}" seccion_proyecto="{% if actual_seccion_proyecto.id %}{{ actual_seccion_proyecto.id }}{% endif %}" criterio="{{ criterio }}">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

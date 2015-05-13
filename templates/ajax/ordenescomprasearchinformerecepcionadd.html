@@ -1,0 +1,39 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Proveedor</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for orden_compra in ordenes_compra.modelo %}
+        <tr>
+            <td>
+                <label>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ orden_compra.fecha_creacion|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ orden_compra.proveedor.razon_social }}</label>
+            </td>
+            <td>
+                <label>{{ orden_compra.persona.first_name }} {{ orden_compra.persona.last_name }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/informerecepcionadd/{{ orden_compra.id }}/{{ proyecto.id }}/">Informe de recepci&oacute;n</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_compra.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_informe_recepcion_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_informe_recepcion_add('Dajax.process',{'pagina': {{ ordenes_compra.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ordenes_compra.page}} de {{ordenes_compra.pages}}
+{% if ordenes_compra.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_informe_recepcion_add('Dajax.process',{'pagina': {{ordenes_compra.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_informe_recepcion_add('Dajax.process',{'pagina': {{ordenes_compra.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

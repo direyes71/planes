@@ -1,0 +1,41 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for subcapitulo in subcapitulos.modelo %}
+        <tr>
+            <td>
+                {{ subcapitulo.codigo }}
+            </td>
+            <td>
+                {{ subcapitulo.nombre_capitulo }}
+            </td>
+            <td>
+                {% if subcapitulo.estado_capitulo == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_capituloapuproyecto' in user.get_all_permissions %}
+                    <a href="/inverboy/home/subcapitulosapuproyectochange/{{ proyecto.id }}/{{ capitulo.id }}/{{ subcapitulo.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if subcapitulos.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apu_proyecto('Dajax.process',{'pagina': 1, 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }}, 'capitulo_id': {{ capitulo.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apu_proyecto('Dajax.process',{'pagina': {{ subcapitulos.prev_page }}, 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }}, 'capitulo_id': {{ capitulo.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{subcapitulos.page}} de {{subcapitulos.pages}}
+{% if subcapitulos.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apu_proyecto('Dajax.process',{'pagina': {{ subcapitulos.next_page }}, 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }}, 'capitulo_id': {{ capitulo.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_subcapitulos_apu_proyecto('Dajax.process',{'pagina': {{ subcapitulos.pages }}, 'capitulo_id': '{{ capitulo.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }}, 'capitulo_id': {{ capitulo.id }} })"> >> </a>
+{% else %}
+{% endif %}

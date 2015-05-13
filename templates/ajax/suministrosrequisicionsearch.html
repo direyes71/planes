@@ -1,0 +1,70 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas. general</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad requerida</th>
+        <th>Cantidad comprada</th>
+        <th>Cantidad almacen</th>
+        <th>Unidad de medida</th>
+        <th>Observaciones</th>
+        <th>Capitulo</th>
+        <th>Subcapitulo</th>
+        <th>Apu proyecto</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                {{ suministro.suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro.cantidad_requerida|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ suministro.cantidad_comprada|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ suministro.cantidad_almacen|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro.observaciones }}
+            </td>
+            <td>
+                {% if suministro.suministro.apu_proyecto.capitulo.tipo_capitulo == 2 %}
+                    <label>{{ suministro.suministro.apu_proyecto.capitulo.capitulo_asociado.nombre_capitulo }}</label>
+                {% else %}
+                    <label>{{ suministro.suministro.apu_proyecto.capitulo.nombre_capitulo }}</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if suministro.suministro.apu_proyecto.capitulo.tipo_capitulo == 2 %}
+                    <label>{{ suministro.suministro.apu_proyecto.capitulo.nombre_capitulo }}</label>
+                {% endif %}
+            </td>
+            <td>
+                {{ suministro.suministro.apu_proyecto.nombre_apu }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisicion('Dajax.process',{'pagina': 1, 'requisicion_id': {{ requisicion.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisicion('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'requisicion_id': {{ requisicion.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros.page }} de {{ suministros.pages }}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisicion('Dajax.process',{'pagina': {{ suministros.next_page }}, 'requisicion_id': {{ requisicion.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_requisicion('Dajax.process',{'pagina': {{ suministros.pages }}, 'requisicion_id': {{ requisicion.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

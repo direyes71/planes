@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th>Suministro</th>
+        <td><label>{{ suministro.suministro.nombre }}</label></td>
+    </tr>
+    <tr>
+        <th>Fecha</th>
+        <td><label>{{ suministro.fecha_especifica }}</label></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>
+            No.
+        </th>
+        <th>
+            Cantidad
+        </th>
+        <th>
+            U. medida
+        </th>
+        <th>
+            Registro
+        </th>
+    </tr>
+    {% for registro in suministro.registros %}
+        <tr>
+            <td>
+                <label>{{ registro.consecutivo }}</label>
+            </td>
+            <td>
+                {% if registro.id == error.id %}
+                    <label>{{ error.error }}</label>
+                    <input type="text" id="id_text_cantidad_{{ registro.id }}" value="{{ error.value|force_escape }}">
+                    <img src="{{ static_prefix }}ima/vistobueno.jpg" id="id_modificar_registro" registro_id="{{ registro.id }}" alt="modificar" style="width:22px; height:22px;">
+                {% else %}
+                    <label>{{ registro.cantidad|force_escape|intcomma }}</label>
+                    <img src="{{ static_prefix }}ima/lapiz.png" id="id_activar_modificar_registro" registro_id="{{ registro.id }}" style="width:22px; height:22px;">
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ suministro.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ registro.usuario }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<div>
+    <td colspan="2"><input type="submit" value="Aceptar" id="id_btn_registrar_cantidad_suministro"></td>
+    <td colspan="2"><input type="submit" value="Cancelar" id="id_btn_cancelar_registrar_cantidad_suministro"></td>
+</div>

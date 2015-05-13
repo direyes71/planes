@@ -1,0 +1,158 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nueva requisici&oacute;n indirectos {% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function anadir_suministro_carrito(suministro_id, pagina, criterio, apu_id, proyecto_id) {
+            cantidad_requerir = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            observaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            document.getElementById('a_href_anadir_suministro_'+suministro_id).style.display='none';
+            document.getElementById('id_cargando_'+suministro_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_carrito_requisicion_indirectos_add('Dajax.process',{'suministro_id': suministro_id, 'cantidad_requerir': cantidad_requerir, 'observaciones': observaciones, 'pagina': pagina, 'criterio': criterio, 'apu_id': apu_id, 'proyecto_id': proyecto_id });
+        }
+        function numerosincomas(numero){
+            return numero.replace(',', '');
+        }
+        function activarModificarCantidadSuministro(suministro_id, apu_id, pagina, proyecto_id){
+            criterio = document.getElementById('id_criterio_suministro').value;
+            Dajaxice.aplicacion.inverboy.activar_modificar_suministro_carrito('Dajax.process',{ 'suministro_id': suministro_id, 'apu_id': apu_id, 'pagina': pagina, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function activarInput(suministro_id, pagina, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_carrito_requisicion_indirectos_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function modificarSuministro(suministro_id, pagina, proyecto_id){
+            var valorCantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            var valorObservaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_suministro_carrito_requisicion_indirectos_add('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad_requerir': valorCantidad, 'observaciones': valorObservaciones, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function del_suministro_carrito(suministro_id, pagina, proyecto_id) {
+            if(confirm('¿Realmente desea eliminar este item?'))
+                Dajaxice.aplicacion.inverboy.del_suministro_carrito_requisicion_indirectos_add('Dajax.process',{'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function tipoBusqueda(elemento) {
+            if (elemento.value == '1')
+                document.getElementById('id_busqueda_apus').style.display='block';
+            else if (elemento.value == '2')
+                document.getElementById('id_busqueda_apus').style.display='none';
+        }
+    </script>
+    {% load static %}
+    {% get_static_prefix as static_prefix %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block contenido %}
+    {% if apus_view %}
+        <form action="/inverboy/home/apusproyectosearchrequisicionindirectosadd/{{ proyecto.id }}/" method="POST">
+            <table>
+                <tr>
+                    <td>
+                        Criterio Busqueda
+                    </td>
+                    <td>
+                        <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                    </td>
+                    <td><input type="submit" value="Buscar"></td>
+                </tr>
+            </table>
+        </form>
+        <div id="id_reporte_apus">
+            {% include 'ajax/apusproyectosearchrequisicionindirectosadd.html' %}
+        </div>
+    {% endif %}
+    {% if apu_details %}
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Capitulo proyecto:</label></th>
+                <td>
+                    {% if apu.capitulo.tipo_capitulo == 2 %}
+                        {{ apu.capitulo.capitulo_asociado }}
+                    {% else %}
+                        {{ apu.capitulo }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo proyecto:</label></th>
+                <td>
+                    {% if apu.capitulo.tipo_capitulo == 2 %}
+                        {{ apu.capitulo }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ apu.nombre_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad medida:</label></th>
+                <td>
+                    {{ apu.unidad_medida_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad proyecto:</label></th>
+                <td>
+                    {{ apu.cantidad_proyecto|force_escape|intcomma }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad APU:</label></th>
+                <td>
+                    {{ apu.cantidad_apu|force_escape|intcomma }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad Total:</label></th>
+                <td>
+                    {{ apu.cantidad_total|force_escape|intcomma }}
+                </td>
+            </tr>
+        </table>
+        <form action="." method="POST">
+            <table>
+                <tr>
+                    <td>
+                        Criterio Busqueda
+                    </td>
+                    <td>
+                        <input name="criterio" id="id_criterio_suministro" value="{{ criterio }}">
+                    </td>
+                    <td><input type="submit" value="Buscar"></td>
+                </tr>
+            </table>
+        </form>
+        <div id="id_contenido_suministros_apu">
+            {% include 'ajax/contenidoapuproyectodetailsrequisicionindirectosadd.html' %}
+        </div>
+    {% endif %}
+    {% if nueva_requisicion_details %}
+        {{ error }}
+        <form action="." method="POST">
+            <div>
+                <table>
+                    <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                        <th><label>Fecha de arribo:</label></th>
+                        <td>
+                            <label id="id_label_error_fecha_arribo">{{ error_fecha }}</label>
+                            <input id="id_fecha_arribo" name="fecha_arribo" value="{{ fecha_arribo|force_escape }}"/>
+                            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                            <script type="text/javascript">
+                                Calendar.setup({inputField:"id_fecha_arribo",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                            </script>
+                        </td>
+                        <th><label>Fecha requisici&oacute;n:</label></th>
+                        <td><input readonly="readonly" value="{{ fecha_actual }}"></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="id_contenido">
+                {% include 'ajax/nuevarequisicionindirectosdetails.html' %}
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

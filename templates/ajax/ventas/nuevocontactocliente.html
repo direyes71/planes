@@ -1,0 +1,22 @@
+<form action="#" id="id_form_contacto">
+    {% csrf_token %}
+    <table>
+        {{ form2.as_table }}
+        <tr>
+            <td align="center">
+                {% if change == 0 %}
+                    <input type="submit" value="Aceptar" onclick="this.disabled=true; preguntar();"/>
+                {% endif %}
+                {% if change == 1 %}
+                    <input type="submit" value="Aceptar" onclick="this.disabled=true; modificarContacto();"/>
+                {% endif %}
+            </td>
+            <td align="center">
+                <input type="button" value="Cancelar" onclick="cerrarVentanaContacto();">
+            </td>
+        </tr>
+    </table>
+    {% if change == 1 %}
+        <input type="hidden" value="{{ indice }}" name="indice_contacto">
+    {% endif %}
+</form>

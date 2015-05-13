@@ -1,0 +1,84 @@
+{% extends "html/base_home.html"%}
+
+{% load adminmedia admin_list i18n %}
+
+{% block script %}
+{% endblock %}
+
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles cliente{% endblock %}
+
+{% block contenido %}
+    <table>
+        <tr>
+            <th>Tipo identificaci&oacute;n:</th>
+            <td><label>{{ cliente.str_tipo_identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Identificaci&oacute;n:</th>
+            <td><label>{{ cliente.identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Nombres:</th>
+            <td><label>{{ cliente.nombre_1 }} {{ cliente.nombre_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Apellidos:</th>
+            <td><label>{{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Municipio documento:</th>
+            <td><label>{{ cliente.municipio_documento.departamento }}, {{ cliente.municipio_documento }}</label></td>
+        </tr>
+        <tr>
+            <th>Estado civil:</th>
+            <td><label>{{ cliente.str_estado_civil }}</label></td>
+        </tr>
+        <tr>
+            <th>Municipio residencia:</th>
+            <td><label>{{ cliente.municipio_residencia.departamento }}, {{ cliente.municipio_residencia }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono 1:</th>
+            <td><label>{{ cliente.telefono_1 }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono 2:</th>
+            <td><label>{{ cliente.telefono_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Correo:</th>
+            <td><label>{{ cliente.email }}</label></td>
+        </tr>
+        <tr>
+            <th>Empresa:</th>
+            <td><label>{{ cliente.empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono empresa:</th>
+            <td><label>{{ cliente.telefono_empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Direcci&oacute;n empresa:</th>
+            <td><label>{{ cliente.direccion_empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Observaciones:</th>
+            <td><label>{{ cliente.observaciones }}</label></td>
+        </tr>
+        <tr>
+            <th>Estado:</th>
+            <td><label>{% if cliente.estado %}Activo{% else %}Inactivo{% endif %}</label></td>
+        </tr>
+    </table>
+    {% if 'inverboy.change_cliente' in user.get_all_permissions %}
+        <a href="/inverboy/home/modificarcliente/{{ cliente.id }}/{{ proyecto.id }}/">Modificar</a>
+    {% endif %}
+    {% if 'inverboy.add_contratoventa' in user.get_all_permissions %}
+        {% if cliente.prospecto_venta_proyecto == None and cliente.estado == 1 %}
+            <a href="/inverboy/home/nuevoprospectoventa/{{ cliente.id }}/{{ proyecto.id }}/">Crear pospecto de venta</a>
+        {% endif %}
+        {% if cliente.prospecto_venta_proyecto != None and cliente.estado == 1 %}
+            <a href="/inverboy/home/detallesprospectoventa/{{ cliente.id }}/{{ proyecto.id }}/">Ver pospecto de venta</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}

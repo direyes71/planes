@@ -1,0 +1,89 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+{% block script %}
+
+    <link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+
+    <script type="text/javascript" charset="utf-8">
+        // Ventana emergente cliente
+        function detalles_cliente(cliente_id, indice) {
+            Dajaxice.aplicacion.inverboy.informacion_cliente('Dajax.process',{'cliente_id': cliente_id, 'indice': indice });
+        }
+
+        function cerrarVentanaCliente(){
+            document.getElementById('flotanteClientes').style.display='none';
+        }
+        // Ventana emergente cliente
+    </script>
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Asignaci&oacute;n individual de precios (Inmuebles){% endblock %}
+{% block contenido %}
+    <div id='flotanteClientes' class="border">
+        {% include 'ajax/ventas/informacioncliente.html' %}
+    </div>
+    <form action="." method="POST">
+        <div id="id_reporte_inmuebles">
+            {% include 'ajax/ventas/busquedainmuebleasignacionindividualprecios.html' %}
+        </div>
+    </form>
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#id_reporte_inmuebles').on("click", "#id_btn_modificar_precio", function(e) {
+                e.preventDefault();
+                var inmueble_id = $(this).attr("inmueble_id");
+                var tipo_inmueble = $(this).attr("tipo_inmueble");
+                var seccion_proyecto = $(this).attr("seccion_proyecto");
+                var criterio = $(this).attr("criterio");
+                Dajaxice.aplicacion.inverboy.activar_input_precio_asignacion_individual_precios('Dajax.process',{'inmueble_id': inmueble_id, 'tipo_inmueble_id': tipo_inmueble, 'seccion_proyecto_id': seccion_proyecto, 'criterio': criterio, 'proyecto_id': {{ proyecto.id }} });
+            });
+            $('#id_reporte_inmuebles').on("click", "#id_btn_asignar_precio", function(e) {
+                e.preventDefault();
+                var inmueble_id = $(this).attr("inmueble_id");
+                var precio = $("#id_text_precio_" + inmueble_id).val();
+                var lista_precios = $("#id_text_lista_precios_" + inmueble_id).val();
+                var tipo_inmueble = $(this).attr("tipo_inmueble");
+                var seccion_proyecto = $(this).attr("seccion_proyecto");
+                var criterio = $(this).attr("criterio");
+                Dajaxice.aplicacion.inverboy.asignar_precio_asignacion_individual_precios('Dajax.process',{'inmueble_id': inmueble_id, 'precio': precio, 'lista_precios': lista_precios, 'tipo_inmueble_id': tipo_inmueble, 'seccion_proyecto_id': seccion_proyecto, 'criterio': criterio, 'proyecto_id': {{ proyecto.id }} });
+            });
+        });
+    </script>
+
+{% endblock %}

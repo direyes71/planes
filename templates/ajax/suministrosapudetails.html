@@ -1,0 +1,50 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table id="id_tabla_suministros" class="tablaReportes" align="center">
+    <tbody id=id_cuerpo_tabla>
+        <tr>
+            <th>Clasificacion general</th>
+            <th>Nombre</th>
+            <th>Sinonimos</th>
+            <th>Unidad de embalaje</th>
+            <th>Unidad de medida</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Valor parcial</th>
+        </tr>
+        {% for suministro_apu in suministros_apu.modelo %}
+            <tr>
+                <td>{{ suministro_apu.suministro.clasificacion_general }}</td>
+                <td>{{ suministro_apu.suministro.nombre }}</td>
+                <td>{{ suministro_apu.suministro.sinonimos }}</td>
+                <td>
+                    {% if suministro_apu.suministro.unidad_embalaje != -1.0 %}
+                        {{ suministro_apu.suministro.unidad_embalaje|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>{{ suministro_apu.suministro.unidad_medida }}</td>
+                <td>
+                    {{ suministro_apu.precio_suministro|force_escape|intcomma }}
+                </td>
+                <td>
+                    {{ suministro_apu.cantidad_suministro|force_escape|intcomma }}
+                </td>
+                <td>
+                    {{ suministro_apu.valor_parcial|force_escape|intcomma }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if suministros_apu.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_details('Dajax.process',{'apu_id': {{ apu.id }}, 'pagina': 1 })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_details('Dajax.process',{'apu_id': {{ apu.id }}, 'pagina': {{ suministros_apu.prev_page }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_apu.page }} de {{ suministros_apu.pages }}
+{% if suministros_apu.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_details('Dajax.process',{'apu_id': {{ apu.id }}, 'pagina': {{ suministros_apu.next_page }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_apu_details('Dajax.process',{'apu_id': {{ apu.id }}, 'pagina': {{ suministros_apu.pages }} })"> >> </a>
+{% else %}
+{% endif %}

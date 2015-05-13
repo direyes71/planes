@@ -1,0 +1,104 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<div>
+    Suministro
+    <table>
+        <tr>
+            <th>Nombre: </th>
+            <td>{{ suministro_comprar.suministro.suministro.nombre }}</td>
+        </tr>
+        <tr>
+            <th>Unidad de embalaje</th>
+            <td>{{ suministro_comprar.suministro.suministro.unidad_embalaje|force_escape|intcomma }}</td>
+        </tr>
+        <tr>
+            <th>Unidad de medida</th>
+            <td>{{ suministro_comprar.suministro.suministro.unidad_medida }}</td>
+        </tr>
+        <tr>
+            <th>Cantidad requerida</th>
+            <td>{{ suministro_comprar.cantidad_requerida|force_escape|intcomma }}</td>
+        </tr>
+        <tr>
+            <th>Observaciones</th>
+            <td>{{ suministro_comprar.observaciones }}</td>
+        </tr>
+        <tr>
+            <th>Fecha:</th>
+            <td>
+                <input type="text" id="id_fecha_actual" name="fecha_arribo" value="{{ fecha_actual }}" readonly="readonly"/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<form action="javascript:buscarProveedores({{ suministro_comprar.suministro.suministro.id }}, {{ proyecto.id }});">
+    <table>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio_busqueda_proveedor" id="id_criterio_busqueda_proveedor" value="{{ criterio_proveedor }}"></td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table id="id_tabla_proveedores_busqueda">
+    <tr>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Razon social</th>
+        <th scope="col">Nombre comercial</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Tipo de proveedor</th>
+        <th scope="col">Telefono 1</th>
+        <th scope="col">Cantidad esta cotizaci&oacute;n</th>
+        {# Valida que el suministro no sea de una orden de servicio (Para que se digiten las observaciones) #}
+        {% if suministro_comprar.suministro.suministro.clasificacion_general == 'Material' %}
+            <th scope="col">Observaciones</th>
+        {% endif %}
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for suministro_proveedor in suministro_proveedores.modelo %}
+        <tr>
+            <td><input type="checkbox" name="option" id="id_option_{{ suministro_proveedor.proveedor.id }}" value="{{ suministro_proveedor.proveedor.id }}" onchange="javascript:seleccionar(this, {{ suministro_comprar.suministro.suministro.id }}, {{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }}, '{{ criterio_proveedor }}', {{ proyecto.id }});" {% if error.id == suministro_proveedor.proveedor.id %}checked="checked"{% endif %}>{{ forloop.counter }}</td>
+            <td><label id="id_label_identificacion_{{ forloop.counter }}" title="{{ suministro_proveedor.proveedor.identificacion }}">{{ suministro_proveedor.proveedor.identificacion }}</label></td>
+            <td><label id="id_label_razon_social_{{ forloop.counter }}" title="{{ suministro_proveedor.proveedor.razon_social }}">{{ suministro_proveedor.proveedor.razon_social }}</label></td>
+            <td><label id="id_label_nombre_comercial_{{ forloop.counter }}" title="{{ suministro_proveedor.proveedor.nombre_comercial }}">{{ suministro_proveedor.proveedor.nombre_comercial }}</label></td>
+            <td><label id="id_label_direccion_{{ forloop.counter }}" title="{{ suministro_proveedor.proveedor.direccion }}">{{ suministro_proveedor.proveedor.direccion }}</label></td>
+            <td><label id="id_label_tipo_{{ forloop.counter }}" {% if suministro_proveedor.proveedor.tipo == 1 %} title="Persona Natural" {% else %} title="Juridica" {% endif %}>{% if suministro_proveedor.proveedor.tipo == 1 %} Persona Natural {% else %} Juridica {% endif %}</label></td>
+            <td><label id="id_label_telefono_1_{{ forloop.counter }}" title="{{ suministro_proveedor.proveedor.telefono_1 }}">{{ suministro_proveedor.proveedor.telefono_1 }}</label></td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro_proveedor.proveedor.id }}">{% if error.id == suministro_proveedor.proveedor.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" name="text_cantidad" id="id_text_cantidad_{{ suministro_proveedor.proveedor.id }}" {% if error.id == suministro_proveedor.proveedor.id %}value="{{ error.value|force_escape }}" {% endif %}{% if error.id != suministro_proveedor.proveedor.id %}disabled="disabled"{% endif %}>
+            </td>
+            <td>
+                {# Valida que el suministro no sea de una orden de servicio (Para que se digiten las observaciones) #}
+                {% if suministro_comprar.suministro.suministro.clasificacion_general == 'Material' %}
+                    {% if error.id == suministro_proveedor.proveedor.id %}
+                        <textarea name="text_observaciones" id="id_text_observaciones_{{ suministro_proveedor.proveedor.id }}">{% if error.id == suministro_proveedor.proveedor.id %}{{ error.value_observaciones }}{% else %}{{ suministro_comprar.observaciones }}{% endif %}</textarea>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>
+                {% if error.id == suministro_proveedor.proveedor.id %}
+                    <a href="javascript:cotizarSuministro({{ suministro_proveedor.suministro.id }}, {{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }}, '{{ criterio_proveedor }}', {{ proyecto.id }});" id="ahref_cotizar_suministro_proveedor_{{ suministro_proveedor.proveedor.id }}">Cotizar</a>
+                {% endif %}
+                <img id="id_cargando_{{ suministro_proveedor.proveedor.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministro_proveedores.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_cotizacion_add('Dajax.process',{'pagina': 1, 'suministro_id': {{ suministro_comprar.suministro.suministro.id }}, 'criterio': '{{ criterio_proveedor }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_cotizacion_add('Dajax.process',{'pagina': {{ suministro_proveedores.prev_page }}, 'suministro_id': '{{ suministro_comprar.suministro.suministro.id }}', 'criterio': '{{ criterio_proveedor }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministro_proveedores.page }} de {{ suministro_proveedores.pages }}
+{% if suministro_proveedores.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_cotizacion_add('Dajax.process',{'pagina': {{ suministro_proveedores.next_page }}, 'suministro_id': {{ suministro_comprar.suministro.suministro.id }}, 'criterio': '{{ criterio_proveedor }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_cotizacion_add('Dajax.process',{'pagina': {{ suministro_proveedores.pages }}, 'suministro_id': {{ suministro_comprar.suministro.suministro.id }}, 'criterio': '{{ criterio_proveedor }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<input type="submit" value="Cancelar" onclick="limpiarBusquedaProveedores(); ">

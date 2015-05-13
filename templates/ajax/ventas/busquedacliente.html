@@ -1,0 +1,84 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Tipo Id.</th>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Primer Nombre</th>
+        <th scope="col">Segundo Nombre</th>
+        <th scope="col">Apellidos</th>
+        <th scope="col">Estado civil</th>
+        <th scope="col">M. residencia</th>
+        <th scope="col">Telefono 1</th>
+        <th scope="col">email</th>
+        <th scope="col">Estado</th>
+        <th scope="col" colspan="2">Opciones</th>
+    </tr>
+    {% for cliente in clientes.modelo %}
+        <tr id="id_fila_cliente_{{ forloop.counter0 }}">
+            <td>
+                <label>{{ cliente.str_abreviatura_tipo_identificacion }}</label>
+            </td>
+            <td>
+                <a href="javascript:void(0)" onclick ="detalles_cliente({{ cliente.id }}, {{ forloop.counter0}});">{{ cliente.identificacion }}</a>
+            </td>
+            <td>
+                <label>{{ cliente.nombre_1 }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.nombre_2 }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.apellido_1 }}, {{ cliente.apellido_2 }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.str_estado_civil }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.municipio_residencia.departamento }}, {{ cliente.municipio_residencia }}, {{ cliente.direccion_residencia }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.telefono_1 }}</label>
+            </td>
+            <td>
+                <label>{{ cliente.email }}</label>
+            </td>
+            <td>
+                {% if cliente.estado == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_cliente' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificarcliente/{{ cliente.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/inverboy/home/detallescliente/{{ cliente.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if clientes.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_clientes('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_clientes('Dajax.process',{'pagina': {{ clientes.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ clientes.page }} de {{ clientes.pages }}
+{% if clientes.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_clientes('Dajax.process',{'pagina': {{ clientes.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_clientes('Dajax.process',{'pagina': {{ clientes.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

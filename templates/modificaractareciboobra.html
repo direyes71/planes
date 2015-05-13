@@ -1,0 +1,115 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Ordenes servicio proveedor {{ proveedor.razon_social }}, Nueva acta de recibo de obra
+{% endblock %}
+{% block script %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+{% endblock script %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/detallescantidadsuministroactareciboobraadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    <table>
+        <tr>
+            <th>Orden de servicio No.</th>
+            <td>OS{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.orden_servicio.consecutivo }}</td>
+        </tr>
+        <tr>
+            <th>Proveedor</th>
+            <td>{{ acta_recibo_obra.orden_servicio.proveedor.identificacion }} - {{ acta_recibo_obra.orden_servicio.proveedor.razon_social }}</td>
+        </tr>
+        {% if acta_recibo_obra.orden_servicio.tercero %}
+            <tr>
+                <th>Tercero</th>
+                <td>{{ acta_recibo_obra.orden_servicio.tercero.identificacion }} - {{ acta_recibo_obra.orden_servicio.tercero.razon_social }}</td>
+            </tr>
+        {% endif %}
+    </table>
+    <form action="." method="POST">
+        <div id="id_reporte_suministros">
+            {% include 'ajax/itemsactareciboobramodificar.html' %}
+        </div>
+    </form>
+    <form action="." method="POST">
+        <input type="submit" value="Guardar cambios" onclick="this.disabled=true;">
+    </form>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script type="text/javascript">
+        $("#id_reporte_suministros").on("click", "#id_detalles_suministro", function(e){
+            e.preventDefault();
+            Dajaxice.aplicacion.inverboy.detalles_cantidad_suministro_modificar_acta_recibo_obra('Dajax.process',{'suministro_id': $(this).attr("suministro_id"), 'fecha_especifica': $(this).attr("fecha_especifica"), 'acta_recibo_obra_id': {{ acta_recibo_obra.id }}, 'proyecto_id': {{ proyecto.id }}});
+        })
+
+        $("#light").on("click", "#id_activar_modificar_registro", function(e){
+            e.preventDefault();
+            Dajaxice.aplicacion.inverboy.activar_input_modificar_cantidad_suministro_modificar_acta_recibo_obra('Dajax.process',{'registro_id': $(this).attr("registro_id"), 'acta_recibo_obra_id': {{ acta_recibo_obra.id }}, 'proyecto_id': {{ proyecto.id }}});
+        })
+
+        $("#light").on("click", "#id_modificar_registro", function(e){
+            e.preventDefault();
+            Dajaxice.aplicacion.inverboy.modificar_cantidad_suministro_modificar_acta_recibo_obra('Dajax.process',{'registro_id': $(this).attr("registro_id"), 'cantidad': $("#id_text_cantidad_" + $(this).attr("registro_id")).val(), 'acta_recibo_obra_id': {{ acta_recibo_obra.id }}, 'proyecto_id': {{ proyecto.id }}});
+        })
+
+        $("#light").on("click", "#id_btn_registrar_cantidad_suministro", function(e){
+            e.preventDefault();
+            Dajaxice.aplicacion.inverboy.registrar_cantidad_suministro_modificar_acta_recibo_obra('Dajax.process',{'acta_recibo_obra_id': {{ acta_recibo_obra.id }}, 'proyecto_id': {{ proyecto.id }}});
+        })
+
+        $("#light").on("click", "#id_btn_cancelar_registrar_cantidad_suministro", function(e){
+            e.preventDefault();
+            Dajaxice.aplicacion.inverboy.cancelar_registrar_cantidad_suministro_modificar_acta_recibo_obra('Dajax.process',{'acta_recibo_obra_id': {{ acta_recibo_obra.id }}, 'proyecto_id': {{ proyecto.id }}});
+        })
+    </script>
+
+{% endblock %}

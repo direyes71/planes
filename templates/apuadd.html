@@ -1,0 +1,202 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        {% if error != '' %}
+            /* alert('{{ error }}'); */
+        {% endif %}
+        function buscarSuministros(){
+            var clasificacion_general_suministro = document.getElementById('id_clasificacion_general_suministro').value;
+            var criterio = document.getElementById('id_criterio_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros_apu_add('Dajax.process',{'pagina': 1, 'clasificacion_general': clasificacion_general_suministro, 'criterio': criterio });
+        }
+
+        function agregarSuministro(suministro_id, pagina, clasificacion_general, criterio){
+            var cantidad = document.getElementById('id_cantidad_'+suministro_id).value;
+            document.getElementById('ahref_agregar_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.agregar_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad': cantidad, 'clasificacion_general': clasificacion_general, 'criterio':criterio, 'pagina': pagina });
+        }
+
+        function agregarSuministros(){
+            Dajaxice.aplicacion.inverboy.agregar_suministros_apu_add('Dajax.process');
+        }
+
+        // FUNCION PARA ELMIMINAR UN SUMINISTRO DE LA LISTA
+         function borrarFila(suministro_id, pagina)	{
+             if(confirm("¿Realmente desea eliminar este item?")) {
+                 Dajaxice.aplicacion.inverboy.eliminar_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina });
+             }
+        }
+
+        function activarInput(suministro_id, pagina){
+            Dajaxice.aplicacion.inverboy.activar_input_precio_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina });
+        }
+
+        function modificarPrecio(suministro_id, pagina){
+            var valorcampo = document.getElementById('id_text_precio_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'precio': valorcampo, 'pagina': pagina });
+        }
+
+        function activarInputCantidad(suministro_id, pagina){
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina });
+        }
+
+        function modificarCantidad(suministro_id, pagina){
+            var valorcampo = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_cantidad_suministro_apu_add('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad': valorcampo, 'pagina': pagina });
+        }
+
+        // Funcion para dar color
+        function darColorBorde(obj, color) {
+            document.getElementById(obj).style.borderColor = color;
+        }
+
+
+        // Funcion para eliminar espacios en blanco
+        function trim (myString) {
+            return myString.replace(/^\s+/g,'').replace(/\s+$/g,'');
+        }
+
+        function valorsincomas(numero){
+               var numconvertido =numero.replace(/[,]/g, '');
+               return numconvertido;
+
+        }
+
+        function valorconmiles(numero){
+            var n= numero % 1;
+            if(n == 0){
+               var preciomilestemp = numero.split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,'$1,');
+               var preciomiles = preciomilestemp.split("").reverse().join("").replace(/^([,])/, "");
+            }
+            else{
+               var numero1= parseFloat(numero).toFixed(2);
+               var preciomilestemp = numero1.split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,'$1,');
+               var preciomiles1 = preciomilestemp.split("").reverse().join("").replace(/^[\.]/, "");
+               var preciomiles = preciomiles1.replace(/^([,])/, "");
+            }
+               return preciomiles;
+        }
+
+
+        //Función para limipiar la ventana de busqueda de suministros
+        function limpiarBusquedaSuministros() {
+            Dajaxice.aplicacion.inverboy.cancelar_agregar_suministros_apu_add('Dajax.process');
+        }
+
+        // Funcion al seleccionar un check de suministro
+        function seleccionar(check, suministro_id, pagina, clasificacion_general_suministro, criterio){
+            Dajaxice.aplicacion.inverboy.seleccionar_suministro_lista_suministros_apu_add('Dajax.process',{ 'parametro': check.checked, 'suministro_id': suministro_id, 'pagina': pagina, 'clasificacion_general': clasificacion_general_suministro, 'criterio': criterio });
+        }
+    
+    </script>
+
+    <style type="text/css">
+
+        /* base semi-transparente */
+            .overlay{
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index:1001;
+                opacity:.75;
+                -moz-opacity: 0.75;
+                filter: alpha(opacity=75);
+            }
+
+        /* estilo para lo q este dentro de la ventana modal */
+            .modal {
+                display: none;
+                position: absolute;
+                width: 880px;
+                height: 600px;
+                left: 50%;
+                top: 50%;
+                margin-left: -440px;  /*Tamaño del DIV entre 2*/
+                margin-top: -300px;  /*Tamaño del DIV entre 2*/
+                padding: 16px;
+                background: #fff;
+                color: #333;
+                z-index:1002;
+                overflow: auto;
+            }
+
+    </style>
+
+{% endblock %}
+{% block titulo %}{% if change %}Modificar APU{% else %}Nuevo APU{% endif %}{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/busquedasuministrosapuadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+
+
+    <form id="form1" name="form1" method="post" action=".">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Capitulo:</label></th>
+                <td>
+                    {{ form.capitulo.errors }}
+                    <select name="capitulo" id="id_capitulo" onchange="Dajaxice.aplicacion.inverboy.cargar_subcapitulos('Dajax.process',{'option':this.value, 'html': 'apuadd.html'});">
+                    {% for capitulo in capitulos %}
+                        <option value="{{ capitulo.id }}" {% if capitulo == capitulo_actual %} selected="selected" {% endif %}> {{ capitulo.nombre_capitulo }}</option>   <!-- se le da el valor al combo del id del capitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo:</label></th>
+                <td>
+                    {{ form.subcapitulo.errors }}
+                    <select name="subcapitulo" id="id_subcapitulo">
+                    {% for subcapitulo in subcapitulos %}
+                        <option value="{{ subcapitulo.id }}" {% if subcapitulo == subcapitulo_actual %} selected="selected" {% endif %}>{{ subcapitulo.nombre_capitulo }} </option>   <!-- se le da el valor al combo del id del subcapitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad medida:</label></th>
+                <td>
+                    {{ form.unidad_medida.errors }} {{ form.unidad_medida }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <p align="center">Suministros</p>
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministrosapuadd.html' %}
+        </div>
+        <p align="center"><a href="javascript:void(0)" onclick="buscarSuministros();">Agregar suministro</a></p>
+        <br>
+        <p align ="center"><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+    </form>
+{% endblock %}

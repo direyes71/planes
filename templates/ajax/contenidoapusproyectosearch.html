@@ -1,0 +1,37 @@
+<!-- <form action="/inverboy/home/apusproyectosearch/{# { proyecto.id } #}/" method="POST"> -->
+<table>
+    <tr>
+        <td>Capitulo:</td>
+        <td>
+            <select name="capitulo" id="id_capitulo" onchange="Dajaxice.aplicacion.inverboy.cargar_subcapitulos_apus_proyectos('Dajax.process',{'option':this.value, 'elemento': 'id_subcapitulo'});">
+                <option value="0">----</option>
+                {% for capitulo in capitulos %}
+                    <option value="{{ capitulo.id }}" {% if capitulo == capitulo_actual %} selected="selected" {% endif %}> {{ capitulo.nombre_capitulo }}</option>   <!-- se le da el valor al combo del id del capitulo -->
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Subcapitulo:</td>
+        <td>
+            {{ form.subcapitulo.errors }}
+            <select name="subcapitulo" id="id_subcapitulo">
+            {% for subcapitulo in subcapitulos %}
+                <option value="{{ subcapitulo.id }}" {% if subcapitulo == subcapitulo_actual %} selected="selected" {% endif %}>{{ subcapitulo.nombre_capitulo }} </option>   <!-- se le da el valor al combo del id del subcapitulo -->
+            {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar" onclick="buscar_apu_proyecto({{ proyecto.id }});"></td>
+    </tr>
+</table>
+<div id="id_reporte_apus">
+    {% include 'ajax/apusproyectosearchrequisicion.html' %}
+</div>

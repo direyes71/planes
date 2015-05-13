@@ -1,0 +1,18 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+{% endblock %}
+{% block titulo %}Reporte buz&oacute;n de sugerencias{% endblock %}
+{% block contenido %}
+    <div>
+        <form action="." method="POST">
+            Busqueda
+            <input type="radio" name="tipo_busqueda" value="1" {% if tipo_busqueda == 1 %}checked="checked"{% endif %}>En estudio
+            <input type="radio" name="tipo_busqueda" value="2" {% if tipo_busqueda == 2 %}checked="checked"{% endif %}>Aprobado
+            <input type="radio" name="tipo_busqueda" value="3" {% if tipo_busqueda == 3 %}checked="checked"{% endif %}>No opera
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+    <div id="id_reporte_sugerencias">
+        {% include 'ajax/sugerenciassearch.html' %}
+    </div>
+{% endblock %}

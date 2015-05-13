@@ -1,0 +1,16 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Ordenes de servicio proyecto {% endblock %}
+{% block script %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/ordenesservicioproyectosearch/{{ proyecto.id }}/" method="POST">
+        <div id="id_reporte_ordenes_servicio">
+            {% include 'ajax/ordenesserviciosearch.html' %}
+        </div>
+    </form>
+{% endblock %}

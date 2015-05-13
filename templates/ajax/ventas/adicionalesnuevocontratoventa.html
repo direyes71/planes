@@ -1,0 +1,22 @@
+{% load humanize %}
+<p align="center">Adicionales</p>
+<table id="tablaReportes" border="1" align="center">
+    <tbody id=cuerpoTabla >
+        <tr>
+            <th>Tipo Adicional</th>
+            <th>Nombre</th>
+            <th>Descripci&oacute;n</th>
+            <th>Valor</th>
+            <th>Opciones</th>
+        </tr>
+        {% for adicional in adicionales_agrupacion_inmueble_contrato %}
+            <tr>
+                <td><label>{% if adicional.tipo_adicional %}{{ adicional.tipo_adicional }}{% endif %}</label></td>
+                <td><label>{{ adicional.nombre }}</label></td>
+                <td><label>{{ adicional.descripcion }} {{ cliente.nombre_2 }} {{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+                <td><label>{{ adicional.valor|escape|intcomma }}</label></td>
+                <td><a href = "#" id="id_btn_eliminar_adicional" adicional_id="{{ adicional.id }}" indice="{{ forloop.counter0 }}">Borrar</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

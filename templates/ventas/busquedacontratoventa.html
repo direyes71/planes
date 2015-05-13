@@ -1,0 +1,11 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Ventas del proyecto{% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div id="id_reporte_ventas">
+            {% include 'ajax/ventas/busquedacontratoventa.html' %}
+        </div>
+    </form>
+{% endblock %}

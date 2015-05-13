@@ -1,0 +1,80 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Modificar requisici&oacute;n {% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function buscar_apu_proyecto(proyecto_id) {
+            capitulo_id = document.getElementById('id_capitulo').value;
+            subcapitulo_id = document.getElementById('id_subcapitulo').value;
+            criterio = document.getElementById('id_criterio').value;
+            tipo_busqueda = document.getElementById('id_busqueda_apu').value;
+            tipo_busqueda = document.getElementById('id_busqueda_suministro').value;
+            Dajaxice.aplicacion.inverboy.buscar_apus_proyecto('Dajax.process',{'capitulo_id': capitulo_id, 'subcapitulo_id': subcapitulo_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function anadir_suministro_carrito(suministro_id, pagina, criterio, apu_id, proyecto_id) {
+            cantidad_requerir = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            observaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            document.getElementById('a_href_anadir_suministro_'+suministro_id).style.display='none';
+            document.getElementById('id_cargando_'+suministro_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_carrito('Dajax.process',{'suministro_id': suministro_id, 'cantidad_requerir': cantidad_requerir, 'observaciones': observaciones, 'pagina': pagina, 'criterio': criterio, 'apu_id': apu_id, 'proyecto_id': proyecto_id });
+        }
+        function numerosincomas(numero){
+            return numero.replace(',', '');
+        }
+        function activarModificarCantidadSuministro(suministro_id, apu_id, pagina, proyecto_id){
+            criterio = document.getElementById('id_criterio_suministro').value;
+            Dajaxice.aplicacion.inverboy.activar_modificar_suministro_carrito('Dajax.process',{ 'suministro_id': suministro_id, 'apu_id': apu_id, 'pagina': pagina, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function activarInput(suministro_id, pagina, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_carrito('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function modificarSuministro(suministro_id, pagina, proyecto_id){
+            var valorCantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            var valorObservaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_suministro_carrito('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad_requerir': valorCantidad, 'observaciones': valorObservaciones, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function del_suministro_carrito(suministro_id, pagina, proyecto_id) {
+            if(confirm('¿Realmente desea eliminar este item?'))
+                Dajaxice.aplicacion.inverboy.del_suministro_carrito('Dajax.process',{'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+        function tipoBusqueda(elemento) {
+            if (elemento.value == '1')
+                document.getElementById('id_busqueda_apus').style.display='block';
+            else if (elemento.value == '2')
+                document.getElementById('id_busqueda_apus').style.display='none';
+        }
+    </script>
+    {% load static %}
+    {% get_static_prefix as static_prefix %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div>
+                <table>
+                    <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                        <th><label>Fecha de arribo:</label></th>
+                        <td>
+                            <label id="id_label_error_fecha_arribo">{{ error_fecha }}</label>
+                            <input id="id_fecha_arribo" name="fecha_arribo" value="{{ requisicion.fecha_arribo|date:'Y-m-d' }}"/>
+                            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                            <script type="text/javascript">
+                                Calendar.setup({inputField:"id_fecha_arribo",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                            </script>
+                        </td>
+                        <th><label>Fecha requisici&oacute;n:</label></th>
+                        <td><input readonly="readonly" value="{{ requisicion.fecha_creacion|date:'Y-m-d' }}"></td>
+                    </tr>
+                </table>
+        </div>
+        <div id="id_contenido">
+            {% include 'ajax/nuevarequisiciondetails.html' %}
+        </div>
+        <br>
+        <input type="submit" id="id_guardar" onclick="this.disabled=true;" value="Guardar Requisicion">
+    </form>
+{% endblock %}
+

@@ -1,0 +1,38 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_pago_efectivo" registro="{% if change == 1 %}modificar{% else %}crear{% endif %}">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Fecha de desembolso:</th>
+            <td>
+                {{ form.fecha_desembolso.errors }}
+                {{ form.fecha_desembolso }}
+                <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha desembolso" id="lanzador_fecha_desembolso">
+            </td>
+        </tr>
+        <tr>
+            <th>Valor:</th>
+            <td>
+                {{ form.valor.errors }}
+                {{ form.valor }}
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                {% if change == 0 %}
+                    <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+                {% endif %}
+                {% if change == 1 %}
+                    <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+                {% endif %}
+            </td>
+            <td align="center">
+                <input type="button" id="id_btn_cancelar_agregar" value="Cancelar">
+            </td>
+        </tr>
+    </table>
+    {% if change == 1 %}
+        <input type="hidden" value="{{ indice }}" name="indice">
+    {% endif %}
+</form>

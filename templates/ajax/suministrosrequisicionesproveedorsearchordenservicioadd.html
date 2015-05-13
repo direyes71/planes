@@ -1,0 +1,76 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="javascript:buscarSuministros( {{ proveedor.id }}, {{ proyecto.id }} )">
+    <table>
+        <tr>
+            <td>
+                Criterio <input type="text" id="id_text_busqueda" name="text_busqueda" value="{{ criterio }}"> <input type="submit" value="Buscar">
+            </td>
+        </tr>
+    </table>
+</form>
+<table id="id_tabla_suministros_busqueda" align="center" border="1">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad requerida</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Cantidad cotizar</th>
+        <th>Opciones</th>
+    </tr>
+    {% for suministro_requisiciones in suministros_requisiciones.modelo %}
+        <tr>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.cantidad_requerida|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro_requisiciones.suministro.suministro.suministro.unidad_embalaje|force_escape|intcomma }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">{% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" id="id_text_cantidad_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id %} value="{{ error.value|force_escape }}"{% else %}{% if suministro_requisiciones.cantidad_nueva_cotizacion != '' %} value="{{ suministro_requisiciones.cantidad_nueva_cotizacion|intcomma|force_escape }}" disabled="disabled"{% endif %}{% endif %}/>
+            </td>
+            <td>
+                {% if error.id == suministro_requisiciones.suministro.suministro.suministro.id or suministro_requisiciones.cantidad_nueva_cotizacion == '' %}
+                    <a href="javascript:void(0)" onclick="anadirSuministroCotizacion( {{ suministros_requisiciones.page }}, {{ suministro_requisiciones.suministro.suministro.suministro.id }}, {{ proveedor.id }}, '{{ criterio }}', {{ proyecto.id }} );" id="ahref_agregar_suministro_{{ suministro_requisiciones.suministro.suministro.suministro.id }}">Cotizar</a>
+                {% else %}
+                    <img id="id_ima_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInputCantidad({{ suministros_requisiciones.page }}, {{ suministro_requisiciones.suministro.suministro.suministro.id }}, {{ proveedor.id }}, '{{ criterio }}', {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_agregar_suministro_{{ suministro_requisiciones.suministro.suministro.suministro.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros_requisiciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_cotizacion_orden_servicio_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.prev_page }}, 'criterio': '{{ criterio }}', 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_requisiciones.page }} de {{ suministros_requisiciones.pages }}
+{% if suministros_requisiciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.next_page }}, 'criterio': '{{ criterio }}', 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_proveedor_cotizacion_orden_servicio_add('Dajax.process',{'pagina': {{ suministros_requisiciones.pages }}, 'criterio': '{{ criterio }}', 'proveedor_id': {{ proveedor.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<p align="right">
+    <a href="javascript:cotizarTodo({{ proveedor.id }}, {{ proyecto.id }});" id="ahref_cotizar_todo_{{ proveedor.id }}">Cotizar todos</a>
+    <img id="id_cargando_cotizar_todo_{{ proveedor.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+</p>
+<br>
+<input type="button" id="id_guardar" value="Realizar Cotización" onclick="realizarCotizacion({{ proyecto.id }});">
+<input type="button" id="id_cancelar" value="Cancelar" onclick="cancelarCotizacion({{ proyecto.id }});">

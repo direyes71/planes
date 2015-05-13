@@ -1,0 +1,50 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - NOVEDADES MODULO INDIRECTOS  {% endblock %}
+{% block contenido %}
+    <p class="titulo">VER ORDENES DE GIRO</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/ordengironovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Orden de Giro
+            <br/>
+        2 - Proveedor de la Orden de Giro
+            <br/>
+        3 - Descripcion del suministro, que se encuentre en la Orden de Giro
+        <br>
+        <br>
+    El listado de Ordenes de Giro se encuentra ordenado por el proveedor alfabéticamente.
+    </p>
+    <br>
+    <br>
+    <!-- Ver actas de conformidad -->
+    <p class="titulo">VER ACTAS DE CONFORMIDAD</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/actaconformidadnovedad1.jpg">
+    </div>
+    <p class="parrafo">
+    Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+        <br/>
+    1 - Consecutivo Acta de Conformidad
+        <br/>
+    2 - Consecutivo Orden de Giro
+        <br/>
+    3 - Proveedor de la Orden de Giro
+        <br/>
+    4 - Descripción del ítem, que se encuentre en el Acta de Conformidad
+        <br>
+        <br>
+    El listado de Actas de Conformidad se encuentra ordenado por el código  consecutivo de la Orden de Giro en forma ascendente.
+    </p>
+{% endblock %}

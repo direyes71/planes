@@ -1,0 +1,37 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th><label>Criterio</label></th>
+        <td><input type="text" name="criterio" id="id_criterio" value="{{ criterio }}"></td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes">
+    <tr>
+        <th scope="col">No.</th>
+        <th scope="col">Observaciones</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for orden_compra in ordenes_compra.modelo %}
+        <tr>
+            <td><label>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</label></td>
+            <td><label title="{{ orden_compra.observaciones }}">{{ orden_compra.observaciones }}</label></td>
+            <td>
+                <a href="/inverboy/home/facturaordencompraproyectoaddinformesrecepcionordencompra/{{ orden_compra.id }}/{{ proyecto.id }}/">Seleccionar</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_compra.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_proveedor_factura_orden_compra_proyecto_add('Dajax.process',{'pagina': 1, 'proveedor_id': {{ proveedor.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_proveedor_factura_orden_compra_proyecto_add('Dajax.process',{'pagina': {{ ordenes_compra.prev_page }}, 'proveedor_id': {{ proveedor.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ ordenes_compra.page }} de {{ ordenes_compra.pages }}
+{% if ordenes_compra.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_proveedor_factura_orden_compra_proyecto_add('Dajax.process',{'pagina': {{ ordenes_compra.next_page }}, 'proveedor_id': {{ proveedor.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_compra_proveedor_factura_orden_compra_proyecto_add('Dajax.process',{'pagina': {{ ordenes_compra.pages }}, 'proveedor_id': {{ proveedor.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

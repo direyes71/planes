@@ -1,0 +1,74 @@
+{% extends 'html/base_pdf.html' %}
+{% load humanize %}
+{% block contenido %}
+    <table class="tabla_borde_uno">
+        <tr>
+            <td><b>Proyecto: {{ proyecto.nombre }}</b></td>
+            <td>Ciudad: {{ proyecto.municipio.nombre }}, {{ proyecto.municipio.departamento.nombre }}</td>
+        </tr>
+        <tr>
+            <td>Direcci&oacute;n: {{ proyecto.direccion }}</td>
+            <td>Fecha: {{ fecha_actual|date:'Y-m-d' }}</td>
+        </tr>
+    </table>
+
+    <br />
+
+    <table class="tabla_borde_reporte_uno">
+        <tr>
+            <th width="250px">Suministro</th>
+            <th width="30px">Und</th>
+            <th>Cant. total</th>
+            <th>Cant. actual sistema</th>
+            <th>Cant. actual almac&eacute;n</th>
+            <th>Diferencia</th>
+            <th>Observaciones</th>
+        </tr>
+        {% for suministro in suministros %}
+            <tr>
+                <td>
+                    <label>{{ suministro.suministro.nombre }}</label>
+                </td>
+                <td align="center">
+                    <label>{{ suministro.suministro.unidad_medida }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ suministro.cantidad_total|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ suministro.cantidad_actual|force_escape|intcomma }}</label>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+    <div>
+        <table width="100%">
+            <tr>
+                <td align="center">______________________________________</td>
+                <td align="center">______________________________________</td>
+            </tr>
+            <tr>
+                <td align="center">{{ almacenista|upper }}</td>
+                <td align="left">SUPERVISOR: </td>
+            </tr>
+            <tr>
+                <td align="center">{{ almacenista.cargo|upper }}</td>
+                <td align="left">CARGO: </td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}

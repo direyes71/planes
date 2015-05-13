@@ -1,0 +1,79 @@
+{% extends "html/base_home.html" %}
+{% block titulo_pagina %} Modificar datos de usuario {% endblock %}
+{% block script %}
+{% endblock %}
+
+{% block titulo %} Informaci&oacute;n usuario {% endblock %}
+
+{% block contenido %}
+    {% if error %}
+        <ul><li>{{ error }}</li></ul>
+    {% endif %}
+    <form action="." METHOD="post">
+        <table align="center">
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Identificacion</label></th>
+                <td> {{ usuario.identificacion }} </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Nombre usuario</label></th>
+                <td>{{ usuario.username }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Nombres</label></th>
+                <td> {{ usuario.first_name }} </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Apellidos</label></th>
+                <td>{{ usuario.last_name }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Fecha de nacimiento:</label></th>
+                    <td>
+                        {{ usuario.fecha_nacimiento }}
+                    </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Direccion de residencia</label></th>
+                <td>{{ usuario.direccion }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label> Departamento: </label></th>
+                <td> {{ usuario.municipio.departamento.nombre }} </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label> Municipio: </label></th>
+                <td> {{ usuario.municipio.nombre }} </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Cargo</label></th>
+                <td>{{ usuario.cargo }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Celular</label></th>
+                <td>{{ usuario.celular }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Telefono</label></th>
+                <td>{% if usuario.telefono != None %} {{ usuario.telefono }} {% endif %}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Contraseña anterior</label></th>
+                <td>{{ form.contrasena_anterior.errors }} {{ form.contrasena_anterior }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Nueva contraseña</label></th>
+                <td>{{ form.contrasena.errors }} {{ form.contrasena }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Confirmar nueva contraseña</label></th>
+                <td>{{ form.confirmar_contrasena.errors }} {{ form.confirmar_contrasena }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <p><input type="submit" value="Guardar"></p>
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load humanize %}
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Ventas</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Identificaci&oacute;n</th>
+                    <th>Inmueble</th>
+                    <th>Estado</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for contrato_venta in prospecto_venta.contratoventa_set.all %}
+                    <tr>
+                        <td><label>{{ contrato_venta.identificacion }}</label></td>
+                        <td><label>{{ contrato_venta.agrupacion_inmueble.str_descripcion }}</label></td>
+                        <td><label>{{ contrato_venta.str_estado_contrato_venta }}</label></td>
+                        <td>
+                            <a href="/inverboy/home/detallescontratoventa/{{ contrato_venta.id }}/{{ proyecto.id }}/">Detalles</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>

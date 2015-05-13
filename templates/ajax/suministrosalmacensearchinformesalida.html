@@ -1,0 +1,75 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="javascript:buscarSuministro({{ proyecto.id }});">
+    <table>
+        <tr>
+            <td>
+                Criterio Busqueda
+            </td>
+            <td>
+                <input name="criterio_suministro" id="id_criterio_suministro" value="{{ criterio_suministro }}">
+            </td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Sinonimos</th>
+        <th scope="col">Unidad embalaje</th>
+        <th scope="col">Unidad medida</th>
+        <th scope="col">Cantidad total</th>
+        <th scope="col">Cantidad actual</th>
+        <th>Cantidad esta salida</th>
+        <th>Opciones</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr id= 'fila_suministro_{{ forloop.counter0 }}'>
+            <td>
+                {{ suministro.suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.unidad_embalaje|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro.suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro.suministro.cantidad_total|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro.suministro.cantidad_actual|force_escape|intcomma }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro.suministro.id }}">{% if error.id == suministro.suministro.id %}{{ error.error }}{% endif %}</label>
+                {% if suministro.cantidad_nuevo_informe != '' %}
+                    <label>{{ suministro.cantidad_nuevo_informe|force_escape|intcomma }}</label>
+                {% endif %}
+            </td>
+            <td>
+                {% if error.id == suministro.suministro.id or suministro.cantidad_nuevo_informe == '' %}
+                    <a href="javascript:void(0)" id="a_href_anadir_suministro_{{ suministro.suministro.id }}" onclick="ventanaAgregarSuministroInformeSalida({{ suministro.suministro.id }}, '{{ criterio_suministro }}', {{ suministros.page }}, {{ proyecto.id }} );"><img src="{{ static_prefix }}ima/almacen.jpg" alt=""></a>
+                {% else %}
+                    <img id="id_modificar_{{ suministro.suministro.id }}" name="modificar" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;" onclick="activarModificarSuministro({{ suministro.suministro.id }}, '{{ criterio_suministro }}', {{ pagina_suministro }}, {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_{{ suministro.suministro.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen_informe_salida_add('Dajax.process',{'pagina': 1, 'criterio_suministro': '{{ criterio_suministro }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen_informe_salida_add('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'criterio_suministro': '{{ criterio_suministro }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros.page }} de {{ suministros.pages }}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen_informe_salida_add('Dajax.process',{'pagina': {{ suministros.next_page }}, 'criterio_suministro': '{{ criterio_suministro }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen_informe_salida_add('Dajax.process',{'pagina': {{ suministros.pages }}, 'criterio_suministro': '{{ criterio_suministro }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,64 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad comprada</th>
+        <th>Cantidad Almacen</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Precio/Unitario</th>
+        <th>+ Iva</th>
+        <th>Observaciones</th>
+        <th>Cant. fact.</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                <label>{{ suministro.suministro.clasificacion_general }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.sinonimos }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_comprada_item|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_almacen_item|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.suministro.unidad_embalaje|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.precio|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{% if suministro.iva_suministro == 0.16 %}16%{% else %}{% endif %}</label>
+            </td>
+            <td>
+                <label>{{ suministro.observaciones }}</label>
+            </td>
+            <td>
+                <label>{{ suministro.cantidad_facturada|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra('Dajax.process',{'pagina': 1, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra('Dajax.process',{'pagina': {{ suministros.next_page }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra('Dajax.process',{'pagina': {{ suministros.pages }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

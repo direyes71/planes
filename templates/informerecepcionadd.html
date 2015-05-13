@@ -1,0 +1,73 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Informe de recepci&oacute;n
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function buscarSuministro(orden_compra_id, proyecto_id) {
+            criterio = document.getElementById('id_criterio').value;
+            Dajaxice.aplicacion.inverboy.buscar_items_orden_compra_informe_recepcion('Dajax.process', { 'criterio': criterio, 'orden_compra_id': orden_compra_id, 'proyecto_id': proyecto_id });
+        }
+        function agregarSuministroInformeRecepcion(pagina, suministro_id, orden_compra_id, criterio, proyecto_id) {
+            var cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            document.getElementById('a_href_anadir_suministro_'+suministro_id).style.display='none';
+            document.getElementById('id_cargando_'+suministro_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.agregar_suministro_informe_recepcion('Dajax.process', { 'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'criterio': criterio, 'proyecto_id': proyecto_id, 'cantidad': cantidad });
+        }
+        function activarModificarCantidadSuministro(pagina, suministro_id, orden_compra_id, proyecto_id){
+            criterio = document.getElementById('id_criterio').value;
+            Dajaxice.aplicacion.inverboy.activar_modificar_suministro_informe_recepcion('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'orden_compra_id': orden_compra_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function paginar(pagina, orden_compra_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.paginar_items_informe_recepcion('Dajax.process',{ 'pagina': pagina, 'criterio': criterio, 'orden_compra_id': orden_compra_id,'proyecto_id': proyecto_id });
+        }
+    </script>
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <table>
+        <tr>
+            <th colspan="2">Orden de compra No.</th>
+            <td colspan="2"><label>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha de creaci&oacute;n</th>
+            <td><label>{{ orden_compra.fecha_creacion|date:'Y-m-d' }}</label></td>
+            <th>Fecha de arribo</th>
+            <td><label>{{ orden_compra.fecha_arribo|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor</th>
+            <td colspan="3"><label>{{ orden_compra.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Observaciones</th>
+            <td><label>{{ orden_compra.observaciones }}</td></label>
+        </tr>
+    </table>
+
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministrosordencomprasearchinformerecepcion.html' %}
+        </div>
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <th>Numero de remisi&oacute;n</th>
+                <td>
+                    <label>{{ error_numero_remision }}</label>
+                    <input type="text" name="numero_remision" value="{{ numero_remision }}">
+                </td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td><textarea name="observaciones">{{ observaciones }}</textarea></td>
+            </tr>
+        </table>
+        <p align="center">
+            <input type="submit" id="id_guardar" value="Realizar informe de recepción" onclick="this.disabled=true;">
+        </p>
+    </form>
+{% endblock %}

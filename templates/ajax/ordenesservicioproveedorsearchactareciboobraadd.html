@@ -1,0 +1,35 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for orden_servicio in ordenes_servicio.modelo %}
+        <tr>
+            <td>
+                <label>OS{{ orden_servicio.proyecto.id }}-{{ orden_servicio.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ orden_servicio.fecha_creacion|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ orden_servicio.persona.first_name }} {{ orden_servicio.persona.last_name }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/actareciboobraproyectoadd/{{ orden_servicio.id }}/{{ proyecto.id }}/">Realizar acta</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_servicio.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio_acta_recibo_obra_add('Dajax.process',{'pagina': 1, 'proveedor_id': '{{ proveedor.id }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio_acta_recibo_obra_add('Dajax.process',{'pagina': {{ ordenes_servicio.prev_page }}, 'proveedor_id': '{{ proveedor.id }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ordenes_servicio.page}} de {{ordenes_servicio.pages}}
+{% if ordenes_servicio.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio_acta_recibo_obra_add('Dajax.process',{'pagina': {{ordenes_servicio.next_page }}, 'proveedor_id': '{{ proveedor.id }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio_acta_recibo_obra_add('Dajax.process',{'pagina': {{ordenes_servicio.pages }}, 'proveedor_id': '{{ proveedor.id }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,58 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<div>
+    <form action="javascript:buscarItems({{ orden_giro.id }}, {{ proyecto.id }});">
+        <table>
+            <tr>
+                <th><label>Criterio:</label></th>
+                <td><input name="criterio" id="id_criterio" value="{{ criterio }}"></td>
+                <td colspan="2"><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Item</th>
+        <th>Cantidad orden</th>
+        <th>Cantidad girada</th>
+        <th>Cantidad esta acta</th>
+        <th>Opciones</th>
+    </tr>
+    {% for item in items.modelo %}
+        <tr>
+            <td>
+                <label>{{ item.item.descripcion }}</label>
+            </td>
+            <td>
+                <label>{{ item.item.valor|force_escape|intcomma }}</label>
+            </td>
+            <td><label>{{ item.item.valor_pagado_actas|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ item.item.id }}">{% if error.id == item.item.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" id="id_text_valor_{{ item.item.id }}" {% if error.id == item.item.id %}value="{{ error.value|force_escape }}"{% else %}{% if item.valor_nueva_acta != '' %} value="{{ item.valor_nueva_acta|intcomma|force_escape }}" disabled="disabled"{% endif %}{% endif %}/>
+            </td>
+            <td>
+                {% if error.id == item.item.id or item.valor_nueva_acta == '' %}
+                    <a href="javascript:void(0)" id="a_href_anadir_item_{{ item.item.id }}" onclick="agregarItemActaConformidad({{ items.page }}, {{ item.item.id }}, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }});"><img src="{{ static_prefix }}ima/vistobueno.jpg" alt="" style="width:22px; height:22px;"></a>
+                {% else %}
+                    <img id="id_modificar_{{ item.item.id }}" name="modificar" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;" onclick="activarModificarValorItem({{ items.page }}, {{ item.item.id }}, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_{{ item.item.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if items.has_prev %}
+    <a href="javascript:paginar(1, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }})"> << </a>
+    <a href="javascript:paginar({{ items.prev_page }}, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }})"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ items.page }} de {{ items.pages }}
+{% if items.has_next %}
+    <a href="javascript:paginar({{ items.next_page }}, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }})"> > </a>
+    <a href="javascript:paginar({{ items.pages }}, {{ orden_giro.id }}, '{{ criterio }}', {{ proyecto.id }})"> >> </a>
+{% else %}
+{% endif %}

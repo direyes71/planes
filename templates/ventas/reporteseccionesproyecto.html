@@ -1,0 +1,15 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Secciones del proyecto{% endblock %}
+{% block contenido %}
+    {% if 'inverboy.add_seccionproyecto' in user.get_all_permissions %}
+        <a href="/inverboy/home/nuevaseccionproyecto/{{ proyecto.id }}/">Nueva</a>
+    {% endif %}
+    <form action="." method="POST">
+        <div id="id_reporte_secciones_proyecto">
+            {% include 'ajax/ventas/busquedaseccionproyecto.html' %}
+        </div>
+    </form>
+{% endblock %}

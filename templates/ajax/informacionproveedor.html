@@ -1,0 +1,62 @@
+<div align="right">
+        <input type="submit" value="X"  align="center" onclick="cerrarVentanaProveedor();">  </input>
+</div>
+<table align="center">
+    <tr>
+        <th>NIT</th>
+        <td><label>{{ proveedor.identificacion }}</label></td>
+    </tr>
+    <tr>
+        <th>Razon social</th>
+        <td><label>{{ proveedor.razon_social }}</label></td>
+    </tr>
+    <tr>
+        <th>Nombre comercial</th>
+        <td><label>{{ proveedor.nombre_comercial }}</label></td>
+    </tr>
+</table>
+
+<p align="center">CONTACTOS</p>
+
+<table border="1" style="border-color: green" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Cargo</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">Ext</th>
+        <th scope="col">Email</th>
+        <th scope="col">Celular</th>
+    </tr>
+    {% for contacto in contactos %}
+        <tr>
+            <td>{{ contacto.nombre_contacto }}</td>
+            <td>
+                {% if contacto.cargo_contacto == 1 %}
+                    Gerente
+                {% endif %}
+                {% if contacto.cargo_contacto == 2 %}
+                    Subgerente
+                {% endif %}
+                {% if contacto.cargo_contacto == 3 %}
+                    Asesor Comercial
+                {% endif %}
+                {% if contacto.cargo_contacto == 4 %}
+                    Gerente Comercial
+                {% endif %}
+                {% if contacto.cargo_contacto == 5 %}
+                    Director de Departamento
+                {% endif %}
+                {% if contacto.cargo_contacto == 6 %}
+                    Vendedor
+                {% endif %}
+                {% if contacto.cargo_contacto == 7 %}
+                    Secretaria
+                {% endif %}
+            </td>
+            <td>{{ contacto.telefono_contacto }}</td>
+            <td>{{ contacto.ext_contacto }}</td>
+            <td>{{ contacto.email_contacto }}</td>
+            <td>{{ contacto.celular_contacto }}</td>
+        </tr>
+    {% endfor %}
+</table>

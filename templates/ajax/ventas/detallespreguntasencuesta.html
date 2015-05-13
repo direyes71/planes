@@ -1,0 +1,18 @@
+<table id="tablacontactos" border="1" align="center" width="100%">
+    <tbody id=cuerpoTabla >
+        {{ encuesta }}
+        <tr>
+            <td><p align="center">Preguntas</p></td>
+        </tr>
+        {% for pregunta in encuesta.preguntaencuesta_set.all %}
+            <tr>
+                <th>{{ pregunta.texto }}{% if modificar %} <input type="button" value="X" id="id_btn_eliminar_pregunta" indice="{{ forloop.counter0 }}"{% endif %}> </th>
+            </tr>
+            {% for respuesta in pregunta.respuestapreguntaencuesta_set.all %}
+                <tr>
+                    <td>&bull; {{ respuesta.texto }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>

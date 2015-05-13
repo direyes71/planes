@@ -1,0 +1,10 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Cotizaciones ordenes de servicio proyecto {% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div id="id_reporte_cotizaciones">
+            {% include 'ajax/cotizacionesordenserviciosearch.html' %}
+        </div>
+    </form>
+{% endblock %}

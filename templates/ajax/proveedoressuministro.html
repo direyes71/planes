@@ -1,0 +1,57 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table border="1" id="id_tabla_proveedores" align="center">
+    <tbody id=id_cuerpo_tabla>
+        <tr>
+            <th>Identificacion</th>
+            <th>Razon Social</th>
+            <th>Nombre Comercial</th>
+            <th>Direccion</th>
+            <th>Tipo</th>
+            <th>Telefono 1</th>
+            <th>Precio</th>
+            <th>+ Iva</th>
+            <th>Opciones</th>
+        </tr>
+        {% for suministro_proveedor in suministro_proveedores.modelo %}
+            <tr>
+                <td>{{ suministro_proveedor.proveedor.identificacion }}</td>
+                <td>{{ suministro_proveedor.proveedor.razon_social }}</td>
+                <td>{{ suministro_proveedor.proveedor.nombre_comercial }}</td>
+                <td>{{ suministro_proveedor.proveedor.direccion }}</td>
+                <td>{% if suministro_proveedor.proveedor.tipo == 1 %} Persona Natural {% else %} Juridica {% endif %}</td>
+                <td>{{ suministro_proveedor.proveedor.telefono_1 }}</td>
+                <td>
+                    <label id="id_label_error_precio_{{ suministro_proveedor.proveedor.id }}">{% if error.id == suministro_proveedor.proveedor.id %}{{ error.error }}{% endif %}</label>
+                    <input type="text" id="id_text_precio_{{ suministro_proveedor.proveedor.id }}" name="text_precio" size="12" {% if error.id == suministro_proveedor.proveedor.id %}value="{{ error.value }}"{% else %}value="{{ suministro_proveedor.precio|intcomma|force_escape }}" disabled="disabled"{% endif %}>
+                    {% if error.id == suministro_proveedor.proveedor.id %}
+                        <img id="id_ima_2_{{ suministro_proveedor.proveedor.id }}" name="ima_2" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px;" onclick="modificarPrecio({{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }});"/>
+                    {% else %}
+                        <img id="id_ima_{{ suministro_proveedor.proveedor.id }}" name="ima" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInput({{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }});">
+                    {% endif %}
+                </td>
+                <td>
+                    <select id="id_opcion_iva_{{ suministro_proveedor.proveedor.id }}" name="opcion_iva" disabled="disabled">
+                        <option value="1">Si</option>
+                        <option value="0" {% if suministro_proveedor.iva == 0 %}selected="selected"{% endif %}>No</option>
+                    </select>
+                    <img id="id_ima_3_{{ suministro_proveedor.proveedor.id }}" name="ima_3" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarSelectIva({{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }});">
+                    <img id="id_ima_4_{{ suministro_proveedor.proveedor.id }}" name="ima_4" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px; display: none;" onclick="modificarIva({{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }});"/>
+                </td>
+                <td><a href="javascript:void(0)" onclick="borrarFila({{ suministro_proveedor.proveedor.id }}, {{ suministro_proveedores.page }});">Borrar</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if suministro_proveedores.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_add('Dajax.process',{'pagina': 1 })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_add('Dajax.process',{'pagina': {{ suministro_proveedores.prev_page }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministro_proveedores.page }} de {{ suministro_proveedores.pages }}
+{% if suministro_proveedores.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_add('Dajax.process',{'pagina': {{ suministro_proveedores.next_page }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_proveedores_suministro_add('Dajax.process',{'pagina': {{ suministro_proveedores.pages }} })"> >> </a>
+{% else %}
+{% endif %}

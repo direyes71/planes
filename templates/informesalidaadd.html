@@ -1,0 +1,133 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nuevo informe de salida de almacen {% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function buscarSuministro(proyecto_id) {
+            criterio_suministro = document.getElementById('id_criterio_suministro').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros_almacen_informe_salida('Dajax.process',{'criterio_suministro': criterio_suministro, 'proyecto_id': proyecto_id});
+        }
+        function ventanaAgregarSuministroInformeSalida(suministro_id, criterio_suministro, pagina_suministro, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process', {'pagina': 1, 'suministro_id': suministro_id, 'criterio_apu': '', 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+        function buscarApusSuministroAlmacen(suministro_id, criterio_suministro, pagina_suministro, proyecto_id) {
+            criterio_apu = document.getElementById('id_criterio_apu').value;
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process', {'pagina': 1, 'suministro_id': suministro_id, 'criterio_apu': criterio_apu, 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+        function agregarCantidadApuProyectoInformeSalida(pagina, suministro_id, apu_proyecto_id, criterio_apu, criterio_suministro, pagina_suministro, proyecto_id) {
+            var cantidad = document.getElementById('id_text_cantidad_'+apu_proyecto_id).value;
+            document.getElementById('a_href_anadir_cantidad_'+apu_proyecto_id).style.display='none';
+            document.getElementById('id_cargando_'+apu_proyecto_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.agregar_cantidad_apu_proyecto_informe_salida('Dajax.process', {'pagina': pagina, 'suministro_id': suministro_id, 'apu_proyecto_id': apu_proyecto_id, 'cantidad': cantidad, 'criterio_apu': criterio_apu, 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+        function activarModificarCantidadApuProyectoInformeSalida(pagina, suministro_id, apu_proyecto_id, criterio_apu, criterio_suministro, pagina_suministro, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_apu_proyecto_informe_salida('Dajax.process', {'pagina': pagina, 'suministro_id': suministro_id, 'apu_proyecto_id': apu_proyecto_id, 'criterio_apu': criterio_apu, 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+        function agregarSuministroInformeSalida(pagina, suministro_id, criterio_suministro, pagina_suministro, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.agregar_suministro_informe_salida('Dajax.process', {'pagina': pagina, 'suministro_id': suministro_id, 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+        function cancelarAgregarSuministroInformeSalida(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_agregar_suministro_informe_salida('Dajax.process', {'proyecto_id': proyecto_id});
+        }
+        function activarModificarSuministro(suministro_id, criterio_suministro, pagina_suministro, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process', {'pagina': 1, 'suministro_id': suministro_id, 'criterio_apu': '', 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+    </script>
+    <style type="text/css">
+
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/apusproyectosearchinformesalidaadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <div id='flotanteSuministros' class="border">
+        {% include 'ajax/informacionsuministro.html' %}
+    </div>
+     <div id="id_reporte_suministros">
+        {% include 'ajax/suministrosalmacensearchinformesalida.html' %}
+    </div>
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <th>Encargado</th>
+                <td>
+                    <select name="persona" id="id_persona">
+                        <option value="0" selected="selected" >---</option>
+                        {% for persona in personas %}
+                            <option value="{{ persona.id }}" {% if persona == persona_proyecto %}selected="selected" {% endif %}>{{ persona.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>
+                    <textarea cols="60" name="observaciones">{{ observaciones }}</textarea>
+                </td>
+            </tr>
+        </table>
+        <p align="center">
+            <input type="submit" id="id_guardar" value="Realizar informe de salida" onclick="this.disabled=true;">
+        </p>
+    </form>
+{% endblock %}

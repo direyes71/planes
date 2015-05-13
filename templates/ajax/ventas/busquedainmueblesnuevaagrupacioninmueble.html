@@ -1,0 +1,27 @@
+<div class="grupo_forma">
+    <label for="tipo_inmueble">Tipo de inmueble</label>
+    <select name="tipo_inmueble" id="tipo_inmueble" class="chosen-select" style="width: 140px;">
+        <option value="">----</option>
+        {% for tipo_inmueble in tipos_inmueble %}
+            <option value="{{ tipo_inmueble.id }}"{% if tipo_inmueble == tipo_inmueble_actual %} selected="selected"{% endif %}>{{ tipo_inmueble.nombre }}</option>
+        {% endfor %}
+    </select>
+    <label for="criterio">Criterio</label>
+    <input type="text" name="criterio" value="{{ criterio }}" id="criterio" style="width: 120px;">
+    <input type="submit" value="buscar" >
+    <br />
+    <br />
+        <label for="id_inmuebles"><h3>Inmuebles</h3></label>
+        <span class="error_inmueble" id="error_inmueble">
+            {{ error }}
+        </span>
+        <select name="inmuebles" id="id_inmuebles" size="2">
+            {% for inmueble in inmuebles %}
+                <option value="{{ inmueble.id }}">{{ inmueble.str_identificacion }}</option>
+            {% endfor %}
+        </select>
+    <a href="javascript:void(0)" id="grupo_agregar_inmueble"> > </a>
+    <input type="hidden" name="proyecto" value="{{ proyecto.id }}">
+</div>
+
+

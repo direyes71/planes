@@ -1,0 +1,39 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} NOVEDADES MODULO FACTURACION{% endblock %}
+{% block contenido %}
+    <p class="titulo">DETALLES DE FACTURA</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/facturanovedad2.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible visualizar los valores subtotal, IVA y total en detalles de la factura de orden de compra:
+        <br>
+        1 - Recuadro valores discriminados por Orden de Compra
+    </p>
+    <br>
+    <br>
+    <p class="titulo">VER FACTURAS DE ORDEN DE COMPRA</p>
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/facturanovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Factura de orden de compra
+            <br/>
+        2 - Numero de Factura
+            <br/>
+        3 - Proveedor de la Orden de Compra
+        <br>
+        <br>
+        El listado de Facturas de Orden de Compra se encuentra ordenado por el proveedor alfabéticamente.
+    </p>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_abono_pago_efectivo">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Fecha actual:</th>
+            <td>
+                <label>{{ fecha_actual|date:'Y-m-d' }}</label>
+            </td>
+        </tr>
+
+        <tr>
+            <th><label for="id_fecha_consignacion">Fecha de consignaci&oacute;n:</label></th>
+            <td>{{ form.fecha_consignacion.errors }} {{ form.fecha_consignacion }}<img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha consignacion" id="lanzador_fecha_consignacion"></td>
+        </tr>
+
+        <tr>
+            <th><label for="id_numero_consignacion">N&uacute;mero consignaci&oacute;n:</label></th>
+            <td>{{ form.numero_consignacion.errors }} {{ form.numero_consignacion }}</td>
+        </tr>
+
+        <tr>
+            <th><label for="id_valor">Valor:</label></th>
+            <td>{{ form.valor.errors }} {{ form.valor }}</td>
+        </tr>
+        
+        <tr>
+            <td align="center">
+                <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+            </td>
+            <td align="center">
+                <input type="button" id="id_btn_cancelar_agregar" value="Cancelar">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="pago_entidad_contrato_venta" value="{{ pago_entidad_contrato_venta.id }}">
+</form>

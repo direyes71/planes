@@ -1,0 +1,32 @@
+{% load humanize %}
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Notificaciones</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Fecha</th>
+                    <th>Descripci&oacute;n</th>
+                    <th colspan="2">Opciones</th>
+                </tr>
+                {% for notificacion_prospecto in notificaciones_prospecto %}
+                    <tr>
+                        <td><label>{{ notificacion_prospecto.str_tipo_notificacion }}</label></td>
+                        <td><label>{{ notificacion_prospecto.fecha_limite_notificacion }}</label></td>
+                        <td><label>{{ notificacion_prospecto.observaciones }}</label></td>
+                        <td><a href="javascript:void(0)" id="id_btn_modificar_notificacion" indice="{{ forloop.counter0 }}">Modificar</a></td>
+                        <td><a href="javascript:void(0)" id="id_btn_eliminar_notificacion" indice="{{ forloop.counter0 }}">Eliminar</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>

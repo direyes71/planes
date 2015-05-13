@@ -1,0 +1,236 @@
+{% extends 'html/base_pdf.html' %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block contenido %}
+    <table class="tabla_borde_dos">
+        <tr>
+            <th>
+                Proveedor:
+            </th>
+            <td>
+                <label>{{ factura_orden_compra.proveedor.razon_social }}</label>
+            </td>
+            <th>
+                NIT:
+            </th>
+            <td>
+                <label>{{ factura_orden_compra.proveedor.identificacion }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Telefono:
+            </th>
+            <td>
+                <label>{{ factura_orden_compra.proveedor.telefono_1 }}</label>
+            </td>
+            <th>
+                E-mail:
+            </th>
+            <td>
+                <label>{{ factura_orden_compra.proveedor.email }}</label>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table class="tabla_borde_dos">
+        <tr>
+            <th>Proyecto: </th>
+            <td colspan="3"><label>{{ proyecto.nombre }}</label></td>
+        </tr>
+        <tr>
+            <th>Factura No.: </th>
+            <td><label>{{ factura_orden_compra.numero_factura }}</label></td>
+            <th>Factura orden de compra: </th>
+            <td><label>FOC{{ proyecto.id }}-{{ factura_orden_compra.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha de registro: </th>
+            <td><label>{{ factura_orden_compra.fecha_registro|date:'Y-m-d' }}</label></td>
+            <th>Persona: </th>
+            <td><label>{{ factura_orden_compra.persona }}</label></td>
+        </tr>
+    </table>
+    <br>
+    <table class="tabla_borde_reporte_dos">
+        <tr>
+            <th width="260px">Suministro</th>
+            <th>Cantidad facturada</th>
+            <th>Unidad de medida</th>
+            <th>Valor unitario</th>
+            <th>+ IVA</th>
+            <th>Subtotal</th>
+        </tr>
+        {% for item_factura in items_factura %}
+            <tr>
+                <td>
+                    <label>{{ item_factura.suministro.nombre }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ item_factura.cantidad_item|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ item_factura.suministro.unidad_medida }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ item_factura.valor_unitario_item_sin_iva|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ item_factura.str_porcentaje_iva|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ item_factura.valor_total_item_sin_iva|force_escape|intcomma }}</label>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <table class="tabla_borde_reporte_dos" width="180px" align="right">
+        <tr>
+            <th colspan="2">Totales factura</th>
+        </tr>
+        <tr>
+            <td>
+                <label>Subtotal:</label>
+            </td>
+            <td align="right">
+                <label>{{ factura_orden_compra.subtotal|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Valor iva:</label>
+            </td>
+            <td align="right">
+                <label>{{ factura_orden_compra.valor_iva|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Valor total:</label>
+            </td>
+            <td align="right">
+                <label>{{ factura_orden_compra.valor_total|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    </table>
+
+    <h2 align="center">Valor discriminado por ordenes de compra</h2>
+
+    {% for valor_orden in valor_discriminado_ordenes_compra %}
+        <table class="tabla_borde_reporte_dos">
+            <tr>
+                <th colspan="6">
+                    OC{{ valor_orden.orden_compra.proyecto.id }}-{{ valor_orden.orden_compra.consecutivo }}
+                </th>
+            </tr>
+            <tr>
+                <th width="260px">
+                    Suministro
+                </th>
+                <th>
+                    Cantidad facturada
+                </th>
+                <th>
+                    Unidad de medida
+                </th>
+                <th>
+                    Subtotal
+                </th>
+                <th>
+                    Iva
+                </th>
+                <th>
+                    Total
+                </th>
+            </tr>
+            {% for suministro in valor_orden.suministros %}
+                <tr>
+                    <td>
+                        <label>{{ suministro.suministro.nombre }}</label>
+                    </td>
+                    <td align="right">
+                        <label>{{ suministro.cantidad|force_escape|intcomma }}</label>
+                    </td>
+                    <td align="right">
+                        <label>{{ suministro.suministro.unidad_medida }}</label>
+                    </td>
+                    <td align="right">
+                        <label>{{ suministro.valor_sin_iva|force_escape|intcomma }}</label>
+                    </td>
+                    <td align="right">
+                        <label>{{ suministro.valor_iva|force_escape|intcomma }}</label>
+                    </td>
+                    <td align="right">
+                        <label>{{ suministro.valor_con_iva|force_escape|intcomma }}</label>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th colspan="3">Total</th>
+                <td align="right">{{ valor_orden.valor_sin_iva|force_escape|intcomma }}</td>
+                <td align="right">{{ valor_orden.valor_iva|force_escape|intcomma }}</td>
+                <td align="right">{{ valor_orden.valor_con_iva|force_escape|intcomma }}</td>
+            </tr>
+        </table>
+        <br>
+    {% endfor %}
+
+    <h2 align="center">Valor discriminado por capitulos</h2>
+
+    <table class="tabla_borde_reporte_dos">
+        <tr>
+            <th width="40px">Cod.</th>
+            <th width="300px">
+                Capitulo
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Iva
+            </th>
+            <th>
+                Total
+            </th>
+        </tr>
+        {% for valor_capitulo in valor_discriminado_capitulos %}
+            <tr>
+                <td>
+                    <label>
+                        {% if valor_capitulo.capitulo.tipo_capitulo == 1 %}
+                            {{ valor_capitulo.capitulo.codigo }}
+                        {% else %}
+                            {{ valor_capitulo.capitulo.capitulo_asociado.codigo }}
+                        {% endif %}
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        {% if valor_capitulo.capitulo.tipo_capitulo == 1 %}
+                            {{ valor_capitulo.capitulo.nombre_capitulo }}
+                        {% else %}
+                            {{ valor_capitulo.capitulo.capitulo_asociado.nombre_capitulo }}
+                        {% endif %}
+                    </label>
+                </td>
+                <td align="right">
+                    <label>{{ valor_capitulo.valor_sin_iva|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ valor_capitulo.valor_iva|force_escape|intcomma }}</label>
+                </td>
+                <td align="right">
+                    <label>{{ valor_capitulo.valor_con_iva|force_escape|intcomma }}</label>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="2" align="right">Total</th>
+            <td align="right">{{ valor_factura_sin_iva|force_escape|intcomma }}</td>
+            <td align="right">{{ valor_iva_factura|force_escape|intcomma }}</td>
+            <td align="right">{{ valor_total_factura|force_escape|intcomma }}</td>
+        </tr>
+    </table>
+{% endblock %}

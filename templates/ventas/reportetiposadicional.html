@@ -1,0 +1,14 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+{% endblock %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Tipos de adicional{% endblock %}
+{% block contenido %}
+    {% if 'inverboy.add_adicionalagrupacion' in user.get_all_permissions %}
+        <a href="/inverboy/home/nuevotipoadicional/{{ proyecto.id }}/">Nuevo tipo de adicional</a>
+    {% endif %}
+    <form action="." method="POST">
+        <div id="id_reporte_tipos_adicional">
+            {% include 'ajax/ventas/busquedatipoadicional.html' %}
+        </div>
+    </form>
+{% endblock %}

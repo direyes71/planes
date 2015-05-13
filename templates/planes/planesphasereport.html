@@ -1,0 +1,49 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+
+{% block script_extra %}
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+{% endblock %}
+
+{% block content %}
+    <form action="." method="POST">
+        <table>
+            <tr>
+                <td>Criterio</td>
+                <td><input type="text" name="criterion" value="{{ criterion }}"></td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+
+    <a href="/inverboy/home/newplane/{{ phase.id }}/{{ phase.stage.project.id }}/">Nuevo plano</a>
+
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Siglas</th>
+            <th>Descripci&oacute;n</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for image_plane in images_planes %}
+            <tr>
+                <td>
+                    <a href="/inverboy/home/phasesreport/{{ image_plane.id }}">{{ image_plane.name }}</a>
+                </td>
+                <td>
+                    <label>{{ image_plane.initials }}</label>
+                </td>
+                <td>
+                    {% if image_plane.can_be_eliminated %}
+                        <a href="/inverboy/home/imageplanedelete/{{ image_plane.id }}/{{ image_plane.phase.stage.project.id }}/">Eliminar</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if 1 == 1 %}
+                        <a href="/inverboy/home/planedescription/{{ image_plane.id }}/{{ phase.stage.project.id }}/">Ver zonas fotograficas</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

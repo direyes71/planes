@@ -1,0 +1,50 @@
+<table>
+    <tr>
+        <th>
+            Criterio
+        </th>
+        <td>
+            <input type="text" name="criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>ID</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Proveedor</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for cotizacion in cotizaciones.modelo %}
+        <tr>
+            <td>
+                {{ cotizacion.id }}
+            </td>
+            <td>
+                {{ cotizacion.fecha_creacion|date:'Y-m-d' }}
+            </td>
+            <td>
+                {{ cotizacion.proveedor.razon_social }}
+            </td>
+            <td>
+                {{ cotizacion.persona }}
+            </td>
+            <td>
+                <a href="/inverboy/home/cotizacionesproyectodetails/{{ cotizacion.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if cotizaciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_cotizaciones_orden_servicio('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_cotizaciones_orden_servicio('Dajax.process',{'pagina': {{ cotizaciones.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ cotizaciones.page }} de {{ cotizaciones.pages }}
+{% if cotizaciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_cotizaciones_orden_servicio('Dajax.process',{'pagina': {{ cotizaciones.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_cotizaciones_orden_servicio('Dajax.process',{'pagina': {{ cotizaciones.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

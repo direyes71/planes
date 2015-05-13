@@ -1,0 +1,25 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} categoria: <a href="/inverboy/home/especificacionessearch/{{ categoria.id }}/"> {{ categoria.nombre }} </a> - especificacion: {{ especificacion.nombre }} - Tipos {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/tipossearch/{{ especificacion.id }}/" method="POST">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+    {% if 'inverboy.add_categoria' in user.get_all_permissions %}
+        <a href="/inverboy/home/tipoadd/{{ especificacion.id }}/">Nuevo tipo</a>
+    {% endif %}
+    <!-- <a href="/inverboy/home/suministroadd/{# { especificacion.id } #}/">Nuevo suministro</a>
+    <a href="/inverboy/home/suministrosview/{# { especificacion.id } #}/">Ver suministros</a> -->
+     <div id="id_reporte_tipos">
+        {% include 'ajax/tiposearch.html' %}
+    </div>
+{% endblock %}

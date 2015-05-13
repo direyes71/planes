@@ -1,0 +1,132 @@
+
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Tipo inmueble
+        </td>
+        <td colspan="2">
+            <select name="tipo_inmueble" class="chosen-select" style="width: 350px;">
+                <option value="">----</option>
+                {% for tipo_inmueble in tipo_inmuebles %}
+                    <option value="{{ tipo_inmueble.id }}"{% if actual_tipo_inmueble.id == tipo_inmueble.id %} selected="selected"{% endif %}>{{ tipo_inmueble.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Seccion del proyecto
+        </td>
+        <td colspan="2">
+            <select name="seccion_proyecto" class="chosen-select" style="width: 350px;">
+                <option value="">----</option>
+                {% for seccion_proyecto in secciones_proyecto %}
+                    <option value="{{ seccion_proyecto.id }}"{% if actual_seccion_proyecto.id == seccion_proyecto.id %} selected="selected"{% endif %}>{{ seccion_proyecto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Tipo</th>
+        <th scope="col">Secci&oacute;n proy.</th>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Area construida</th>
+        <th scope="col">Area privada</th>
+        <th scope="col">Estado inmueble</th>
+        <th scope="col">F. ent. obra</th>
+        <th scope="col">F. escrit.</th>
+        <th scope="col">F. entrega</th>
+        <th scope="col">Estado reg.</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Precio actual</th>
+        <th scope="col">Lista de precios</th>
+        <th scope="col" colspan="3">Opciones</th>
+    </tr>
+    {% for inmueble in inmuebles.modelo %}
+        <tr>
+            <td>
+                <label>{{ inmueble.tipo_inmueble.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.seccion_proyecto.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.identificacion }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_construida|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_area_privada|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_estado_inmueble }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_entrega_obra|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_escrituradate|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_fecha_entrega|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_estado_registro }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.usuario_registro }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.valor|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ inmueble.str_lista_precios }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.assignchangepermission_inmueble' in user.get_all_permissions %}
+                    {% if inmueble.permiso_modificar == 1 and inmueble.item_agrupacion_inmueble != None %}
+                        <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_inmueble_proyecto('Dajax.process',{'permiso': 0, 'inmueble_id': {{ inmueble.id }}, 'pagina': 1, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} });">Cancelar permitir modificaci&oacute;n</a>
+                    {% endif %}
+                    {% if inmueble.permiso_modificar == 0 and inmueble.item_agrupacion_inmueble != None %}
+                        <a href="javascript:Dajaxice.aplicacion.inverboy.asignar_modificacion_inmueble_proyecto('Dajax.process',{'permiso': 1, 'inmueble_id': {{ inmueble.id }}, 'pagina': 1, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} });">Permitir modificaci&oacute;n</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_inmueble' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificarinmueble/{{ inmueble.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_inmueble' in user.get_all_permissions and inmueble.estado_registro %}
+                    <a href="/inverboy/home/modificacionmasivainmuebles/{{ inmueble.id }}/{{ proyecto.id }}/">Mod.(Masiva)</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if inmuebles.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': 1, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.prev_page }}, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ inmuebles.page }} de {{ inmuebles.pages }}
+{% if inmuebles.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.next_page }}, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_inmuebles('Dajax.process',{'pagina': {{ inmuebles.pages }}, 'tipo_inmueble_id': '{{ actual_tipo_inmueble.id }}', 'seccion_proyecto_id': '{{ actual_seccion_proyecto.id }}', 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

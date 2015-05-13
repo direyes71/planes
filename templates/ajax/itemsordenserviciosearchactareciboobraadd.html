@@ -1,0 +1,89 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Fecha inicio:{% if error_fecha_inicio != '' %}<label>{{ error_fecha_inicio }}</label>{% endif %}
+            <input type="text" id="id_fecha_inicio" name="fecha_inicio" placeholder="aaaa-mm-dd" readonly="readonly" value="{{ fecha_inicio }}"/>
+            {% load static %}
+            {% get_static_prefix as static_prefix %}
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador_fecha_inicio">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_inicio",ifFormat:"%Y-%m-%d",button:"lanzador_fecha_inicio"});
+            </script>
+        </td>
+        <td>
+            Fecha fin:{% if error_fecha_fin != '' %}<label>{{ error_fecha_fin }}</label>{% endif %}
+            <input type="text" id="id_fecha_fin" name="fecha_fin" placeholder="aaaa-mm-dd" readonly="readonly" value="{{ fecha_fin }}"/>
+            {% load static %}
+            {% get_static_prefix as static_prefix %}
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Fin" id="lanzador_fecha_fin">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_fin",ifFormat:"%Y-%m-%d",button:"lanzador_fecha_fin"});
+            </script>
+        </td>
+        <td>
+            <input type="submit" value="Buscar">
+        </td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    {% for fila in matriz %}
+        <tr>
+            {% for data in fila %}
+                {% if forloop.parentloop.counter0 == 0 and forloop.counter0 == 0 %}
+                    <th>
+                        Suministro
+                    </th>
+                {% endif %}
+                {% if forloop.parentloop.counter0 == 0 and forloop.counter0 == 1 %}
+                    <th>
+                        Cantidad
+                    </th>
+                {% endif %}
+                {% if forloop.parentloop.counter0 == 0 and forloop.counter0 == 2 %}
+                    <th>
+                        U. medida
+                    </th>
+                {% endif %}
+                {% if forloop.parentloop.counter0 == 0 and forloop.counter0 > 2 %}
+                    <th>
+                        {{ data.corte_diario_obra__fecha_corte|date:'Y-m-d' }}
+                    </th>
+                {% endif %}
+                {% if forloop.parentloop.counter0 > 0 and forloop.counter0 == 0 %}
+                    <td>
+                        {{ data.suministro__suministro__suministro__suministro__nombre }}
+                    </td>
+                {% endif %}
+                {% if forloop.parentloop.counter0 > 0 and forloop.counter0 == 1 %}
+                    <td>
+                        {{ data.cantidad_total|force_escape|intcomma }}
+                    </td>
+                {% endif %}
+                {% if forloop.parentloop.counter0 > 0 and forloop.counter0 == 2 %}
+                    <td>
+                        {{ data.suministro__suministro__suministro__suministro__unidad_medida }}
+                    </td>
+                {% endif %}
+                {% if forloop.parentloop.counter0 > 0 and forloop.counter0 > 2 %}
+                    <td align="right">
+                        {% if data.cantidad_corte %}
+                            <a href="javascript:ventanaDetallesCantidadSuministroActaReciboObra({{ data.suministro__suministro__suministro__suministro__id }}, '{{ data.corte_diario_obra__fecha_corte|date:'Y-m-d' }}', {{ orden_servicio.id }}, '{{ fecha_inicio }}', '{{ fecha_fin }}', {{ proyecto.id }});">{{ data.cantidad_corte|force_escape|intcomma }}</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_servicio.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ ordenes_servicio.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina 1 de 1
+{% if ordenes_servicio.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ordenes_servicio.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ordenes_servicio.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

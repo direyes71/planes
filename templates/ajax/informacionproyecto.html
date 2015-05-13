@@ -1,0 +1,35 @@
+<table align="center">
+    <div align="right">
+        <input type="submit" value="X"  align="center" onclick="cerrarVentanaProyecto();">  </input>
+    </div>
+    <tr>
+        <th align="left"><label>Nombre</label></th>
+        <td>{{ proyecto.nombre }}</td>
+    </tr>
+    <tr>
+        <th align="left"><label>Tipo proyecto</label></th>
+        <td>{{ proyecto.tipo_proyecto }}</td>
+    </tr>
+    <tr>
+        <th align="left"><label>Direccion</label></th>
+        <td>{{ proyecto.direccion }}</td>
+    </tr>
+    <tr>
+        <th align="left"><label> Ciudad: </label></th>
+        <td>
+            {{ proyecto.municipio.departamento.nombre }}, {{ proyecto.municipio.nombre }}
+        </td>
+    </tr>
+    <tr>
+        <th align="left"><label>Extension</label></th>
+        <td>{{ proyecto.ext }}</td>
+    </tr>
+    <tr>
+        <th align="left"><label>Director de obra</label></th>
+        <td>
+            {% if proyecto.director_obra != None %}
+                {{ proyecto.director_obra }}
+            {% endif %}
+        </td>
+    </tr>
+</table>

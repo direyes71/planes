@@ -1,0 +1,28 @@
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Inversiones Boyac&aacute;</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+        <link rel="stylesheet" href="{{ static_prefix }}dedalo/css/normalize.min.css">
+        <link rel="stylesheet" href="{{ static_prefix }}dedalo/css/main.css">
+        <link rel="stylesheet/less" type="text/css" href="{{ static_prefix }}dedalo/css/template.less"/>
+        <script src="{{ static_prefix }}dedalo/js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="{{ static_prefix }}dedalo/js/vendor/less.min.js"></script>
+    </head>
+    <body>
+        {% block contenido %}
+        {% endblock contenido %}
+    </body>
+</html>

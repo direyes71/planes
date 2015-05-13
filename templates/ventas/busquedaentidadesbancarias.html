@@ -1,0 +1,53 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load l10n %}
+{% block titulo_pagina %} Entidades Bancarias {% endblock %}
+{% block titulo_navegacion %}Busqueda Entidades Bancarias{% endblock %}
+
+{% block titulo %} Entidades Bancarias {% endblock %}
+{% block contenido %}
+    <link rel="stylesheet" href="{{ static_prefix }}css/personalizado.css">
+
+    <form action="" method="POST">
+    <table> 
+        <tr>
+            <td>
+                Criterio Busqueda
+            </td>
+            <td>
+                <input name="criterio" id="id_criterio_modulo" value="{{ criterio }}">
+            </td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+    </form>
+    <table align="center" class="tabla_dedalo">
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Cuentas</th>
+            <th scope="col">Opciones</th>
+        {% for entidad_bancaria in entidades_bancarias %}
+            <tr>
+                <td>
+                    {{ entidad_bancaria.nombre }}
+                </td>
+                <td>
+                    {% if entidad_bancaria.estado_registro %}
+                        Activo
+                    {% else %}
+                        Inactivo
+                    {% endif %}
+                </td>
+                <td>
+                    {% for cuenta in entidad_bancaria.cuentas_asociadas %}
+                        <p>{{cuenta.numero}}</p>
+                    {% endfor %}
+                </td>   
+                <td>
+                    <a href="/inverboy/home/modificarentidadbancaria/{{ entidad_bancaria.id }}">Modificar</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

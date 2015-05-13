@@ -1,0 +1,52 @@
+{% load humanize %}
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Identificaci&oacute;n</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Cliente principal</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for contrato_venta in contratos_venta.modelo %}
+        <tr>
+            <td>
+                <label>{{ contrato_venta.identificacion }}</label>
+            </td>
+            <td>
+                <label>{{ contrato_venta.str_estado_contrato_venta }}</label>
+            </td>
+            <td>
+                <label>{{ contrato_venta.cliente_principal.cliente.nombre_1 }} {{ contrato_venta.cliente_principal.cliente.nombre_2 }} {{ contrato_venta.cliente_principal.cliente.apellido_1 }} {{ contrato_venta.cliente_principal.cliente.apellido_2 }}</label>
+            </td>
+            <td>
+                <label>{{ contrato_venta.usuario_registro }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/detallescontratoventa/{{ contrato_venta.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if contratos_venta.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_contratos_venta('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_contratos_venta('Dajax.process',{'pagina': {{ contratos_venta.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ contratos_venta.page }} de {{ contratos_venta.pages }}
+{% if contratos_venta.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_contratos_venta('Dajax.process',{'pagina': {{ contratos_venta.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_contratos_venta('Dajax.process',{'pagina': {{ contratos_venta.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

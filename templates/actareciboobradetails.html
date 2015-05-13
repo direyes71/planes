@@ -1,0 +1,320 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles acta de recibo de obra
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function asignarValorCooperativa(acta_recibo_obra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_valor_cooperativa').value;
+            Dajaxice.aplicacion.inverboy.asignar_valor_cooperativa_acta_recibo_obra('Dajax.process', {'acta_recibo_obra_id': acta_recibo_obra_id, 'valor_cooperativa': valorcampo, 'proyecto_id': proyecto_id});
+        }
+        function cerrarActaReciboObra(acta_recibo_obra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_valor_cooperativa').value;
+            Dajaxice.aplicacion.inverboy.cerrar_acta_recibo_obra('Dajax.process', {'acta_recibo_obra_id': acta_recibo_obra_id, 'valor_cooperativa': valorcampo, 'proyecto_id': proyecto_id});
+        }
+        function asignarNumeroFactura(acta_recibo_obra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_numero_factura').value;
+            Dajaxice.aplicacion.inverboy.asignar_numero_factura_acta_recibo_obra('Dajax.process', {'acta_recibo_obra_id': acta_recibo_obra_id, 'numero_factura': valorcampo, 'proyecto_id': proyecto_id});
+        }
+        function cerrarNumeroFactura(acta_recibo_obra_id, proyecto_id){
+            var valorcampo = document.getElementById('id_text_numero_factura').value;
+            Dajaxice.aplicacion.inverboy.cerrar_numero_factura_acta_recibo_obra('Dajax.process', {'acta_recibo_obra_id': acta_recibo_obra_id, 'numero_factura': valorcampo, 'proyecto_id': proyecto_id});
+        }
+    </script>
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th><label>Acta de recibo de obra No.</label></th>
+            <td><label>ARO{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.consecutivo }}</label></td>
+            <th><label>Fecha acta</label></th>
+            <td><label>{{ acta_recibo_obra.fecha_acta|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th><label>Orden de servicio</label></th>
+            <td colspan="3"><label>OS{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.orden_servicio.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th><label>NIT</label></th>
+            <td colspan="3"><label>{{ acta_recibo_obra.orden_servicio.proveedor.identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th><label>Proveedor</label></th>
+            <td colspan="3">
+                <label>
+                    {{ acta_recibo_obra.orden_servicio.proveedor.razon_social }}{% if acta_recibo_obra.orden_servicio.tercero != None %} - Supervisor: {{ acta_recibo_obra.orden_servicio.tercero.razon_social }}{% endif %}
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <th><label>Persona</label></th>
+            <td colspan="3"><label>{{ acta_recibo_obra.persona }}</label></td>
+        </tr>
+        <tr>
+            <th><label>Numero Factura</label></th>
+            <td>
+                <label id="id_label_error_numero_factura" style="color: #aa6666;"></label>
+                {% if 'inverboy.assignchangepermission_ordenservicio' in user.get_all_permissions %}
+                    <input type="text" name="numero_factura" id="id_text_numero_factura" {% if acta_recibo_obra.cerrado_numero_factura %} disabled="disabled" {% endif %}  {% if acta_recibo_obra.numero_factura %} value="{{ acta_recibo_obra.numero_factura }}" {% endif %} onchange="asignarNumeroFactura({{ acta_recibo_obra.id }}, {{ proyecto.id }});">
+                {% else %}
+                    <label>{{ acta_recibo_obra.numero_factura }}</label>
+                {% endif %}
+            </td>
+            {% if 'inverboy.add_actareciboobra' in user.get_all_permissions or 'inverboy.change_actareciboobra' in user.get_all_permissions %}
+                {% if not acta_recibo_obra.cerrado_numero_factura %}
+                    <td><input type="button" id="id_cerrar_numero_factura" onclick="cerrarNumeroFactura({{ acta_recibo_obra.id }}, {{ proyecto.id }});" value="Cerrar"></td>
+                {% endif %}
+            {% endif %}
+        </tr>
+        {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+            <tr>
+                <th><label>Valor cooperativa</label></th>
+                <td>
+                    <label id="id_label_error_cooperativa" style="color: #aa6666;"></label>
+                    {% if 'inverboy.approve_cooperativaactareciboobra' in user.get_all_permissions %}
+                        <input type="text" name="valor_cooperativa" id="id_text_valor_cooperativa" value="{% if acta_recibo_obra.estado_acta == 1 %}{{ acta_recibo_obra.valor_cooperativa|force_escape }}{% else %}{% if acta_recibo_obra.estado_acta == 2 %}{{ acta_recibo_obra.valor_cooperativa|force_escape|intcomma }}{% endif %}{% endif %}"{% if acta_recibo_obra.estado_acta == 2 %} readonly="readonly"{% endif %}>
+                    {% else %}
+                        <label>{{ acta_recibo_obra.valor_cooperativa|force_escape|intcomma }}</label>
+                    {% endif %}
+                </td>
+                {% if acta_recibo_obra.estado_acta == 1 and 'inverboy.approve_cooperativaactareciboobra' in user.get_all_permissions %}
+                    <td><img src="{{ static_prefix }}ima/vistobueno.jpg" id="id_asignar_valor_cooperativa" style="width:22px; height:22px;" onclick="asignarValorCooperativa({{ acta_recibo_obra.id }}, {{ proyecto.id }});"/></td>
+                    <td><input type="button" id="id_cerrar_acta_recibo_obra" onclick="cerrarActaReciboObra({{ acta_recibo_obra.id }}, {{ proyecto.id }});" value="Cerrar"></td>
+                {% endif %}
+            </tr>
+        {% endif %}
+    </table>
+
+    <br>
+    
+    <div id="id_reporte_items">
+        {% include 'ajax/itemsactareciboobrasearch.html' %}
+    </div>
+    
+    <div align="right">
+        <table class="tablaReportes">
+            <tr>
+               <th>
+                   Valor corte
+               </th>
+                <td align="right">
+                    <label>{{ acta_recibo_obra.str_valor_corte|force_escape|intcomma }}</label>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div align="center">
+        <table width="100%">
+            <tr>
+                <td>
+                    <p align="center">
+                        {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                            <table class="tablaReportes">
+                                <tr>
+                                    <th colspan="2">Cooperativa</th>
+                                </tr>
+                                <tr>
+                                    <td align="right"><label>Valor cooperativa</label></td>
+                                    <td align="right"><label>{{ acta_recibo_obra.valor_cooperativa|force_escape|floatformat:0|intcomma }}</label></td>
+                                </tr>
+                            </table>
+                        {% endif %}
+                    </p>
+                </td>
+                <td>
+                    <div align="center">
+                        <table class="tablaReportes">
+                            <tr>
+                                <th colspan="2">Proveedor</th>
+                            </tr>
+                            {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva == 1 or acta_recibo_obra.orden_servicio.tipo_iva == 3 %}
+                                    <tr>
+                                        <td align="right"><label>Costo directo</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_costo_directo_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>AIU</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_aiu_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>IVA</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_iva_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                {% endif %}
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva == 2 %}
+                                    <tr>
+                                        <td align="right"><label>Subtotal</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_subtotal_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><label>IVA ({{ acta_recibo_obra.orden_servicio.porcentaje_iva|force_escape|intcomma }}%)</label></td>
+                                        <td align="right"><label>{{ acta_recibo_obra.str_valor_iva_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td align="right"><label>Total a facturar</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_total_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Anticipo</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_anticipo|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Retegarantia</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_retegarantia|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Descuentos</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.descuento|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Reteica</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_reteica_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label>Retefuente</label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_valor_retefuente_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><label><b>Neto a pagar</b></label></td>
+                                <td align="right"><label>{{ acta_recibo_obra.str_neto_pagar_proveedor|force_escape|floatformat:0|intcomma }}</label></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h2 align="center">Discriminaci&oacute;n por capitulos</h2>
+    <div align="center">
+        <table class="tablaReportes">
+            <tr>
+                <th>Capitulo</th>
+                {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                    <th>IVA cooperativa</th>
+                {% endif %}
+                <th>Valor capitulo</th>
+            </tr>
+            {% for capitulo in acta_recibo_obra.discriminacion_capitulos %}
+                <tr>
+                    <td>
+                        {{ capitulo.capitulo.nombre_capitulo }}
+                    </td>
+                    {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                        <td align="right">
+                            {{ capitulo.valor_iva_cooperativa|force_escape|floatformat:0|intcomma }}
+                        </td>
+                    {% endif %}
+                    <td align="right">
+                        {{ capitulo.valor_total_capitulo|force_escape|floatformat:0|intcomma }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        {% if acta_recibo_obra.orden_servicio.aplica_cooperativa %}
+                            <table class="tablaReportes">
+                                <tr>
+                                    <th colspan="5">Cooperativa</th>
+                                </tr>
+                                <tr>
+                                    <th>Capitulo</th>
+                                    <th>SubTotal</th>
+                                    <th>Base gravable</th>
+                                    <th>IVA</th>
+                                    <th>Total</th>
+                                </tr>
+                                {% for capitulo in discriminacion_capitulos %}
+                                    <tr>
+                                        <td>
+                                            {{ capitulo.capitulo.nombre_capitulo }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_subtotal_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_base_gravable_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_iva_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                        <td align="right">
+                                            {{ capitulo.valor_total_cooperativa|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <table class="tablaReportes">
+                            <tr>
+                                <th colspan="6">Proveedor</th>
+                            </tr>
+                            <tr>
+                                <th>Capitulo</th>
+                                <th>Costo directo</th>
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                    <th>Base IVA</th>
+                                {% endif %}
+                                <th>Subtotal</th>
+                                {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                    <th>IVA</th>
+                                {% endif %}
+                                <th>Total</th>
+                            </tr>
+                            {% for capitulo in acta_recibo_obra.discriminacion_capitulos %}
+                                <tr>
+                                    <td>
+                                        {{ capitulo.capitulo.nombre_capitulo }}
+                                    </td>
+                                    <td align="right">
+                                        {{ capitulo.valor_costo_directo_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                    {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                        <td align="right">
+                                            {{ capitulo.base_iva_proveedor|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    {% endif %}
+                                    <td align="right">
+                                        {{ capitulo.valor_subtotal_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                    {% if acta_recibo_obra.orden_servicio.tipo_iva != None %}
+                                        <td align="right">
+                                            {{ capitulo.valor_iva_proveedor|force_escape|floatformat:0|intcomma }}
+                                        </td>
+                                    {% endif %}
+                                    <td align="right">
+                                        {{ capitulo.valor_total_proveedor|force_escape|floatformat:0|intcomma }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% if acta_recibo_obra.permite_imprimir %}
+        <a href="/inverboy/home/imprimiractareciboobraproveedor/{{ acta_recibo_obra.id }}/{{ proyecto.id }}/">Imprimir para proveedor</a>
+        <a href="/inverboy/home/imprimiractareciboobracontabilidad/{{ acta_recibo_obra.id }}/{{ proyecto.id }}/">Imprimir para contabilidad</a>
+    {% endif %}
+    {% if acta_recibo_obra.permite_modificar %}
+        <a href="/inverboy/home/actasreciboobraproyectochange/{{ acta_recibo_obra.id }}/{{ proyecto.id }}/">Modificar</a>
+    {% endif %}
+    {% if acta_recibo_obra.estado_registro_acta == 1 and 'inverboy.approve_actareciboobra' in user.get_all_permissions %}
+        <a href="/inverboy/home/actareciboobraaprobar/{{ acta_recibo_obra.id }}/{{ proyecto.id }}/">Aprobar</a>
+    {% endif %}
+{% endblock %}

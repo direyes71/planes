@@ -1,0 +1,163 @@
+{% extends "html/base_home.html" %}
+
+{% block titulo_pagina %} Nuevo Usuario {% endblock %}
+
+{% block script %}
+
+    <script type="text/JavaScript" charset="utf-8">
+        function MM_jumpMenu(targ,selObj,restore){
+            eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+            if (restore) selObj.selectedIndex=0;
+        }
+        /*function validar_formulario(){
+            validar_selects_vacios(document.getElementById('id_municipio'));
+            validar_selects_vacios(document.getElementById('id_cargo'));
+            validar_selects_vacios(document.getElementById('id_grupo_usuario'));
+            validar_fecha(document.getElementById('id_fecha_nacimiento'));
+        }*/
+    </script>
+
+    {% load static %}
+    {% get_static_prefix as static_prefix %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+
+{% endblock %}
+{% block titulo %} Nuevo Usuario {% endblock %}
+{% block contenido %}
+
+    {% if error %}
+        <ul><li>{{ error }}</li></ul>
+    {% endif %}
+    
+    <form action="." method="POST">
+        <table align="center" id="tablaForm">
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Identificacion</label></th>
+                <td>{{ form.identificacion.errors }}
+                    <!-- <input id="id_identificacion" name="identificacion" maxlength="10" onkeypress="return validar_teclado_numeros(event)" required pattern="\d{7,10}" placeholder="1049612875" title="Solo números: Mínimo 7 máximo 10" value="{% if form.identificacion.value != None %}{{ form.identificacion.value }}{% endif %}"/> -->
+                    <input id="id_identificacion" name="identificacion" placeholder="1049612875" title="Solo números: Mínimo 7 máximo 10" value="{% if form.identificacion.value != None %}{{ form.identificacion.value }}{% endif %}"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Nombre usuario</label></th>
+                <td>{{ form.nombre_usuario.errors }}
+                    <!-- <input id="nombre_usuario" name="nombre_usuario" maxlength="30" onkeypress="return validar_teclado_numerosLetrasNomUser(event)" required pattern="^[A-Za-z0-9\Á\É\Í\Ó\Ú\Ñ\á\é\í\ó\ú\ñ]+$" title="Letras y números sin espacios" value="{% if form.nombre_usuario.value != None %}{{ form.nombre_usuario.value }}{% endif %}"/> -->
+                    <input id="nombre_usuario" name="nombre_usuario" maxlength="30" title="Letras y números sin espacios" value="{% if form.nombre_usuario.value != None %}{{ form.nombre_usuario.value }}{% endif %}"/>
+                </td>
+            </tr>
+            {% if usuario.id %}
+                <tr>
+                    <th>
+                        <label>Conservar contrasena</label>
+                    </th>
+                    <td>
+                        {{ form.conservar_contrasena }}
+                    </td>
+                </tr>
+            {% endif %}
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Contraseña</label></th>
+                <td>{{ form.contrasena.errors }}
+                    <!-- <input  type="password" id="id_contrasena" name="contrasena" maxlength="30" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Aa123456 ó Aa123456#" title="Mínimo 8 caracteres: una mayúscula, una minúscula, un número ó un caracter especial"/> -->
+                    <input type="password" id="id_contrasena" name="contrasena" maxlength="30" placeholder="Aa123456 ó Aa123456#" title="Mínimo 8 caracteres: una mayúscula, una minúscula, un número ó un caracter especial"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Confirmar contraseña</label></th>
+                <td>{{ form.confirmar_contrasena.errors }}
+                    <!-- <input  type="password" id="id_confirmar_contrasena" name="confirmar_contrasena" maxlength="30" required onkeyup="validar_contrasenia(document.getElementById('id_contrasena'),this)" title="Confirme la contraseña"/> -->
+                    <input  type="password" id="id_confirmar_contrasena" name="confirmar_contrasena" maxlength="30" title="Confirme la contraseña"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Nombres</label></th>
+                <td>{{ form.nombres.errors }}
+                    <!-- <input id="id_nombres" name="nombres" maxlength="30" onkeyup="validar_vacio_solo_espacios(this)" onkeypress="return validar_teclado_numerosLetrasEspacios(event)" required pattern="^[0-9A-Za-z+]{0,}[\s[0-9A-Za-z]+]*$" title="Nombre(s) del usuario" value="{% if form.nombres.value != None %}{{ form.nombres.value }}{% endif %}"/> -->
+                    <input id="id_nombres" name="nombres" maxlength="30" title="Nombre(s) del usuario" value="{% if form.nombres.value != None %}{{ form.nombres.value }}{% endif %}"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Apellidos</label></th>
+                <td>{{ form.apellidos.errors }}
+                    <!-- <input id="id_apellidos" name="apellidos" maxlength="30" onkeyup="validar_vacio_solo_espacios(this)" onkeypress="return validar_teclado_numerosLetrasEspacios(event)" required pattern="^[0-9A-Za-z+]{0,}[\s[0-9A-Za-z]+]*$" title="Apellido(s) del usuario" value="{% if form.apellidos.value != None %}{{ form.apellidos.value }}{% endif %}"/> -->
+                    <input id="id_apellidos" name="apellidos" maxlength="30" title="Apellido(s) del usuario" value="{% if form.apellidos.value != None %}{{ form.apellidos.value }}{% endif %}"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Fecha de nacimiento:</label></th>
+                    <td>
+                        {{ form.fecha_nacimiento.errors }}
+                        <!-- <input type="text" id="id_fecha_nacimiento" name="fecha_nacimiento" onkeyup="validar_fecha(this);" onkeypress="return validar_teclado_fecha(event)" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required placeholder="aaaa-mm-dd" title="No puede ser mayor o igual que la fecha actual" value="{{ fecha_nacimiento }}"/> -->
+                        <input type="text" id="id_fecha_nacimiento" name="fecha_nacimiento" placeholder="aaaa-mm-dd" title="No puede ser mayor o igual que la fecha actual" value="{{ fecha_nacimiento }}"/>
+                        <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+                        <script type="text/javascript">
+                            Calendar.setup({inputField:"id_fecha_nacimiento",ifFormat:"%Y-%m-%d",button:"lanzador"});
+                        </script>
+                    </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Direccion de residencia</label></th>
+                <td>{{ form.direccion.errors }}
+                    <!-- <input id="id_direccion" name="direccion" malength="30" onkeyup="validar_vacio_solo_espacios(this)" onkeypress="return validar_teclado_MayusculasNumerosEspacios(event)" pattern="^[A-Z0-9\s\Á\É\Í\Ó\Ú]+$" placeholder="CR 29C N 79 70" required value="{% if form.direccion.value != None %}{{ form.direccion.value }}{% endif %}" title="No se admiten minúsculas ni caracteres especiales"/> -->
+                    <input id="id_direccion" name="direccion" malength="30" placeholder="CR 29C N 79 70" value="{% if form.direccion.value != None %}{{ form.direccion.value }}{% endif %}" title="No se admiten minúsculas ni caracteres especiales"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label> Departamento: </label></th>
+                <td>
+                    <select name="departamento" id="id_departamento" onchange="Dajaxice.aplicacion.inverboy.cargar_municipios('Dajax.process',{'option':this.value, 'elemento': 'id_municipio'})">
+                        <option value="0" selected="selected" >---</option>
+                        {% for departamento in departamentos %}
+                            <option value="{{ departamento.id }}" {% if departamento == departamento_actual %}selected="selected" {% endif %}>{{ departamento.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label> Municipio: </label></th>
+                <td>
+                    {{ form.municipio.errors }}
+                    <!-- <select name="municipio" id="id_municipio" required> -->
+                    <select name="municipio" id="id_municipio">
+                    {% for municipio in municipios %}
+                        <option value="{{ municipio.id }}" {% if municipio == municipio_actual %}selected="selected" {% endif %}>{{ municipio.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Cargo</label></th>
+                <td>{{ form.cargo.errors }} {{ form.cargo }}</td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Celular</label></th>
+                <td>{{ form.celular.errors }}
+                    <!-- <input id="id_celular" name="celular" maxlength="10" onkeypress="return validar_teclado_numeros(event)" required title="Diez digitos sin espacios" pattern="\d{10}" value="{% if form.celular.value != None %}{{ form.celular.value }}{% endif %}"/> -->
+                    <input id="id_celular" name="celular" maxlength="10" title="Diez digitos sin espacios" value="{% if form.celular.value != None %}{{ form.celular.value }}{% endif %}"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Telefono</label></th>
+                <td>{{ form.telefono.errors }}
+                    <!-- <input id="id_telefono" name="telefono" maxlength="10" onkeyup="validar_celular_telefono(this);" onkeypress="return validar_teclado_telefonoIndicativo(event)" placeholder="(7)1234567 ó 3120101010"  pattern="(^\(?[0-9]{1}\)??[0-9]{7})|(\d{10})" value="{% if form.telefono.value != None %}{{ form.telefono.value }}{% endif %}" title="También puede ser un número celular"/> -->
+                    <input id="id_telefono" name="telefono" maxlength="10" placeholder="(7)1234567 ó 3120101010" value="{% if form.telefono.value != None %}{{ form.telefono.value }}{% endif %}" title="También puede ser un número celular"/>
+                </td>
+            </tr>
+            <tr style="cursor:hand" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Grupo usuario</label></th>
+                <td>{{ form.grupo_usuario.errors }} {{ form.grupo_usuario }}</td>
+            </tr>
+            <tr style="cursor: default" onMouseOver="this.style.background='#E1E1E1'; this.style.color='#618926'" onMouseOut="this.style.background='#FFFFFF'; this.style.color='black'">
+                <th><label>Activo</label></th>
+                <td>{{ form.estado.errors }} {{ form.estado }}</td>
+            </tr>
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true"></p>
+        </div>
+    </form>
+
+{% endblock %}

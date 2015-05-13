@@ -1,0 +1,78 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <td>
+            {% if fecha_inicial.error != '' %}
+                <ul>
+                    <li>{{ fecha_inicial.error }}</li>
+                </ul>
+            {% endif %}
+            <label>Fecha inicial</label>
+            <input type="text" id="id_fecha_inicial" name="fecha_inicial" placeholder="aaaa-mm-dd" value="{{ fecha_inicial.valor }}"/>
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador_f_i">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_inicial",ifFormat:"%Y-%m-%d",button:"lanzador_f_i"});
+            </script>
+        </td>
+        <td>
+            {% if fecha_final.error != '' %}
+                <ul>
+                    <li>{{ fecha_final.error }}</li>
+                </ul>
+            {% endif %}
+            <label>Fecha final</label>
+            <input type="text" id="id_fecha_final" name="fecha_final" placeholder="aaaa-mm-dd" value="{{ fecha_final.valor }}"/>
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha final" id="lanzador_f_f">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_final",ifFormat:"%Y-%m-%d",button:"lanzador_f_f"});
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Criterio Busqueda</label>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Fecha de arribo</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for requisicion in requisiciones.modelo %}
+        <tr>
+            <td>
+                <label>RE{{ requisicion.proyecto.id }}-{{ requisicion.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ requisicion.fecha_creacion|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ requisicion.fecha_arribo }}</label>
+            </td>
+            <td>
+                <label>{{ requisicion.persona }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/requisicionesproyectodetails/{{ requisicion.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if requisiciones.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones('Dajax.process',{'pagina': {{ requisiciones.prev_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{requisiciones.page}} de {{requisiciones.pages}}
+{% if requisiciones.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones('Dajax.process',{'pagina': {{ requisiciones.next_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_requisiciones('Dajax.process',{'pagina': {{ requisiciones.pages }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

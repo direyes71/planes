@@ -1,0 +1,54 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_abono_pago_entidad">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Fecha actual:</th>
+            <td>
+                <label>{{ fecha_actual|date:'Y-m-d' }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Tipo cuenta:</th>
+            <td>
+                <label>{{ pago_entidad_contrato_venta.tipo_cuenta }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Entidad:</th>
+            <td>
+                <label>{% if pago_entidad_contrato_venta.entidad %}{{ pago_entidad_contrato_venta.entidad }}{% endif %}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>N&deg; cuenta:</th>
+            <td>
+                <label>{% if pago_entidad_contrato_venta.numero_cuenta %}{{ pago_entidad_contrato_venta.numero_cuenta }}{% endif %}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Fecha de desembolso:</th>
+            <td>
+                <label>{% if pago_entidad_contrato_venta.fecha_desembolso %}{{ pago_entidad_contrato_venta.fecha_desembolso }}{% endif %}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Valor:</th>
+            <td>
+                <label>{{ pago_entidad_contrato_venta.valor|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+        {{ form.as_table }}
+        <tr>
+            <td align="center">
+                <input type="submit" value="Aceptar" onclick="this.disabled=true;"/>
+            </td>
+            <td align="center">
+                <input type="button" id="id_btn_cancelar_agregar" value="Cancelar">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="pago_entidad_contrato_venta" value="{{ pago_entidad_contrato_venta.id }}">
+</form>

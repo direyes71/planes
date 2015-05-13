@@ -1,0 +1,112 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+
+{% block script_extra %}
+    
+{% endblock %}
+
+{% block content %}
+    {% comment %}
+    {% if 'inverboy.create_setup' in user.get_all_permissions %}
+        <a href="#" class="buttom_add_stage" id="buttom_add_stage">Agregar Etapa</a>
+    {% endif %}
+    {% endcomment %}
+    <a href="#" class="buttom_add_stage" id="buttom_add_stage">Agregar Etapa</a>
+
+    <div id="add_block">
+
+        {% if form.name.errors  or form.initials.errors or form.image_file.errors %}
+            <h4>Errores en el formulario</h4>
+            <div class='form_error'>
+                {% if form.name.errors %} Campo nombre : {{ form.name.errors }}{% endif %}
+                {% if form.initials.errors %} Campo Iniciales :{{ form.initials.errors }}{% endif %}
+                {% if form.image_file.errors %} Campo imagen :{{ form.image_file.errors }}{% endif %}
+            </div>
+        {% endif %}
+        <form id="add_stage" class="add_stage" action="." method="POST" enctype="multipart/form-data">
+
+            <input type="file" id="file_photo" class="file_photo" name="image_file" placeholder="IMG">
+            <input type="text" id="text_title" class="text_title" name="name" placeholder="Titulo" value="{% if form.name.value != None %}{{ form.name.value }}{% endif %}">
+            <input type="text" id="text_sigla" class="text_sigla" name="initials" placeholder="Sigla"value="{% if form.initials.value != None %}{{ form.initials.value }}{% endif %}">
+            <div class='clear_fix'></div>
+            <textarea id="text_description" class="text_description" name="description" placeholder="Descripcion">{% if form.description.value != None %}{{ form.description.value }}{% endif %}</textarea>
+            <input type="submit" id="buttom_send" class="buttom_1" name="buttom_send" value="Guardar">
+        </form>
+    </div>
+
+    {% for stage in stages %}
+        <div class="content_block">
+            <div class="content_block_title"><span><img src="{{ static_prefix }}{{ stage.get_image }}" alt="Icon"></span> <h4>{{ stage.name }} - {{ stage.initials }}</h4></div>
+            <div class="content_block_text">
+                {{ stage.description }}
+            </div>
+            <div class="action_buttons">
+                {% comment %}
+                {% if 'inverboy.view_stage' in user.get_all_permissions %}
+                {% endcomment %}
+                    <a href="/inverboy/home/phasesreport/{{ stage.id }}/{{ stage.project.id }}/" class="buttom_1">Ver mas</a>
+                {% comment %}
+                {% endif %}
+                {% endcomment %}
+                {% comment %}
+                {% if 'inverboy.create_setup' in user.get_all_permissions and stage.can_be_eliminated %}
+                {% endcomment %}
+                    <a href="/inverboy/home/stagechange/{{ stage.id }}/{{ stage.project.id }}/" stage_id="{{ stage.id }}" class="buttom_1">Modificar</a>
+                    <a href="/inverboy/home/stagedelete/{{ stage.id }}/{{ stage.project.id }}/" class="buttom_1">Eliminar</a>
+                {% comment %}
+                {% endif %}
+                {% endcomment %}
+            </div>
+            <div class="clearfix"></div>
+            <div class="division"></div>
+
+        </div>
+        <div class="clearfix"></div>
+    {% endfor %}
+
+    <script>
+        $(document).ready(function(e){
+
+            // INTERFAZ ACTIONS ******************************************************
+            // actions stage()
+
+            var flag_stage = 0;
+
+            {% if flag_stage %}
+                flag_stage = 1;
+            {% endif %}
+
+            if (flag_stage == 1){
+                $("#add_block").slideDown("slow");
+            }
+
+            $("#buttom_add_stage").click(function(e){
+                location.href = "/inverboy/home/stageadd/{{ project.id }}/";
+                /*if (flag_stage == 0){
+                    //$("#add_block").css("display","block");
+                    $("#add_block").slideDown("slow");
+                    flag_stage = 1;
+                }else{
+                    $("#add_block").slideUp("slow");
+                    flag_stage = 0;
+                }*/
+            });
+
+            /*
+            $(".buttom_1").click(function(e){
+                e.preventDefault();
+                var stage_id = $(this).attr("stage_id");
+                $.get( "/inverboy/home/stagechange/" + stage_id + "/{{ project.id }}/", function( data ) {
+
+                });
+                $("#add_block").slideDown("slow");
+                flag_stage = 1;
+            });
+            */
+
+            // END INTERFAZ ACTIONS ******************************************************
+        });
+    </script>
+{% endblock %}

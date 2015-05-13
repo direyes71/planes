@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_busqueda_adicionales_agrupacion_inmueble">
+    <table>
+        <tr>
+            <th>Tipo adicional</th>
+            <td colspan="2">
+                <select name="tipo_adicional" class="chosen-select" style="width: 350px;">
+                    <option value="">-----</option>
+                    {% for tipo_adicional in tipos_adicional %}
+                        <option value="{{ tipo_adicional.id }}"{% if tipo_adicional.id == tipo_adicional_actual.id %}selected="selected"{% endif %}>{{ tipo_adicional.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio" id="id_criterio_proveedor" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table id="tablaReportes">
+    <tr>
+        <th>Sel.</th>
+        <th scope="col">Tipo adicional</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripci&oacute;n</th>
+        <th scope="col">Valor</th>
+    </tr>
+    {% for adicional_agrupacion_inmueble in adicionales_agrupacion_inmueble.modelo %}
+        <tr>
+            <td><input type="checkbox" value="{{ adicional_agrupacion_inmueble.id }}" tipo_adicional="{% if tipo_adicional_actual %}{{ tipo_adicional_actual.id }}{% endif %}" criterio="{{ criterio }}" pagina="{{ adicionales_agrupacion_inmueble.page }}" id="id_select_adicional_agrupacion_inmueble" {% if adicional_agrupacion_inmueble in adicionales_agrupacion_inmueble_seleccionados %} checked="checked"{% endif %}></td>
+            <td><label>{% if adicional_agrupacion_inmueble.tipo_adicional %}{{ adicional_agrupacion_inmueble.tipo_adicional }}{% endif %}</label></td>
+            <td><label>{{ adicional_agrupacion_inmueble.nombre }}</label></td>
+            <td><label>{{ adicional_agrupacion_inmueble.descripcion }}</label></td>
+            <td><label>{{ adicional_agrupacion_inmueble.valor|force_escape|intcomma }}</label></td>
+        </tr>
+    {% endfor %}
+</table>
+{% if adicionales_agrupacion_inmueble.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_adicionales_agrupacion_inmueble_nuevo_contrato_venta('Dajax.process',{'pagina': 1, {% if tipo_adicional_actual %}'tipo_adicional_id': {{ tipo_adicional_actual.id }}, {% endif %}'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_adicionales_agrupacion_inmueble_nuevo_contrato_venta('Dajax.process',{'pagina': {{ adicionales_agrupacion_inmueble.prev_page }}, {% if tipo_adicional_actual %}'tipo_adicional_id': {{ tipo_adicional_actual.id }}, {% endif %}'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ adicionales_agrupacion_inmueble.page }} de {{ adicionales_agrupacion_inmueble.pages }}
+{% if adicionales_agrupacion_inmueble.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_adicionales_agrupacion_inmueble_nuevo_contrato_venta('Dajax.process',{'pagina': {{ adicionales_agrupacion_inmueble.next_page }}, {% if tipo_adicional_actual %}'tipo_adicional_id': {{ tipo_adicional_actual.id }}, {% endif %}'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_adicionales_agrupacion_inmueble_nuevo_contrato_venta('Dajax.process',{'pagina': {{ adicionales_agrupacion_inmueble.pages }}, {% if tipo_adicional_actual %}'tipo_adicional_id': {{ tipo_adicional_actual.id }}, {% endif %}'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }}})"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<input type="submit" value="Agregar adicionales" id="id_btn_agregar_adicionales_agrupacion_inmueble">
+<input type="button" value="Cancelar" id="id_btn_cancelar_agregar">

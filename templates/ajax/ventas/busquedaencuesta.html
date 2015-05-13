@@ -1,0 +1,44 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Titulo</th>
+        <th scope="col">Descripci&oacute;n</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for encuesta in encuestas.modelo %}
+        <tr>
+            <td>
+                <label>{{ encuesta.titulo }}</label>
+            </td>
+            <td>
+                <label>{{ encuesta.descripcion }}</label>
+            </td>
+            <td>
+                <a href="/inverboy/home/detallesencuesta/{{ encuesta.id }}/">Detalles</a>
+                <a href="/inverboy/home/modificarencuesta/{{ encuesta.id }}/">Modificar</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if encuestas.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_encuestas('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}'})"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_encuestas('Dajax.process',{'pagina': {{ encuestas.prev_page }}, 'criterio': '{{ criterio }}'})"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ encuestas.page }} de {{ encuestas.pages }}
+{% if encuestas.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_encuestas('Dajax.process',{'pagina': {{ encuestas.next_page }}, 'criterio': '{{ criterio }}'})"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_encuestas('Dajax.process',{'pagina': {{ encuestas.pages }}, 'criterio': '{{ criterio }}'})"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,17 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Nueva orden de giro
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <form action="." method="POST">
+        <div id="id_reporte_proveedores">
+            {% include 'ajax/proveedoressearchordengiroadd.html' %}
+        </div>
+    </form>
+{% endblock %}

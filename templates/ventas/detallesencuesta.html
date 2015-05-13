@@ -1,0 +1,27 @@
+{% extends "html/base_home.html" %}
+{% load adminmedia admin_list i18n %}
+{% block titulo %}
+    Detalles encuesta
+{% endblock %}
+{% block script %}
+
+{% endblock %}
+
+{% block contenido %}
+    <!-- contenido página -->
+    <table>
+        <tr>
+            <td><label>Titulo:</label></td>
+            <td><label>{{ encuesta.titulo }}</label></td>
+        </tr>
+        <tr>
+            <td><label>Descripci&oacute;n:</label></td>
+            <td><label>{{ encuesta.descripcion }}</label></td>
+        </tr>
+    </table>
+
+    <div id="reporte_preguntas">
+        {% include 'ajax/ventas/detallespreguntasencuesta.html' %}
+    </div>
+    <!-- contenido página -->
+{% endblock %}

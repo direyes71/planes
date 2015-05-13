@@ -1,0 +1,46 @@
+<table>
+    <div align="right">
+        <input type="submit" value="X"  align="center" onclick="cerrarVentanaSuministro();">  </input>
+    </div>
+    <tr>
+        <td>{% if suministro.categoria.tipo == 3 %}{{ suministro.categoria.categoria_asociada.categoria_asociada.id }}.{% endif %}{{ suministro.categoria.categoria_asociada.id }}.{{ suministro.categoria.id }}.{{ suministro.codigo }}</td>
+    </tr>
+    <tr>
+        <td>{{ suministro.nombre }}</td>
+    </tr>
+</table>
+
+<p align="center">PROVEEDORES</p>
+
+<table border="1" style="border-color: green" align="center">
+    <tr>
+        <th scope="col">Identificacion</th>
+        <th scope="col">Razon Social</th>
+        <th scope="col">Nombre Comercial</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Telefeno</th>
+        <th scope="col">Precio</th>
+        <th scope="col">Iva</th>
+        <th scope="col">Fecha actualización</th>
+    </tr>
+    {% for proveedor in proveedores %}
+        <tr>
+            <td>{{ proveedor.proveedor.identificacion }}</td>
+            <td>{{ proveedor.proveedor.razon_social }}</td>
+            <td>{{  proveedor.proveedor.nombre_comercial }}</td>
+            <td>{{  proveedor.proveedor.direccion }}</td>
+            <td>{{  proveedor.proveedor.tipo }}</td>
+            <td>{{  proveedor.proveedor.telefono_1 }}</td>
+            <td>{{  proveedor.precio_suministro }}</td>
+            <td>
+               {% if proveedor.iva_suministro == 0 %}
+                    No
+               {% else %}
+                    Si
+               {% endif %}
+            </td>
+            <td>{{ proveedor.fecha_actualizacion|date:'Y-m-d' }}</td>
+        </tr>
+    {% endfor %}
+</table>

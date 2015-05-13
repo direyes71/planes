@@ -1,0 +1,11 @@
+{% extends 'html/base_pdf.html' %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block contenido %}
+    
+    <p align="justify">
+        {{ texto }}
+    </p>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nueva acta de conformidad ordenes de giro proyecto {% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div id="id_reporte_ordenes_giro">
+            {% include 'ajax/ordenesgirosearchactaconformidadadd.html' %}
+        </div>
+    </form>
+{% endblock %}

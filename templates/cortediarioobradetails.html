@@ -1,0 +1,36 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Detalles corte diario de obra
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    <table>
+        <tr>
+            <th>Corte diario de obra No.</th>
+            <td colspan="3"><label>CDO{{ corte_diario_obra.orden_servicio.proyecto.id }}-{{ corte_diario_obra.consecutivo }}</label></td>
+        </tr>
+        <tr>
+            <th>Fecha Corte</th>
+            <td><label>{{ corte_diario_obra.fecha_corte|date:'Y-m-d' }}</label></td>
+            <th>Persona</th>
+            <td><label>{{ corte_diario_obra.persona }}</label></td>
+        </tr>
+        <tr>
+            <th>NIT</th>
+            <td colspan="3"><label>{{ corte_diario_obra.orden_servicio.proveedor.identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor</th>
+            <td><label>{{ corte_diario_obra.orden_servicio.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th>Orden de servicio</th>
+            <td colspan="3"><label>OS{{ corte_diario_obra.orden_servicio.proyecto.id }}-{{ corte_diario_obra.orden_servicio.consecutivo }}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_suministros">
+        {% include 'ajax/suministroscortediarioobrasearch.html' %}
+    </div>
+{% endblock %}

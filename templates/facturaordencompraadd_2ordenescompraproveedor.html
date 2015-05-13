@@ -1,0 +1,32 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Nueva factura orden de compra - ordenes de compra proveedor
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <table>
+        <tr>
+            <th><label>NIT proveedor</label></th>
+            <td>{{ proveedor.identificacion }}</td>
+        </tr>
+        <tr>
+            <th><label>Razon social proveedor</label></th>
+            <td>{{ proveedor.razon_social }}</td>
+        </tr>
+        <tr>
+            <th><label>Nombre comercial proveedor</label></th>
+            <td>{{ proveedor.nombre_comercial }}</td>
+        </tr>
+    </table>
+    <form action="." method="POST">
+        <div id="id_reporte_ordenes_compra">
+            {% include 'ajax/ordenescompraproveedorsearchfacturaordencompraadd.html' %}
+        </div>
+    </form>
+    <a href="/inverboy/home/facturaordencompraproyectoaddproveedoresordenescompra/{{ proyecto.id }}/">Volver proveedores (Se perdera la informaci&oacute;n actual)</a> - <a href="/inverboy/home/facturaordencompraproyectoadddetalles/{{ proveedor.id }}/{{ proyecto.id }}/">Ver factura</a>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "html/base_home.html" %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Orden de servicio por proveedor{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function suministrosProveedor(proveedor_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.orden_servicio_suministros_proveedor('Dajax.process',{ 'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+        }
+        function buscarSuministros(proveedor_id, proyecto_id) {
+            criterio = document.getElementById('id_text_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros_proveedor_contizacion_orden_servicio_add('Dajax.process',{ 'criterio': criterio, 'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+        }
+        function anadirSuministroCotizacion(pagina, suministro_id, proveedor_id, criterio, proyecto_id) {
+            cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            document.getElementById('ahref_agregar_suministro_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_agregar_suministro_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_cotizacion_orden_servicio('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'proveedor_id': proveedor_id, 'criterio': criterio, 'proyecto_id': proyecto_id, 'cantidad': cantidad });
+        }
+        function activarInputCantidad(pagina, suministro_id, proveedor_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_cotizacion_orden_servicio_add('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'proveedor_id': proveedor_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function cotizarTodo(proveedor_id, proyecto_id) {
+            document.getElementById('ahref_cotizar_todo_'+proveedor_id).style.display = 'none';
+            document.getElementById('id_cargando_cotizar_todo_'+proveedor_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.cotizar_todos_suministros_proveedor_orden_servicio_add('Dajax.process',{ 'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+        }
+        function cancelarCotizacion(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_cotizacion_orden_servicio('Dajax.process',{ 'proyecto_id': proyecto_id });
+        }
+        function realizarCotizacion(proyecto_id) {
+            document.getElementById('id_guardar').disabled=true;
+            Dajaxice.aplicacion.inverboy.realizar_cotizacion_orden_servicio('Dajax.process',{ 'proyecto_id': proyecto_id });
+        }
+
+        //Ventana emergente proveedor
+        function detalles_proveedor(proveedor_id, indice) {
+            Dajaxice.aplicacion.inverboy.informacion_proveedor('Dajax.process',{'id': proveedor_id, 'indice': indice });
+        }
+        function cerrarVentanaProveedor() {
+            document.getElementById('flotanteProveedores').style.display = 'none' ;
+        }
+        // VENTANA EMERGENTE PROVEEDOR
+    </script>
+    <style type="text/css">
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+        /* base semi-transparente */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/suministrosrequisicionesproveedorsearchordenservicioadd.html' %}
+    </div>
+    <div id='flotanteProveedores' class="border">
+        {% include 'ajax/informacionproveedor.html' %}
+    </div>
+    <form action="." method="POST">
+        <div id="id_reporte_proveedores">
+            {% include 'ajax/ordenservicioproveedoressearch.html' %}
+        </div>
+    </form>
+{% endblock %}

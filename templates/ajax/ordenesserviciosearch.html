@@ -1,0 +1,89 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <td>
+            {% if fecha_inicial.error != '' %}
+                <ul>
+                    <li>{{ fecha_inicial.error }}</li>
+                </ul>
+            {% endif %}
+            <label>Fecha inicial</label>
+            <input type="text" id="id_fecha_inicial" name="fecha_inicial" placeholder="aaaa-mm-dd" value="{{ fecha_inicial.valor }}"/>
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador_f_i">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_inicial",ifFormat:"%Y-%m-%d",button:"lanzador_f_i"});
+            </script>
+        </td>
+        <td>
+            {% if fecha_final.error != '' %}
+                <ul>
+                    <li>{{ fecha_final.error }}</li>
+                </ul>
+            {% endif %}
+            <label>Fecha final</label>
+            <input type="text" id="id_fecha_final" name="fecha_final" placeholder="aaaa-mm-dd" value="{{ fecha_final.valor }}"/>
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha final" id="lanzador_f_f">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_final",ifFormat:"%Y-%m-%d",button:"lanzador_f_f"});
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Criterio Busqueda</label>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha creaci&oacute;n</th>
+        <th>Proveedor</th>
+        <th>Tercero</th>
+        <th>Persona</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for orden_servicio in ordenes_servicio.modelo %}
+        <tr>
+            <td>
+                <label>OS{{ orden_servicio.proyecto.id }}-{{ orden_servicio.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ orden_servicio.fecha_creacion|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ orden_servicio.proveedor.razon_social }}</label>
+            </td>
+            <td>
+                {% if orden_servicio.tercero != None %}
+                    <label>{{ orden_servicio.tercero.razon_social }}</label>
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ orden_servicio.persona }}</label>
+            </td>
+            <td>
+                {% if orden_servicio.permite_modificaciones %}
+                    <a href="/inverboy/home/ordenesservicioproyectochange/{{ orden_servicio.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/inverboy/home/ordenesservicioproyectodetails/{{ orden_servicio.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_servicio.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ ordenes_servicio.prev_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ordenes_servicio.page}} de {{ordenes_servicio.pages}}
+{% if ordenes_servicio.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ordenes_servicio.next_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_servicio('Dajax.process',{'pagina': {{ordenes_servicio.pages }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

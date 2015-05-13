@@ -1,0 +1,41 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for tipo in tipos.modelo %}
+        <tr>
+            <td>
+                {{ tipo.id }}
+            </td>
+            <td>
+                {{ tipo.nombre }}
+            </td>
+            <td>
+                {% if tipo.estado == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_categoria' in user.get_all_permissions %}
+                    <a href="/inverboy/home/tiposchange/{{ tipo.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if tipos.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_suministro('Dajax.process',{'pagina': 1, 'html': 'reportetipos.html', 'especificacion_id': '{{ especificacion.id }}', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_suministro('Dajax.process',{'pagina': {{ tipos.prev_page }}, 'html': 'reportetipos.html', 'especificacion_id': '{{ especificacion.id }}', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ tipos.page }} de {{ tipos.pages }}
+{% if tipos.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_suministro('Dajax.process',{'pagina': {{ tipos.next_page }}, 'html': 'reportetipos.html', 'especificacion_id': '{{ especificacion.id }}', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipos_suministro('Dajax.process',{'pagina': {{ tipos.pages }}, 'html': 'reportetipos.html', 'especificacion_id': '{{ especificacion.id }}', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

@@ -1,0 +1,10 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Requisiciones por aprobar proyecto {% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div id="id_reporte_requisiciones">
+            {% include 'ajax/requisicionesaprobarsearch.html' %}
+        </div>
+    </form>
+{% endblock %}

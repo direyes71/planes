@@ -1,0 +1,31 @@
+<p align="center">Clientes</p>
+<table id="tablaReportes" border="1" align="center">
+    <tbody id=cuerpoTabla >
+        <tr>
+            <th>Tipo</th>
+            <th>Tipo Id.</th>
+            <th>Identificaci&oacute;n</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Departamento</th>
+            <th>Municipio</th>
+            <th>Residencia</th>
+            <th>Email</th>
+            <th>Opciones</th>
+        </tr>
+        {% for cliente in clientes %}
+            <tr>
+                <td><label>{% if prospecto_venta.cliente.id == cliente.id or contrato_venta.cliente_principal.cliente.id == cliente.id %}Principal{% endif %}</label></td>
+                <td><label>{{ cliente.str_abreviatura_tipo_identificacion }}</label></td>
+                <td><label>{{ cliente.identificacion }}</label></td>
+                <td><label>{{ cliente.nombre_1 }} {{ cliente.nombre_2 }} {{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+                <td><label>{{ cliente.telefono_1 }}</label></td>
+                <td><label>{{ cliente.municipio_residencia.departamento }}</label></td>
+                <td><label>{{ cliente.municipio_residencia }}</label></td>
+                <td><label>{{ cliente.direccion_residencia }}</label></td>
+                <td><label>{{ cliente.email }}</label></td>
+                <td>{% if prospecto_venta.cliente.id != cliente.id and contrato_venta.cliente_principal.cliente.id != cliente.id %}<a href = "#" id="id_btn_eliminar_cliente" cliente_id="{{ cliente.id }}">Borrar</a>{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

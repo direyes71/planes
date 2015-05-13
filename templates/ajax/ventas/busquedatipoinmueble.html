@@ -1,0 +1,51 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <!-- <th scope="col">No.</th> -->
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripci&oacute;n</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for tipo_inmueble in tipo_inmuebles.modelo %}
+        <tr>
+            <!--
+            <td>
+                <label>{{ forloop.counter }}</label>
+            </td>
+            -->
+            <td>
+                <label>{{ tipo_inmueble.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ tipo_inmueble.descripcion }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.change_tipoinmueble' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificartipoinmueble/{{ tipo_inmueble.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if tipo_inmuebles.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipo_inmuebles('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipo_inmuebles('Dajax.process',{'pagina': {{ tipo_inmuebles.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ tipo_inmuebles.page }} de {{ tipo_inmuebles.pages }}
+{% if tipo_inmuebles.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipo_inmuebles('Dajax.process',{'pagina': {{ tipo_inmuebles.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_tipo_inmuebles('Dajax.process',{'pagina': {{ tipo_inmuebles.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

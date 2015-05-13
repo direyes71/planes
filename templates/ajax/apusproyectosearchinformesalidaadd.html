@@ -1,0 +1,82 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th>Suministro</th>
+        <td>{{ suministro_almacen.suministro.nombre }}</td>
+    </tr>
+    <tr>
+        <th>Cantidad disponible</th>
+        <td>{{ suministro_almacen.cantidad_actual|force_escape|intcomma }}</td>
+    </tr>
+    <tr>
+        <th>Unidad de medida</th>
+        <td>{{ suministro_almacen.suministro.unidad_medida }}</td>
+    </tr>
+</table>
+<form action="javascript:buscarApusSuministroAlmacen({{ suministro_almacen.id }}, '{{ criterio_suministro }}', {{ pagina_suministro }}, {{ proyecto.id }});">
+    <table>
+        <tr>
+            <td>
+                Criterio
+            </td>
+            <td>
+                <input type="text" name="criterio_apu" id="id_criterio_apu" value="{{ criterio_apu }}">
+            </td>
+            <td>
+                <input type="submit" value="Buscar">
+            </td>
+        </tr>
+    </table>
+</form>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clasificaci&oacute;n</th>
+        <th>Nombre</th>
+        <th>Unidad de medida</th>
+        <th>Cantidad esta salida</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for apu in apus.modelo %}
+        <tr>
+            <td>
+                {{ apu.apu.capitulo.capitulo_asociado.nombre_capitulo }}
+                <br>
+                {{ apu.apu.capitulo.nombre_capitulo }}
+            </td>
+            <td>
+                {{ apu.apu.nombre_apu }}
+            </td>
+            <td>
+                {{ apu.apu.unidad_medida_apu }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ apu.apu.id }}">{% if error.id == apu.apu.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" id="id_text_cantidad_{{ apu.apu.id }}" name="text_cantidad" size="12" {% if error.id == apu.apu.id %}value="{{ error.value|force_escape }}"{% else %}{% if apu.cantidad_suministro_apu_nuevo_informe != '' %} value="{{ apu.cantidad_suministro_apu_nuevo_informe|force_escape|intcomma }}" disabled="disabled"{% endif %}{% endif %}>
+            </td>
+            <td>
+                {% if error.id == apu.apu.id or apu.cantidad_suministro_apu_nuevo_informe == '' %}
+                    <a href="javascript:agregarCantidadApuProyectoInformeSalida({{ apus.page }}, {{ suministro_almacen.id }}, {{ apu.apu.id }}, '{{ criterio_apu }}', '{{ criterio_suministro }}', {{ pagina_suministro }}, {{ proyecto.id }});" id="a_href_anadir_cantidad_{{ apu.apu.id }}">Agregar</a>
+                {% else %}
+                    <img id="id_modificar_{{ apu.apu.id }}" name="modificar" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;" onclick="activarModificarCantidadApuProyectoInformeSalida({{ apus.page }}, {{ suministro_almacen.id }}, {{ apu.apu.id }}, '{{ criterio_apu }}', '{{ criterio_suministro }}', {{ pagina_suministro }}, {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_{{ apu.apu.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if apus.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process',{'pagina': 1, 'suministro_id': {{ suministro_almacen.id }}, 'criterio_apu': '{{ criterio_apu }}', 'criterio_suministro': '{{ criterio_suministro }}', 'pagina_suministro': {{ pagina_suministro }}, 'proyecto_id': '{{ proyecto.id }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process',{'pagina':{{ apus.prev_page }}, 'suministro_id': {{ suministro_almacen.id }}, 'criterio_apu': '{{ criterio_apu }}', 'criterio_suministro': '{{ criterio_suministro }}', 'pagina_suministro': {{ pagina_suministro }}, 'proyecto_id': '{{ proyecto.id }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ apus.page }} de {{ apus.pages }}
+{% if apus.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process',{'pagina': {{ apus.next_page }}, 'suministro_id': {{ suministro_almacen.id }}, 'criterio_apu': '{{ criterio_apu }}', 'criterio_suministro': '{{ criterio_suministro }}', 'pagina_suministro': {{ pagina_suministro }}, 'proyecto_id': '{{ proyecto.id }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process',{'pagina': {{ apus.pages }}, 'suministro_id': {{ suministro_almacen.id }}, 'criterio_apu': '{{ criterio_apu }}', 'criterio_suministro': '{{ criterio_suministro }}', 'pagina_suministro': {{ pagina_suministro }}, 'proyecto_id': '{{ proyecto.id }}' })"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<input type="button" onclick="agregarSuministroInformeSalida({{ apus.page }}, {{ suministro_almacen.id }}, '{{ criterio_suministro }}', {{ pagina_suministro }}, {{ proyecto.id }});" value="Aceptar">
+<input type="button" onclick="cancelarAgregarSuministroInformeSalida({{ proyecto.id }});" value="Cancelar">

@@ -1,0 +1,25 @@
+{% extends 'html/base_home.html' %}
+{% block titulo %}{% if change %}Modificar capitulo APU's{% else %}Nuevo capitulo APU's{% endif %}{% endblock %}
+{% block contenido %}
+    <form action="." name="form1" method="post">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+        </div>
+    </form>
+{% endblock %}

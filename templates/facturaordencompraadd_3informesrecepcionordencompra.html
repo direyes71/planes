@@ -1,0 +1,127 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Nueva factura orden de compra - informes de recepci&oacute;n
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function ventanaAgregarSuministroFactura(informe_recepcion_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process', {'pagina': 1, 'informe_recepcion_id': informe_recepcion_id, 'criterio': '', 'proyecto_id': proyecto_id});
+        }
+        function buscarSuministrosInformeRecepcion(informe_recepcion_id, proyecto_id) {
+            criterio = document.getElementById('id_criterio_suministro').value;
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process', {'pagina': 1, 'informe_recepcion_id': informe_recepcion_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function agregarItemFactura(pagina, suministro_id, informe_recepcion_id, criterio, proyecto_id) {
+            var cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            document.getElementById('a_href_anadir_cantidad_'+suministro_id).style.display='none';
+            document.getElementById('id_cargando_'+suministro_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.agregar_item_factura_orden_compra('Dajax.process', {'pagina': pagina, 'suministro_id': suministro_id, 'informe_recepcion_id': informe_recepcion_id, 'cantidad': cantidad, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function activarModificarCantidadItemFacturaOrdenCompra(pagina, suministro_id, informe_recepcion_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_item_factura_orden_compra('Dajax.process', {'pagina': pagina, 'suministro_id': suministro_id, 'informe_recepcion_id': informe_recepcion_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function agregarItemsFactura(informe_recepcion_id, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.agregar_items_factura_orden_compra('Dajax.process', {'informe_recepcion_id': informe_recepcion_id, 'proyecto_id': proyecto_id});
+        }
+        function facturarTodo(informe_recepcion_id, proyecto_id) {
+            document.getElementById('ahref_facturar_todo_'+informe_recepcion_id).style.display = 'none';
+            document.getElementById('id_cargando_facturar_todo_'+informe_recepcion_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.facturar_todos_suministros_informe_recepcion_factura_orden_compra_add('Dajax.process',{ 'informe_recepcion_id': informe_recepcion_id, 'proyecto_id': proyecto_id });
+        }
+        function cancelarAgregarItemsFactura(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_agregar_items_factura_orden_compra('Dajax.process', {'proyecto_id': proyecto_id});
+        }
+        function activarModificarSuministro(suministro_id, criterio_suministro, pagina_suministro, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_informe_salida('Dajax.process', {'pagina': 1, 'suministro_id': suministro_id, 'criterio_apu': '', 'criterio_suministro': criterio_suministro, 'pagina_suministro': pagina_suministro, 'proyecto_id': proyecto_id});
+        }
+    </script>
+    <style type="text/css">
+
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 880px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -440px;  /*Tamaño del DIV entre 2*/
+            margin-top: -300px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        .border{
+            display: none;
+            /*position: absolute;*/
+            width: auto;
+            height: auto;
+            border-bottom: solid 4px #494949;
+            border-right: solid 4px #494949;
+            border-top: solid 5px #E0EDDF;
+            border-left: solid 5px #E0EDDF;
+            background: #f4fcf4;
+            padding: 16px;
+            position:absolute;
+            color: #008844;
+            z-index:1002;
+            overflow: auto;
+            font-weight:bold;
+		    text-shadow: 1px 1px #494949;
+        }
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/suministrosinformerecepcionsearchfacturaordencompraadd.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <table>
+        <tr>
+            <th><label>Orden compra</label></th>
+            <td><label>OC{{ orden_compra.proyecto.id }}-{{ orden_compra.consecutivo }}</label></td>
+            <th><label></label>Fecha</th>
+            <td><label>{{ orden_compra.fecha_creacion|date:'Y-m-d' }}</label></td>
+        </tr>
+        <tr>
+            <th><label>Razon social</label></th>
+            <td colspan="3"><label>{{ orden_compra.proveedor.razon_social }}</label></td>
+        </tr>
+        <tr>
+            <th><label>Nombre comercial</label></th>
+            <td colspan="3"><label>{{ orden_compra.proveedor.nombre_comercial }}</label></td>
+        </tr>
+    </table>
+    <form action="." method="POST">
+        <div id="id_reporte_informes_recepcion">
+            {% include 'ajax/informesrecepcionordencomprasearchfacturaordencompraadd.html' %}
+        </div>
+    </form>
+    <a href="/inverboy/home/facturaordencompraproyectoaddordenescompraproveedor/{{ orden_compra.proveedor.id }}/{{ proyecto.id }}/">Volver a ordenes de compra</a> - <a href="/inverboy/home/facturaordencompraproyectoadddetalles/{{ orden_compra.proveedor.id }}/{{ proyecto.id }}/">Ver factura</a>
+{% endblock %}

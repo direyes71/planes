@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <title>PDF</title>
+        <style type="text/css">
+            body {
+              font-family: Helvetica, Arial, sans-serif;
+              font-size: 10pt;
+            }
+
+            #footerContent {
+                text-align: right;
+                font-size: 8pt;
+            }
+
+            @page {
+                size: {{ pagesize }} {{ orientation }};
+                margin:2cm;
+                margin-left:3cm;
+                margin-right:1.5cm;
+                margin-bottom:20mm;
+                margin-top:45mm;
+
+                @frameheader {
+                    -pdf-frame-content:headerContent;
+                    top:10mm;
+                    height:33mm;
+                    margin-left:1cm;
+                    margin-right:1cm;
+                    /* -pdf-frame-border: 0; */
+                }
+
+                @framefooter {
+                    -pdf-frame-content:footerContent;
+                    bottom:1cm;
+                    margin-left:3cm;
+                    margin-right:2cm;
+                    height:1cm;
+                    /* -pdf-frame-border: 0; */
+                }
+            }
+
+            .tabla_borde_uno {
+                border: 1px solid #000000;
+            }
+
+            .tabla_borde_uno th, .tabla_borde_uno td {
+                border:hidden;
+                padding-left:2px;
+                padding-right:2px;
+                padding-top:2px;
+                font-size: 10pt;
+            }
+
+            .tabla_borde_dos {
+                border: 1px solid #000000;
+            }
+
+            .tabla_borde_dos th, .tabla_borde_dos td {
+                border:hidden;
+                padding-left:2px;
+                padding-right:2px;
+                padding-top:2px;
+                font-size: 8pt;
+            }
+
+            .tabla_borde_reporte_uno {
+                border: 1px solid #000000;
+            }
+
+            .tabla_borde_reporte_uno th, .tabla_borde_reporte_uno td {
+                padding-top: 3px;
+                padding-left: 2px;
+                padding-right: 2px;
+                font-size: 7pt;
+            }
+
+            .tabla_borde_reporte_dos {
+                border: 1px solid #000000;
+            }
+
+            .tabla_borde_reporte_dos th, .tabla_borde_reporte_dos td {
+                padding-top: 3px;
+                padding-left: 2px;
+                padding-right: 2px;
+                font-size: 8pt;
+            }
+
+            .panel_firmas li {
+                display: none;
+            }
+
+            @frame {
+                -pdf-frame-content: main_text;
+                /*-pdf-frame-border: 1;*/
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="footerContent">
+        [p&aacute;gina <pdf:pagenumber />]
+        </div>
+
+        <div id="headerContent">
+            <table>
+                <tr>
+                    <td{% if orientation == 'portrait' %} style="text-align:right;"{% endif %}{% if orientation == 'landscape' %} style="text-align:center;"{% endif %}>
+                        <img src="ima/{{ imagen_cabecera }}" height="130px" width="900px" alt="rotulo">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {% block contenido %}
+
+        {% endblock %}
+
+    </body>
+</html>

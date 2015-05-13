@@ -1,0 +1,91 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <td>
+            <label>Fecha inicial</label>
+            <label>{{ error_fecha_inicial }}</label>
+            <input type="search" name="fecha_inicial" id="id_fecha_inicial" value="{{ fecha_inicial }}">
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_inicial",ifFormat:"%Y-%m-%d",button:"lanzador"});
+            </script>
+        </td>
+        <td>
+            <label>Fecha final</label>
+            <label>{{ error_fecha_final }}</label>
+            <input type="text" name="fecha_final" id="id_fecha_final" value="{{ fecha_final }}">
+            <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Final" id="lanzador2">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"id_fecha_final",ifFormat:"%Y-%m-%d",button:"lanzador2"});
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <label>Busqueda</label>
+            <input type="radio" name="tipo_busqueda" value="1" {% if tipo_busqueda == 1 %}checked="checked" {% endif %}> Proveedor
+            <input type="radio" name="tipo_busqueda" value="2" {% if tipo_busqueda == 2 %}checked="checked" {% endif %}> Tercero
+            <input type="radio" name="tipo_busqueda" value="3" {% if tipo_busqueda == 3 %}checked="checked" {% endif %}> Mixto
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Criterio</label>
+            <input type="text" name="criterio" value="{{ criterio }}">
+        </td>
+        <td>
+            <input type="submit" value="Buscar">
+        </td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha</th>
+        <th>Orden de servicio</th>
+        <th>Proveedor</th>
+        <th>Tercero</th>
+        <th>Persona</th>
+        <th>Valor</th>
+    </tr>
+    {% for acta_recibo_obra in actas_recibo_obra.modelo %}
+        <tr>
+            <td>
+                <label>ARO{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ acta_recibo_obra.fecha_acta|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>OS{{ acta_recibo_obra.orden_servicio.proyecto.id }}-{{ acta_recibo_obra.orden_servicio.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ acta_recibo_obra.orden_servicio.proveedor.razon_social }}</label>
+            </td>
+            <td>
+                {% if acta_recibo_obra.orden_servicio.tercero != None %}
+                    <label>{{ acta_recibo_obra.orden_servicio.tercero.razon_social }}</label>
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ acta_recibo_obra.persona.first_name }} {{ acta_recibo_obra.persona.last_name }}</label>
+            </td>
+            <td align="right">
+                <label>{{ acta_recibo_obra.total_pagar|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if actas_recibo_obra.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_actas_recibo_obra_reporte_pago('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial }}', 'fecha_final': '{{ fecha_final }}', 'tipo_busqueda': {{ tipo_busqueda }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_actas_recibo_obra_reporte_pago('Dajax.process',{'pagina': {{ actas_recibo_obra.prev_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial }}', 'fecha_final': '{{ fecha_final }}', 'tipo_busqueda': {{ tipo_busqueda }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ actas_recibo_obra.page }} de {{ actas_recibo_obra.pages }}
+{% if actas_recibo_obra.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_actas_recibo_obra_reporte_pago('Dajax.process',{'pagina': {{ actas_recibo_obra.next_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial }}', 'fecha_final': '{{ fecha_final }}', 'tipo_busqueda': {{ tipo_busqueda }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_actas_recibo_obra_reporte_pago('Dajax.process',{'pagina': {{ actas_recibo_obra.pages }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial }}', 'fecha_final': '{{ fecha_final }}', 'tipo_busqueda': {{ tipo_busqueda }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

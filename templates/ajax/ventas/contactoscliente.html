@@ -1,0 +1,25 @@
+<p align="center">Contactos</p>
+<table id="tablacontactos" border="1" align="center">
+    <tbody id=cuerpoTabla >
+        <tr>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Departamento</th>
+            <th>Municipio</th>
+            <th>Email</th>
+            <th colspan="2">Opciones</th>
+        </tr>
+        {% for contacto in contactos %}
+            <tr>
+                <td>{{ contacto.nombre }}</td>
+                <td>{{ contacto.telefono }}</td>
+                <td>{{ contacto.municipio.departamento }}</td>
+                <td>{{ contacto.municipio }}</td>
+                <td>{{ contacto.email }}</td>
+                <!-- <td><a href = "#" name="modificar_contacto" onclick="modificarFila( {{ forloop.counter0 }} );">Modificar</a></td> -->
+                <td><a href = "javascript:void(0)" name="modificar_contacto" indice="{{ forloop.counter0 }}" onclick="modificarFila(this);">Modificar</a></td>
+                <td><a href = "#" onclick="borrarFila( {{ forloop.counter0 }} );">Borrar</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

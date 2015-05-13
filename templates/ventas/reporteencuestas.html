@@ -1,0 +1,12 @@
+{% extends "html/base_home.html" %}
+{% block script %}
+    
+{% endblock %}
+{% block titulo %}Encuestas{% endblock %}
+{% block contenido %}
+    <form action="." method="POST">
+        <div id="id_reporte_encuestas">
+            {% include 'ajax/ventas/busquedaencuesta.html' %}
+        </div>
+    </form>
+{% endblock %}

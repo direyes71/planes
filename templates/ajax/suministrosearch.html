@@ -1,0 +1,124 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+        <tr>
+            <th scope="col">Codigo</th>
+            <th scope="col">Clasificacion</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Sinonimos</th>
+            <th scope="col">Representativo</th>
+            <th scope="col">Unidad embalaje</th>
+            <th scope="col">Unidad medida</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Peso</th>
+            <th scope="col">Largo</th>
+            <th scope="col">Alto</th>
+            <th scope="col">Ancho</th>
+            <th scope="col">Fecha creacion</th>
+            <th scope="col">Fecha actualizacion</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Opciones</th>
+        </tr>
+        {% for suministro in suministros.modelo %}
+             <tr id= 'fila_suministro_{{ forloop.counter0 }}'>
+                <td>
+                    {% if suministro.categoria.tipo == 3 %}{{ suministro.categoria.categoria_asociada.categoria_asociada.id }}.{% endif %}{{ suministro.categoria.categoria_asociada.id }}.{{ suministro.categoria.id }}.{{ suministro.codigo }}
+                </td>
+                <td>
+                    {% if suministro.categoria.tipo == 3 %}
+                        <label style="color: #165C01;">
+                            {{ suministro.categoria.categoria_asociada.categoria_asociada.nombre }}
+                        </label>
+                        <br>
+                        <label style="color: #57A43F;">
+                            {{ suministro.categoria.categoria_asociada.nombre }}
+                        </label>
+                        <br>
+                        <label style="color: #165C01;">
+                            {{ suministro.categoria.nombre }}
+                        </label>
+                    {% else %}
+                        <label style="color: #165C01;">
+                            {{ suministro.categoria.categoria_asociada.nombre }}
+                        </label>
+                        <br>
+                        <label style="color: #57A43F;">
+                            {{ suministro.categoria.nombre }}
+                        </label>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="javascript:void(0)" onclick ="detalles_suministro({{ suministro.id }}, {{ forloop.counter0 }});">{{ suministro.nombre }}</a>
+                </td>
+                <td>
+                    {{ suministro.sinonimos }}
+                </td>
+                <td>
+                    {% if suministro.representativo == 0 %}
+                        No
+                    {% else %}
+                        Si
+                    {% endif %}
+                </td>
+                <td>
+                    {% if suministro.unidad_embalaje != -1 %}
+                        {{ suministro.unidad_embalaje|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ suministro.unidad_medida }}
+                </td>
+                <td>
+                    {% if suministro.estado_suministro == 0 %}
+                        Inactivo
+                    {% else %}
+                        Activo
+                    {% endif %}
+                </td>
+                <td>
+                    {% if suministro.peso != null %}
+                        {{ suministro.peso|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if suministro.largo != null %}
+                        {{ suministro.largo|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if suministro.alto != null %}
+                        {{ suministro.alto|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if suministro.ancho != null %}
+                        {{ suministro.ancho|force_escape|intcomma }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ suministro.fecha_creacion }}
+                </td>
+                <td>
+                    {{ suministro.fecha_actualizacion }}
+                </td>
+                <td>
+                    {{ suministro.usuario.first_name }} {{ suministro.usuario.last_name }}
+                </td>
+                <td>
+                    {% if 'inverboy.change_suministro' in user.get_all_permissions %}
+                        <a href="/inverboy/home/suministroschange/{{ suministro.id }}/">Modificar</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros('Dajax.process',{'pagina': 1, 'html': 'reportesuministros.html', 'criterio': '{{ criterio }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'html': 'reportesuministros.html', 'criterio': '{{ criterio }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros('Dajax.process',{'pagina': {{ suministros.next_page }}, 'html': 'reportesuministros.html', 'criterio': '{{ criterio }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros('Dajax.process',{'pagina': {{ suministros.pages }}, 'html': 'reportesuministros.html', 'criterio': '{{ criterio }}' })"> >> </a>
+{% else %}
+{% endif %}

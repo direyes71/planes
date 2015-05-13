@@ -1,0 +1,240 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        function buscarSuministros(proyecto_id){
+            var clasificacion_general_suministro = document.getElementById('id_clasificacion_general_suministro').value;
+            var criterio = document.getElementById('id_criterio_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros('Dajax.process',{'pagina': 1, 'clasificacion_general': clasificacion_general_suministro, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+
+        function agregarSuministro(suministro_id, pagina, clasificacion_general, criterio, proyecto_id){
+            var cantidad = document.getElementById('id_cantidad_'+suministro_id).value;
+            document.getElementById('ahref_agregar_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.agregar_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad': cantidad, 'clasificacion_general': clasificacion_general, 'criterio': criterio, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        function agregarSuministros(proyecto_id){
+            Dajaxice.aplicacion.inverboy.agregar_suministros_apu_proyecto_add('Dajax.process',{ 'proyecto_id': proyecto_id });
+        }
+
+        // funcion para calcular el precio
+        function calcularValor(proyecto_id) {
+            cantidad_proyecto = document.getElementById("id_cantidad_proyecto").value;
+            cantidad_apu = document.getElementById("id_cantidad_apu").value;
+            Dajaxice.aplicacion.inverboy.calcular_valor_apu_proyecto_add('Dajax.process',{ 'cantidad_proyecto': cantidad_proyecto, 'cantidad_apu': cantidad_apu, 'proyecto_id': proyecto_id });
+        }
+
+        function activarInput(suministro_id, pagina, proyecto_id){
+            Dajaxice.aplicacion.inverboy.activar_input_precio_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        function modificarPrecio(suministro_id, pagina, proyecto_id){
+            var valorcampo = document.getElementById('id_text_precio_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_precio_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'precio': valorcampo, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        function modificarCantidad(suministro_id, pagina, proyecto_id){
+            var valorcampo = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            Dajaxice.aplicacion.inverboy.modificar_cantidad_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'cantidad': valorcampo, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        function activarInputCantidad(suministro_id, pagina, proyecto_id){
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        function cambiarManejoApuEstandar(check, proyecto_id){
+            Dajaxice.aplicacion.inverboy.cambiar_manejo_estandar_apu_proyecto_add('Dajax.process',{ 'parametro': check.checked, 'proyecto_id': proyecto_id });
+        }
+
+        function asignarSuministroApuEstandar(check, suministro_id, pagina, proyecto_id){
+            Dajaxice.aplicacion.inverboy.asignar_suministro_estandar_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'parametro': check.checked, 'pagina': pagina, 'proyecto_id': proyecto_id });
+        }
+
+        // FUNCION PARA ELMIMINAR UN SUMINISTRO DE LA LISTA
+        function borrarFila(suministro_id, pagina, proyecto_id)	{
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                Dajaxice.aplicacion.inverboy.eliminar_suministro_apu_proyecto_add('Dajax.process',{ 'suministro_id': suministro_id, 'pagina': pagina, 'proyecto_id': proyecto_id });
+            }
+        }
+
+        // FUNCION PARA LIMPIAR LA VENTANA DE BUSQUEDA DE SUMINISTROS
+        function limpiarBusquedaSuministros(proyecto_id) {
+            Dajaxice.aplicacion.inverboy.cancelar_agregar_suministros_apu_proyecto_add('Dajax.process', { 'proyecto_id': proyecto_id });
+        }
+
+        // Funcion al seleccionar un check de suministro
+        function seleccionar(check, suministro_id, pagina, clasificacion_general_suministro, criterio, proyecto_id){
+            Dajaxice.aplicacion.inverboy.seleccionar_suministro_lista_suministros_apu_proyecto_add('Dajax.process',{ 'parametro': check.checked, 'suministro_id': suministro_id, 'pagina': pagina, 'clasificacion_general': clasificacion_general_suministro, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+
+    </script>
+
+    <style type="text/css">
+
+        /* base semi-transparente */
+            .overlay{
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index:1001;
+                opacity:.75;
+                -moz-opacity: 0.75;
+                filter: alpha(opacity=75);
+            }
+
+        /* estilo para lo q este dentro de la ventana modal */
+            .modal {
+                display: none;
+                position: absolute;
+                width: 880px;
+                height: 600px;
+                left: 50%;
+                top: 50%;
+                margin-left: -440px;  /*Tamaño del DIV entre 2*/
+                margin-top: -300px;  /*Tamaño del DIV entre 2*/
+                padding: 16px;
+                background: #fff;
+                color: #333;
+                z-index:1002;
+                overflow: auto;
+            }
+
+    </style>
+
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles APU Maestro {% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/tabla_busqueda_suministros.html' %}
+    </div>
+    <!-- fin ventana modal -->
+
+    <form id="form1" name="form1" method="post" action=".">
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Capitulo APU Maestro:</label></th>
+                <td>
+                    {{ apu.capitulo.capitulo_asociado }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo APU Maestro:</label></th>
+                <td>
+                    {{ apu.capitulo }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Capitulo proyecto:</label></th>
+                <td>
+                    {{ form.capitulo.errors }}
+                    <select name="capitulo" id="id_capitulo" onchange="Dajaxice.aplicacion.inverboy.cargar_subcapitulos_apus_proyectos('Dajax.process',{'option':this.value, 'elemento': 'id_subcapitulo'});">
+                    {% for capitulo in capitulos %}
+                        <option value="{{ capitulo.id }}" {% if capitulo == capitulo_actual %} selected="selected" {% endif %}> {{ capitulo.nombre_capitulo }}</option>   <!-- se le da el valor al combo del id del capitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo proyecto:</label></th>
+                <td>
+                    {{ form.subcapitulo.errors }}
+                    <select name="subcapitulo" id="id_subcapitulo">
+                        <option value="0">----</option>
+                    {% for subcapitulo in subcapitulos %}
+                        <option value="{{ subcapitulo.id }}" {% if subcapitulo == subcapitulo_actual %} selected="selected" {% endif %}>{{ subcapitulo.nombre_capitulo }} </option>   <!-- se le da el valor al combo del id del subcapitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad medida:</label></th>
+                <td>
+                    {{ apu.unidad_medida_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad proyecto:</label></th>
+                <td>
+                    <label id="id_label_error_cantidad_proyecto"></label>
+                    {{ form.cantidad_proyecto.errors }} {{ form.cantidad_proyecto }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad APU:</label></th>
+                <td>
+                    <label id="id_label_error_cantidad_apu"></label>
+                    {{ form.cantidad_apu.errors }} {{ form.cantidad_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad Total:</label></th>
+                <td>
+                    {{ form.cantidad_total.errors }}
+                    <input type="text" id="id_cantidad_total" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <th><label>Valor Unitario:</label></th>
+                <td>
+                    {{ form.valor_unitario.errors }}
+                    <input type="text" id="id_valor_unitario" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <th><label>Valor Total:</label></th>
+                <td>
+                    {{ form.valor_total.errors }}
+                    <input type="text" id="id_valor_total" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <th><label>Manejo apu estandar:</label></th>
+                <td>
+                    {{ form.apu_manejo_estandar.errors }}
+                    <input type="checkbox" name="apu_manejo_estandar" id="id_apu_manejo_estandar" onchange="cambiarManejoApuEstandar(this, {{ proyecto.id }});" {% if form.apu_manejo_estandar.value %}checked="checked" {% endif %}>
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <input type="button" value="Calcular precio" onclick="calcularValor({{ proyecto.id }});">
+
+        <p align="center">Suministros</p>
+
+        <div id="id_reporte_suministros">
+            {% include 'ajax/suministrosapuproyectoadd.html' %}
+        </div>
+
+        <p align="center"><a href="javascript:void(0)" onclick="buscarSuministros({{ proyecto.id }});">Agregar suministro</a></p>
+        <br>
+        <p align ="center"><input type="submit" value="Guardar APU proyecto" onclick="this.disabled=true;"></p>
+    </form>
+{% endblock %}

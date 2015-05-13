@@ -1,0 +1,84 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <th>Informe de recepci&oacute;n:</th>
+        <td>IR{{ informe_recepcion.orden_compra.proyecto.id }}-{{ informe_recepcion.consecutivo }}</td>
+    </tr>
+    <tr>
+        <th>Fecha registro:</th>
+        <td>{{ informe_recepcion.fecha_informe|date:'Y-m-d' }}</td>
+    </tr>
+</table>
+<form action="javascript:buscarSuministrosInformeRecepcion({{ informe_recepcion.id }}, {{ proyecto.id }});">
+    <table>
+        <tr>
+            <td>
+                Criterio
+            </td>
+            <td>
+                <input type="text" name="criterio_suministro" id="id_criterio_suministro" value="{{ criterio }}">
+            </td>
+            <td>
+                <input type="submit" value="Buscar">
+            </td>
+        </tr>
+    </table>
+</form>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Nombre</th>
+        <th>Unidad de medida</th>
+        <th>Cant. I. R.</th>
+        <th>Cant. facturada</th>
+        <th>Cantidad esta factura</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for suministro_informe_recepcion in suministros_informe_recepcion.modelo %}
+        <tr>
+            <td>
+                {{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro_informe_recepcion.suministro.cantidad|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro_informe_recepcion.suministro.cantidad_facturada|force_escape|intcomma }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}">{% if error.id == suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id %}{{ error.error }}{% endif %}</label>
+                <input type="text" id="id_text_cantidad_{{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}" name="text_cantidad" size="12" {% if error.id == suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id %}value="{{ error.value|force_escape }}"{% else %}{% if suministro_informe_recepcion.cantidad_suministro_nueva_factura != '' %} value="{{ suministro_informe_recepcion.cantidad_suministro_nueva_factura|force_escape|intcomma }}" disabled="disabled"{% endif %}{% endif %}>
+            </td>
+            <td>
+                {% if error.id == suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id or suministro_informe_recepcion.cantidad_suministro_nueva_factura == '' %}
+                    <a href="javascript:agregarItemFactura({{ suministros_informe_recepcion.page }}, {{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}, {{ informe_recepcion.id }}, '{{ criterio }}', {{ proyecto.id }});" id="a_href_anadir_cantidad_{{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}">Agregar</a>
+                {% else %}
+                    <img id="id_modificar_{{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}" name="modificar" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;" onclick="activarModificarCantidadItemFacturaOrdenCompra({{ suministros_informe_recepcion.page }}, {{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}, {{ informe_recepcion.id }}, '{{ criterio }}', {{ proyecto.id }});">
+                {% endif %}
+                <img id="id_cargando_{{ suministro_informe_recepcion.suministro.suministro.suministro_orden_compra_item.suministro.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros_informe_recepcion.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process',{'pagina': 1, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process',{'pagina':{{ suministros_informe_recepcion.prev_page }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros_informe_recepcion.page }} de {{ suministros_informe_recepcion.pages }}
+{% if suministros_informe_recepcion.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process',{'pagina': {{ suministros_informe_recepcion.next_page }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.ventana_agregar_suministro_factura_orden_compra('Dajax.process',{'pagina': {{ suministros_informe_recepcion.pages }}, 'informe_recepcion_id': {{ informe_recepcion.id }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> >> </a>
+{% else %}
+{% endif %}
+<p align="right">
+    <a href="javascript:facturarTodo({{ informe_recepcion.id }}, {{ proyecto.id }});" id="ahref_facturar_todo_{{ informe_recepcion.id }}">Facturar todos</a>
+    <img id="id_cargando_facturar_todo_{{ informe_recepcion.id }}" name="cargando" src="{{ static_prefix }}ima/cargando.gif" style="width:22px; height:22px; display: none;">
+</p>
+<br>
+<input type="button" onclick="agregarItemsFactura({{ informe_recepcion.id }}, {{ proyecto.id }});" value="Aceptar">
+<input type="button" onclick="cancelarAgregarItemsFactura({{ proyecto.id }});" value="Cancelar">

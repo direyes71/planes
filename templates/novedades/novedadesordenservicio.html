@@ -1,0 +1,145 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} NOVEDADES MODULO ORDENES DE SERVICIO {% endblock %}
+{% block contenido %}
+
+    <p class="titulo"> VER ACTA DE RECIBO DE OBRA </p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/actareciboobranovedad3.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Ahora en el Acta de Recibo de Obra es posible visualizar:
+            <br/>
+            <br/>
+        1 - Las condiciones originales de los distintos suministros.
+            <br/>
+        2 - La obra ejecutada actualmente, comparada con dichas condiciones originales.
+            <br/>
+        3 - El valor del corte.
+            <br>
+        4 - Recuadro con todos los valores contables del proveedor.
+            <br/>
+        5 - Valor cooperativa.
+            <br/>
+        6 - Discriminación general por capitulo.
+            <br/>
+        7 - Discriminación cooperativa por capitulo.
+            <br>
+        8 - Discriminación cooperativa por proveedor.
+            <br/>
+        9 - Link impresión para proveedor.
+            <br/>
+        10 -Link impresión para contabilidad.
+    </p>
+    <br>
+    <br>
+    <br>
+    <!-- Ver ordenes de servicio -->
+    <p class="titulo">IMPRESIÓN PARA PROVEEDOR </p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/impresionparaproveedoracta.jpg">
+    </div>
+    <br>
+    <br>
+    <br>
+    <!-- Ver ordenes de servicio -->
+    <p class="titulo">IMPRESIÓN PARA CONTABILIDAD </p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/impresionparacontabilidadacta.jpg">
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+<!-- ---------------------------------------------------------------------------------------------------------------------  -->
+    <p class="titulo">VER COTIZACIÓN</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/cotizacionordenservicionovedad1.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - ID cotización
+            <br/>
+        2 - Proveedor de la cotización
+            <br/>
+        3 - Nombre del suministro, que se encuentre en la cotización
+            <br>
+            <br>
+        El listado de cotizaciones se encuentra ordenado por el código consecutivo de creación.
+    </p>
+    <br>
+    <br>
+    <!-- Ver ordenes de servicio -->
+    <p class="titulo">VER ORDENES DE SERVICIO </p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/ordenservicionovedad1.jpg">
+    </div>
+    <p class="parrafo" align="left">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Orden de Servicio
+            <br/>
+        2 - Proveedor de la Orden de Servicio
+            <br/>
+        3 - Nombre del suministro, que se encuentre en la Orden de Servicio
+            <br>
+            <br>
+        El listado de Ordenes de Servicio se encuentra ordenado por el proveedor alfabéticamente.
+    </p>
+    <br>
+    <br>
+    <!-- Ver cortes diarios -->
+    <p class="titulo">VER CORTES DIARIOS</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/cortediarionovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Corte Diario
+            <br/>
+        2 - Consecutivo Orden de Servicio a la que pertenece el Corte Diario
+            <br/>
+        3 - Nombre del suministro, que se encuentre en el Corte Diario
+        <br>
+        <br>
+    El listado de Cortes Diarios se encuentra ordenado por el código consecutivo de la Orden de Servicio en forma ascendente.
+    </p>
+    <br>
+    <br>
+    <!-- Ver actas de recibo de obra -->
+    <p class="titulo">VER ACTAS DE RECIBO DE OBRA</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/actareciboobranovedad1.jpg">
+    </div>
+    <p class="parrafo">
+    Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+        <br/>
+    1 - Consecutivo Acta de recibo de Obra
+        <br/>
+    2 - Consecutivo Orden de Servicio a la que pertenece el Acta de Recibo de Obra
+        <br/>
+    3 - Proveedor de la Orden de Servicio
+        <br/>
+    4 - Nombre del suministro, que se encuentre en el Acta de Recibo de Obra
+        <br>
+        <br>
+    El listado de Actas de Recibo de Obra se encuentra ordenado por el código consecutivo de la Orden de Servicio en forma ascendente.
+    </p>
+{% endblock %}

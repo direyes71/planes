@@ -1,0 +1,105 @@
+{% load adminmedia admin_list i18n %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+</head>
+<body>
+
+    <form method='post' id ='test'>
+        <input type="hidden" value="video34" />
+    </form>
+
+    <input type="text" name="video" id="video" value="24">
+
+    <input type="button" id="prueba" value='Test button'/>
+
+    <div id="message">Initial text</div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //$("#test").submit(function(event){
+             //   alert('paso');
+             //   event.preventDefault();
+                /*$.ajax({
+                     type:"POST",
+                     url:"/test2/",
+                     data: {
+                            'video': $('#test').val() // from form
+                            },
+                     success: function(){
+                         $('#message').html("<h2>Contact Form Submitted!</h2>")
+                        }
+                });
+                return false;
+            });
+
+*/
+            /*
+            $("#prueba").click(function(event){
+                $.ajax({
+                    type:"POST",
+                    url:"/test2/",
+                    data: {
+                        'video': $('#test').val() // from form
+                    },
+                    success: function(){
+                        $('#message').html("<h2>Contact Form Submitted!</h2>")
+                    }
+                });
+                return false; //<---- move it here
+            });
+            */
+
+
+            $("#prueba").click(function(event){
+                /*$.ajax({
+                    type:"GET",
+                    url:"/test2/",
+                    data: {
+                        'video': $('#video').val() // from form
+                    },
+                    success: function(data){
+                        $('#message').html(data)
+                    }
+                });
+                return false; //<---- move it here
+                */
+       //         $("#message").load("/test2/"); // no mas
+                // seeeppos seee
+                //jajajajja run run
+                //alert("coma mierda","coma mierda");
+                $.post("/test2/",{prueba:"prueba2"},function(data){
+                    alert(data);
+                    data = JSON.parse(data);
+                    alert(data);
+                    if (parseInt(data.error) == 1 )
+                        alert("no mando la foto");
+                    else {
+                        alert("berraquera la foto");
+                    }
+
+                });
+            });
+            
+
+
+            /*
+            $("#prueba").click(function(event){
+                $.get( "/test2/", function( data ) {
+                    $( "#message" ).html( data );
+                    alert( "Load was performed." );
+                });
+
+            });
+            */
+
+        });
+    </script>
+    
+</body>
+</html>

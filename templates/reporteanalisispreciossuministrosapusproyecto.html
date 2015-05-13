@@ -1,0 +1,136 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block script %}
+{% endblock %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Reporte an&aacute;lisis de cantidades por suministro
+{% endblock %}
+{% block contenido %}
+    <div align="center">
+        <table border="1" align="center">
+            {% for capitulo in proyecto.lista_capitulos_activos %}
+                <tr>
+                    <th><h2>Capitulo: {{ capitulo.nombre_capitulo }}</h2></th>
+                </tr>
+                <tr>
+                    <td>
+                        {% if capitulo.apus_proyecto %}
+                            {% if capitulo.lista_apus_proyecto_activos %}
+                                {% for apu_proyecto in capitulo.lista_apus_proyecto_activos %}
+                                    {% if apu_proyecto.lista_suministros %}
+                                        <table border="1" align="center">
+                                            <tr>
+                                                <th>
+                                                    <label>APU: {{ apu_proyecto.nombre_apu }}</label>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table border="2">
+                                                        <tr>
+                                                            <td>
+                                                                <label>Clasificaci&oacute;n</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>Suministro</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>U. medida</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>Valor ejecutado en OC</label>
+                                                            </td>
+                                                        </tr>
+                                                        {% for suministro in apu_proyecto.lista_suministros %}
+                                                            <tr>
+                                                                <td>
+                                                                    <label>{{ suministro.suministro.clasificacion_general }}</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label>{{ suministro.suministro.nombre }}</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label>{{ suministro.suministro.unidad_medida }}</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label>{{ suministro.precio_ejecutado_ordenes_compra|force_escape|intcomma }}</label>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if capitulo.subcapitulos %}
+                    <tr>
+                        <td>
+                            <h3>Subcapitulos</h3>
+                            {% for subcapitulo in capitulo.lista_subcapitulos_activos %}
+                                {% if subcapitulo.apus_proyecto %}
+                                    {% if subcapitulo.lista_apus_proyecto_activos %}
+                                        {% for apu_proyecto in subcapitulo.lista_apus_proyecto_activos %}
+                                            {% if apu_proyecto.lista_suministros %}
+                                                <table border="1" align="center">
+                                                    <tr>
+                                                        <th>
+                                                            <label>APU: {{ apu_proyecto.nombre_apu }}</label>
+                                                        </th>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <table border="2">
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Clasificaci&oacute;n</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label>Suministro</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label>U. medida</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label>Valor ejecutado en OC</label>
+                                                                    </td>
+                                                                </tr>
+                                                                {% for suministro in apu_proyecto.lista_suministros %}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label>{{ suministro.suministro.clasificacion_general }}</label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label>{{ suministro.suministro.nombre }}</label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label>{{ suministro.suministro.unidad_medida }}</label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label>{{ suministro.precio_ejecutado_ordenes_compra|force_escape|intcomma }}</label>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <br>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'html/planes/base_home.html' %}
+{% load adminmedia admin_list i18n %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+
+{% block script_extra %}
+    
+{% endblock %}
+
+{% block content %}
+    <form action="." method="post" enctype="multipart/form-data">
+        {{ form.as_table }}
+        <button>Enviar</button>
+    </form>
+{% endblock %}

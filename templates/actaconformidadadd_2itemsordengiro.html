@@ -1,0 +1,58 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Acta de conformidad
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        function buscarItems(orden_giro_id, proyecto_id) {
+            criterio = document.getElementById('id_criterio').value;
+            Dajaxice.aplicacion.inverboy.buscar_items_acta_conformidad_add('Dajax.process',{ 'pagina': 1, 'criterio': criterio, 'orden_giro_id': orden_giro_id,'proyecto_id': proyecto_id });
+        }
+        function agregarItemActaConformidad(pagina, item_id, orden_giro_id, criterio, proyecto_id) {
+            var valor = document.getElementById('id_text_valor_'+item_id).value;
+            document.getElementById('a_href_anadir_item_'+item_id).style.display='none';
+            document.getElementById('id_cargando_'+item_id).style.display='block';
+            Dajaxice.aplicacion.inverboy.agregar_item_acta_conformidad_add('Dajax.process', {'pagina': pagina, 'item_id': item_id, 'orden_giro_id': orden_giro_id, 'criterio': criterio, 'proyecto_id': proyecto_id, 'valor': valor});
+        }
+        function activarModificarValorItem(pagina, item_id, orden_giro_id, criterio, proyecto_id){
+            Dajaxice.aplicacion.inverboy.activar_modificar_item_acta_conformidad_add('Dajax.process',{'pagina': pagina, 'item_id': item_id, 'orden_giro_id': orden_giro_id, 'criterio': criterio, 'proyecto_id': proyecto_id});
+        }
+        function paginar(pagina, orden_giro_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.buscar_items_acta_conformidad_add('Dajax.process',{ 'pagina': pagina, 'criterio': criterio, 'orden_giro_id': orden_giro_id,'proyecto_id': proyecto_id });
+        }
+    </script>
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <table>
+        <tr>
+            <th>
+                Orden de giro No.
+            </th>
+            <td colspan="3">
+                <label>OG{{ orden_giro.proyecto.id }}-{{ orden_giro.consecutivo }}</label>
+            </td>
+        </tr>
+        <tr>
+            <th>Fecha de registro:</th>
+            <td><label>{{ orden_giro.fecha_registro }}</label></td>
+            <th>NIT Proveedor:</th>
+            <td><label>{{ orden_giro.proveedor.identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Proveedor:</th>
+            <td colspan="3"><label>{{ orden_giro.proveedor.razon_social }}</label></td>
+        </tr>
+    </table>
+    <div id="id_reporte_items">
+        {% include 'ajax/itemsordengirosearchactaconformidad.html' %}
+    </div>
+    <form action="." method="POST">
+        <p align="center">
+            <input type="submit" id="id_guardar" value="Realizar acta de conformidad" onclick="this.disabled=true;">
+        </p>
+    </form>
+{% endblock %}

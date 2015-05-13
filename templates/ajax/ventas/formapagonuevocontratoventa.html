@@ -1,0 +1,90 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% if form.forma_pago.value or form.entidad_bancaria_credito.errors or form.monto_credito.errors %}
+    <script src="{{ static_prefix }}js/jquery.1.11.0.min.js"></script>
+
+
+
+    <table{% if form.forma_pago.value == 2 or form.forma_pago.value == '2' %} style="display: none;"{% endif %}>
+        <tr>
+            <th>
+                Entidad bancaria:
+            </th>
+            <td>
+                {{ form.entidad_bancaria_credito.errors }}
+                {{ form.entidad_bancaria_credito }}
+            </td>
+        </tr>
+        <tr>
+            <th>Fecha desembolso:</th>
+            <td>
+                <input name="fecha_registro_desembolso_credito" id="id_fecha_registro_desembolso_credito" 
+                type="text">
+            </td>
+        </tr>
+
+        <tr>
+            <th>Valor desembolsado</th>
+            <td>
+                <input name="valor_desembolsado_credito" id="id_valor_desembolsado_credito" type="text">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Monto credito:
+            </th>
+            <td>
+                <label id="id_error_monto_credito"></label>
+                {{ form.monto_credito.errors }}
+                {{ form.monto_credito }}
+                <input type="text" name="monto_credito_0" id="id_monto_credito_0"{% if form.monto_credito.value %} value="{{ form.monto_credito.value|force_escape|intcomma }}" readonly="readonly"{% endif %}>
+                <img id="id_btn_asignar_monto_credito" src="{{ static_prefix }}ima/vistobueno.jpg" style="width:22px; height:22px;{% if form.monto_credito.value %} display: none;{% endif %}"/>
+                <img id="id_btn_modificar_monto_credito" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px;{% if not form.monto_credito.value %} display: none;{% endif %}"/>
+                
+                <span style="{% if form.monto_credito.value %} display: none;{% endif %}">
+                <label> % </label><input type="text" id="porcentaje" 
+                onkeyup='var v=parseFloat($("#id_valor_inmueble").attr("valor"));var p=0;if($("#porcentaje").val())p=parseFloat($("#porcentaje").val())/100; v=v*p; $("#id_monto_credito_0").val(v);'>
+                </span>
+            </td>
+        </tr>
+    </table>
+
+
+    <table>
+        <tr>
+            <td>
+                <h2>Pagos entidades</h2>
+                <table>
+                    <tr>
+                        <td>
+                            <div id="id_reporte_pagos_entidad">
+                                {% include 'ajax/ventas/pagosentidadcontratoventa.html' %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <a href="#" id="id_btn_agregar_pago_entidad">Agregar pago entidad</a>
+            </td>
+            <td>
+                <h2 id="id_valor_excedente_pagar_efectivo">Pagos en efectivo ${{ valor_efectivo_pagar|force_escape|intcomma }}</h2>
+                <table>
+                    <tr>
+                        <th>N&deg; cuotas:</th>
+                        <td>
+                            {{ form.numero_cuotas }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div id="id_panel_numero_cuotas">
+                                {% include 'ajax/ventas/pagosefectivocontratoventa.html' %}
+                            </div>
+                            <a href="#" id="id_btn_agregar_pago_efectivo">Agregar pago efectivo</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endif %}

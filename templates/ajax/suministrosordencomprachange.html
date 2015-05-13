@@ -1,0 +1,120 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Eliminar</th>
+        <th>Clas.</th>
+        <th>Suministro</th>
+        <th>Sinonimos</th>
+        <th>Cantidad comprada</th>
+        <th>Unidad de medida</th>
+        <th>Unidad de embalaje</th>
+        <th>Precio/Unitario</th>
+        <th>+ Iva</th>
+        <th>Observaciones</th>
+        <!--
+            // Cantidad requerida en el proyecto
+            <th>Cantidad requerida proyecto</th>
+        -->
+    </tr>
+    {% for suministro in suministros.modelo %}
+        <tr>
+            <td>
+                {% if 'inverboy.add_ordencompra' in user.get_all_permissions %}
+                    <img id="id_elimina_{{ suministro.suministro.id  }}" src="{{ static_prefix }}ima/elimina.jpg" onclick="eliminar_suministro({{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});"/>
+                {% endif %}
+            </td>
+            <td>
+                {{ suministro.suministro.clasificacion_general }}
+            </td>
+            <td>
+                {{ suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                <label id="id_label_error_cantidad_{{ suministro.suministro.id }}">{% if error.item == 'cantidad' and error.id == suministro.suministro.id %}{{ error.error }}{% endif %}</label>
+                {% if error.item == 'cantidad' and error.id == suministro.suministro.id %}
+                    <input type="text" id="id_text_cantidad_{{ suministro.suministro.id }}" name="text_cantidad" size="12"value="{{ error.value|force_escape }}"/>
+                {% else %}
+                    <label>{{ suministro.cantidad|intcomma|force_escape }}</label>
+                {% endif %}
+                {% if error.item == 'cantidad' and error.id == suministro.suministro.id %}
+                    <img id="id_ima_2_{{ suministro.suministro.id }}" name="ima_2" src="{{ static_prefix }}ima/vistobueno.jpg"  style="width:22px; height:22px;" onclick="modificarCantidad({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});"/>
+                {% else %}
+                    <img id="id_ima_{{ suministro.suministro.id }}" name="ima" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInput({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});">
+                {% endif %}
+            </td>
+            <td>
+                {{ suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro.suministro.unidad_embalaje|force_escape|intcomma }}
+            </td>
+            <td>
+                <label id="id_label_error_precio_{{ suministro.suministro.id }}">{% if error.item == 'precio' and error.id == suministro.suministro.id %}{{ error.error }}{% else %}{% if error == 'Revise los precios, deben ser mayores a 0' and suministro.precio == 0 %}Campo incorrecto{% endif %}{% endif %}</label>
+                {% if error.item == 'precio' and error.id == suministro.suministro.id %}
+                    <input type="text" id="id_text_precio_{{ suministro.suministro.id }}" name="text_precio" size="12" value="{{ error.value|force_escape }}"/>
+                {% else %}
+                    <label>{{ suministro.precio|intcomma|force_escape }}</label>
+                {% endif %}
+                {% if error.item == 'precio' and error.id == suministro.suministro.id %}
+                    <img id="id_ima_4_{{ suministro.suministro.id }}" name="ima_4" src="{{ static_prefix }}ima/vistobueno.jpg"  style="width:22px; height:22px;" onclick="modificarPrecio({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});"/>
+                {% else %}
+                    <img id="id_ima_3_{{ suministro.suministro.id }}" name="ima_3" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInputPrecio({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});">
+                {% endif %}
+            </td>
+            <td>
+                <input type="checkbox" id="id_check_iva_{{ suministro.suministro.id }}" {% if suministro.iva_suministro == 0.16 %}checked="checked"{% endif %} onchange="modificarIva({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});">
+            </td>
+            <td>
+                {% if error.item == 'observaciones' and error.id == suministro.suministro.id %}
+                    <textarea id="id_text_observaciones_{{ suministro.suministro.id }}" name="text_observaciones_{{ suministro.suministro.id }}">{{ error.value }}</textarea>
+                    <img id="id_ima_6_{{ suministro.suministro.id }}" name="ima_6" src="{{ static_prefix }}ima/vistobueno.jpg"  style="width:22px; height:22px;" onclick="modificarObservaciones({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});"/>
+                {% else %}
+                    <label>{{ suministro.observaciones }}</label>
+                    <img id="id_ima_5_{{ suministro.suministro.id }}" name="ima_5" src="{{ static_prefix }}ima/lapiz.png" style="width:22px; height:22px" onclick="activarInputObservaciones({{ suministros.page }}, {{ suministro.suministro.id }}, {{ orden_compra.id }}, {{ proyecto.id }});">
+                {% endif %}
+            </td>
+            <!--
+                // Cantidad requerida en el proyecto
+                <td>
+                    {{ suministro.cantidad_total_requerida_suministro_proyecto.cantidad_requerida|force_escape|intcomma }}
+                </td>
+            -->
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra_change('Dajax.process',{'pagina': 1, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra_change('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ suministros.page }} de {{ suministros.pages }}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra_change('Dajax.process',{'pagina': {{ suministros.next_page }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_orden_compra_change('Dajax.process',{'pagina': {{ suministros.pages }}, 'orden_compra_id': {{ orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<div>
+    <table class="tablaReportes" align="center">
+        <tr>
+            <th colspan="2">Previo</th>
+        </tr>
+        <tr>
+            <th>Subtotal</th>
+            <td><label>{{ subtotal|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>IVA</th>
+            <td><label>{{ valor_iva|force_escape|intcomma }}</label></td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td><label>{{ valor_total|force_escape|intcomma }}</label></td>
+        </tr>
+    </table>
+</div>

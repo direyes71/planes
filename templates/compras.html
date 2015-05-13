@@ -1,0 +1,112 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Compras{% endblock %}
+{% block script %}
+    <script type="text/javascript" charset="utf-8">
+        //Funcion para buscar un proveedor
+        function buscarProveedores(suministro_id, proyecto_id){
+            var criterio = document.getElementById('id_criterio_busqueda_proveedor').value;
+            Dajaxice.aplicacion.inverboy.buscar_proveedores_suministro_contizacion_add('Dajax.process',{ 'suministro_id': suministro_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        // Funcion al seleccionar un check de proveedor
+        function seleccionar(check, suministro_id, proveedor_id, pagina, criterio, proyecto_id){
+            Dajaxice.aplicacion.inverboy.seleccionar_proveedor_lista_proveedores_suministro_cotizacion_add('Dajax.process',{ 'parametro': check.checked, 'suministro_id': suministro_id, 'proveedor_id': proveedor_id, 'pagina': pagina, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function cotizarSuministro(suministro_id, proveedor_id, pagina, criterio, proyecto_id) {
+            cantidad = document.getElementById('id_text_cantidad_'+proveedor_id).value;
+            observaciones = document.getElementById('id_text_observaciones_'+proveedor_id).value;
+            document.getElementById('ahref_cotizar_suministro_proveedor_'+proveedor_id).style.display = 'none';
+            document.getElementById('id_cargando_'+proveedor_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.cotizar_suministro_proveedor('Dajax.process',{ 'suministro_id': suministro_id, 'proveedor_id': proveedor_id, 'cantidad': cantidad, 'observaciones': observaciones, 'pagina': pagina, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function cotizarTodo(proveedor_id, proyecto_id) {
+            document.getElementById('ahref_cotizar_todo_'+proveedor_id).style.display = 'none';
+            document.getElementById('id_cargando_cotizar_todo_'+proveedor_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.cotizar_todos_suministros_proveedor('Dajax.process',{ 'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+        }
+        function anadirSuministroCotizacion(pagina, suministro_id, proveedor_id, criterio, proyecto_id) {
+            cantidad = document.getElementById('id_text_cantidad_'+suministro_id).value;
+            observaciones = document.getElementById('id_text_observaciones_'+suministro_id).value;
+            document.getElementById('ahref_agregar_suministro_'+suministro_id).style.display = 'none';
+            document.getElementById('id_cargando_agregar_suministro_'+suministro_id).style.display = 'block';
+            Dajaxice.aplicacion.inverboy.anadir_suministro_cotizacion('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'cantidad': cantidad, 'observaciones': observaciones, 'proveedor_id': proveedor_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function activarInputCantidad(pagina, suministro_id, proveedor_id, criterio, proyecto_id) {
+            Dajaxice.aplicacion.inverboy.activar_input_cantidad_suministro_cotizacion_add('Dajax.process',{ 'pagina': pagina, 'suministro_id': suministro_id, 'proveedor_id': proveedor_id, 'criterio': criterio, 'proyecto_id': proyecto_id });
+        }
+        function buscarSuministros(proveedor_id, proyecto_id) {
+            criterio = document.getElementById('id_text_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros_proveedor_contizacion_add('Dajax.process',{ 'criterio': criterio, 'proveedor_id': proveedor_id, 'proyecto_id': proyecto_id });
+        }
+        function cancelarCotizacion(proveedor_id, proyecto_id) {
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+        // FUNCION PARA LIMPIAR LA VENTANA DE BUSQUEDA DE PROVEEDORES
+        function limpiarBusquedaProveedores() {
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+        
+        function realizarCotizacion(proyecto_id) {
+            document.getElementById('id_guardar').disabled=true;
+            Dajaxice.aplicacion.inverboy.realizar_cotizacion('Dajax.process',{ 'proyecto_id': proyecto_id });
+        }
+    </script>
+    {% load static %}
+    {% get_static_prefix as static_prefix %}
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+        /* base semi-transparente */
+            .overlay{
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                /*z-index:10;*/
+                opacity:.75;
+                -moz-opacity: 0.75; 
+                filter: alpha(opacity=75);
+            }
+
+        /* estilo para lo q este dentro de la ventana modal */
+            .modal {
+                display: none;
+                position: absolute;
+                width: 1000px;
+                height: 600px;
+                left: 50%;
+                top: 50%;
+                margin-left: -500px;  /*Tamaño del DIV entre 2*/
+                margin-top: -300px;  /*Tamaño del DIV entre 2*/
+                padding: 16px;
+                background: #fff;
+                color: #333;
+                /*z-index:11;*/
+                overflow: auto;
+            }
+    </style>
+{% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/suministrocotizarproveedoressearch.html' %}
+    </div>
+    <!-- fin ventana modal -->
+    <div>
+        <form action="." method="POST">
+            <div id="id_reporte_suministros_requisiciones">
+                {% include 'ajax/suministrosrequisicionessearch.html' %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

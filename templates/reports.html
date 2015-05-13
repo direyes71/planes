@@ -1,0 +1,162 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} Home {% endblock %}
+{% block script %}
+
+    <script type="text/javascript" charset="utf-8">
+        function mostrarSubMenu1() {
+            document.getElementById('id_sub_menu_1').style.display='block';
+        }
+        function quitarSubMenus() {
+            document.getElementById('id_sub_menu_1').style.display='none';
+        }
+
+        function mostrarSubMenu2() {
+            document.getElementById('id_sub_menu_categorias').style.display='block';
+        }
+    </script>
+
+    <style type="text/css">
+        /* estilo para lo q este dentro de la ventana modal */
+        .sub_menu {
+            display: none;
+        }
+
+    </style>
+{% endblock %}
+{% block contenido %}
+    <div onclick="">
+    <h2 align="center"> REPORTES PROYECTO INVERBOY</h2>
+
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+
+    <table align="center">
+    <tr>
+    {# % for permiso in permisos % #}
+        {% if 'inverboy.add_usuario' in permisos or 'inverboy.view_usuario' in permisos or 'auth.add_group' in permisos or 'auth.view_group' in permisos %}
+            <td>
+            <div title="Usuarios">
+                <table>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="{{ static_prefix }}ima/reportusers.jpg" alt="">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                            {% if 'inverboy.view_usuario' in permisos %}
+                                <a href="/inverboy/home/usuariosview/"> Ver Usuarios</a><br>
+                            {% endif %}
+                            {% if 'auth.view_group' in permisos %}
+                                <a href="/inverboy/home/gruposview/"> Ver Grupos de Usuario</a>
+                            {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </td>
+        {% endif %}
+    {# % endfor % #}
+    {# % for permiso in permisos % #}
+        {% if 'inverboy.add_proveedor' in permisos or 'inverboy.view_proveedor' in permisos %}
+            <td>
+            <div title="Proveedores">
+                <table>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="{{ static_prefix }}ima/reportproveedores.jpg" alt="">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if 'inverboy.view_proveedor' in permisos %}
+                                    <a href="/inverboy/home/proveedoresview/"> Ver proveedores</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </td>
+        {% endif %}
+    {# % endfor % #}
+    {# % for permiso in permisos % #}
+        {% if 'inverboy.add_suministro' in permisos or 'inverboy.view_suministro' in permisos or 'inverboy.view_categoria' in permisos %}
+            <td>
+            <div title="Suministros">
+                <table>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="{{ static_prefix }}ima/reportsuministros.jpg" alt="">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if 'inverboy.view_suministro' in permisos %}
+                                    <a href="/inverboy/home/suministrosview/"> Ver Suministros</a><br>
+                                {% endif %}
+                                {% if 'inverboy.view_categoria' in permisos %}
+                                    <a href="/inverboy/home/categoriasview/">Clasificacion de suministros</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </td>
+        {% endif %}
+
+    {# % endfor % #}
+    {# % for permiso in permisos % #}
+        {% if 'inverboy.add_apu' in permisos or 'inverboy.view_apu' in permisos %}
+            <td>
+            <div title="APU's">
+                <table>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="{{ static_prefix }}ima/reportapus.jpg" alt="">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if 'inverboy.view_apu' in permisos %}
+                                    <a href="/inverboy/home/apusview/"> Ver APU's</a><br>
+                                {% endif %}
+                                {% if 'inverboy.view_capitulo' in permisos %}
+                                    <a href="/inverboy/home/capitulosview/">Clasificacion de APU's</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </td>
+        {% endif %}
+
+
+    </tr>
+    </table>
+
+    {# % endfor % #}
+    {# % for permiso in permisos % #}
+        {# if permiso == 'inverboy.add_proyecto' #}
+            <!-- <br> -->
+            <!-- <div> -->
+                {# if 'inverboy.add_proyecto' in permisos #}
+                    <!-- <a href="."><img src="{# static_prefix #}ima/+.jpg" alt="" align="left"> Nuevo proyecto</a> -->
+                {# endif #}
+                {# if 'inverboy.view_proyecto' in permisos #}
+                    <!-- <a href="."><img src="{# static_prefix #}ima/+.jpg" alt="" align="left"> Ver proyectos</a> -->
+                {# endif #}
+            <!-- </div> -->
+        {# endif #}
+    {# % endfor % #}
+    </div>
+{% endblock %}
+

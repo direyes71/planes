@@ -1,0 +1,43 @@
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<form action="#" id="id_form_busqueda_inmuebles">
+    <table>
+        <tr>
+            <th><label>Criterio</label></th>
+            <td><input type="text" name="criterio" id="id_criterio_inmueble" value="{{ criterio }}"></td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table id="tablaReportes">
+    <tr>
+        <th>Sel.</th>
+        <th scope="col">Inmueble</th>
+        <th>Descripci&oacute;n</th>
+        <th>Valor</th>
+    </tr>
+    {% for agrupacion in agrupaciones.modelo %}
+        <tr>
+            <td><input type="checkbox" value="{{ agrupacion.id }}" criterio="{{ criterio }}" pagina="{{ agrupaciones.page }}" id="id_seleccion_agrupacion"{% if agrupacion in agrupaciones_seleccionadas %} checked="checked" {% endif %}></td>
+            <td><label>{{ agrupacion.identificacion }}</label></td>
+            <td>{{ agrupacion.str_descripcion|escape|safe }}</td>
+            <td><label>{{ agrupacion.str_valor|force_escape|intcomma }}</label></td>
+        </tr>
+    {% endfor %}
+</table>
+{% if agrupaciones.has_prev %}
+    <a href="javascript:void(0)" onclick="paginar_busqueda_inmuebles_agregar(1, '{{ criterio }}');"> << </a>
+    <a href="javascript:void(0)" onclick="paginar_busqueda_inmuebles_agregar({{ agrupaciones.prev_page }}, '{{ criterio }}');"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ agrupaciones.page }} de {{ agrupaciones.pages }}
+{% if agrupaciones.has_next %}
+    <a href="javascript:void(0)" onclick="paginar_busqueda_inmuebles_agregar({{ agrupaciones.next_page }}, '{{ criterio }}');"> > </a>
+    <a href="javascript:void(0)" onclick="paginar_busqueda_inmuebles_agregar({{ agrupaciones.pages }}, '{{ criterio }}');"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<input type="submit" value="Agregar inmuebles" id="id_btn_agregar_inmuebles_interes">
+<input type="button" value="Cancelar" id="id_btn_cancelar_agregar">

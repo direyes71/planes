@@ -1,0 +1,60 @@
+{% load humanize %}
+
+<form action="#" method="POST" id="id_form_busqueda_agrupaciones_inmueble_agregar_convenio_prospecto_venta">
+    <table>
+        <tr>
+            <td>
+                Criterio Busqueda
+            </td>
+            <td>
+                <input name="criterio" id="id_criterio" value="{{ criterio }}">
+            </td>
+            <td><input type="submit" value="Buscar"></td>
+        </tr>
+    </table>
+</form>
+
+<table style="width: 100%">
+    <thead>
+    <tr>
+        <td>
+            <h3>Inmuebles</h3>
+        </td>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <table border="1">
+                <tr>
+                    <th>Inmueble</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Valor</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for agrupacion_inmueble in agrupaciones_inmueble.modelo %}
+                    <tr>
+                        <td><label>{{ agrupacion_inmueble.identificacion }}</label></td>
+                        <td>{{ agrupacion_inmueble.str_descripcion|escape|safe }}</td>
+                        <td><label>{{ agrupacion_inmueble.str_valor|force_escape|intcomma }}</label></td>
+                        <td><a href="/inverboy/home/nuevocontratoventa/{{ agrupacion_inmueble.id }}/{{ prospecto_venta.id }}/{{ proyecto.id }}/">Crear</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>
+
+{% if agrupaciones_inmueble.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_agrupaciones_inmueble_agregar_convenio_prospecto_venta('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_agrupaciones_inmueble_agregar_convenio_prospecto_venta('Dajax.process',{'pagina': {{ agrupaciones_inmueble.prev_page }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ agrupaciones_inmueble.page }} de {{ agrupaciones_inmueble.pages }}
+{% if agrupaciones_inmueble.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_agrupaciones_inmueble_agregar_convenio_prospecto_venta('Dajax.process',{'pagina': {{ agrupaciones_inmueble.next_page }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_busqueda_agrupaciones_inmueble_agregar_convenio_prospecto_venta('Dajax.process',{'pagina': {{ agrupaciones_inmueble.pages }}, 'criterio': '{{ criterio }}', 'prospecto_venta_id': {{ prospecto_venta.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<br>
+<input type="button" value="Cancelar" id="id_btn_cancelar_agregar">

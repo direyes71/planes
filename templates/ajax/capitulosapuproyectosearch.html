@@ -1,0 +1,41 @@
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for capitulo in capitulos.modelo %}
+        <tr>
+            <td>
+                {{ capitulo.codigo }}
+            </td>
+            <td>
+                <a href="/inverboy/home/subcapitulosapuproyectosearch/{{ proyecto.id }}/{{ capitulo.id }}/">{{ capitulo.nombre_capitulo }}</a>
+            </td>
+            <td>
+                {% if capitulo.estado_capitulo == 0 %}
+                    Inactivo
+                {% else %}
+                    Activo
+                {% endif %}
+            </td>
+            <td>
+                {% if 'inverboy.change_capituloapuproyecto' in user.get_all_permissions %}
+                    <a href="/inverboy/home/capitulosapuproyectochange/{{ proyecto.id }}/{{ capitulo.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if capitulos.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_capitulos_apu_proyecto('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_capitulos_apu_proyecto('Dajax.process',{'pagina': {{ capitulos.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{capitulos.page}} de {{capitulos.pages}}
+{% if capitulos.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_capitulos_apu_proyecto('Dajax.process',{'pagina': {{ capitulos.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_capitulos_apu_proyecto('Dajax.process',{'pagina': {{ capitulos.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

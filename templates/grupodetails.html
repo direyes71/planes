@@ -1,0 +1,21 @@
+{% extends "html/base_home.html" %}
+{% block titulo %} Detalles Grupo {{ grupo.name }} {% endblock %}
+{% block contenido %}
+    {% if 'auth.change_group' in user.get_all_permissions %}
+        <a href="/inverboy/home/gruposchange/{{ grupo.id }}/">Modificar Grupo</a>
+    {% endif %}
+    <table align="center">
+        <tr>
+            <th scope="col">Permisos</th>
+        </tr>
+            <tr>
+                <td>
+                <ul>
+                    {% for permiso in permisos_grupo %}
+                        <li>{{ permiso.name }}</li>
+                    {% endfor %}
+                </ul>
+                </td>
+            </tr>
+    </table>
+{% endblock %}

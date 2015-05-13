@@ -1,0 +1,60 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Clasificaci&oacute;n</th>
+        <th>Nombre</th>
+        <th>Unidad de medida</th>
+        <th>Cantidad APU</th>
+        <th>Cantidad proyecto</th>
+        <th>Cantidad total</th>
+        <th>Valor Unit.</th>
+        <th>Valor Total</th>
+        <th colspan="2">Opciones</th>
+    </tr>
+    {% for apu in apus.modelo %}
+        <tr>
+            <td>
+                {{ apu.capitulo.capitulo_asociado.nombre_capitulo }}
+                <br>
+                {{ apu.capitulo.nombre_capitulo }}
+            </td>
+            <td>
+                {{ apu.nombre_apu }}
+            </td>
+            <td>
+                {{ apu.unidad_medida_apu }}
+            </td>
+            <td>
+                {{ apu.cantidad_apu|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ apu.cantidad_proyecto|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ apu.cantidad_total|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ apu.valor_unitario|intcomma|force_escape }}
+            </td>
+            <td>
+                {{ apu.valor_total|intcomma|force_escape }}
+            </td>
+            <td>
+                <a href="/inverboy/home/apuproyectodetailsrequisicionindirectosadd/{{ apu.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if apus.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus_proyecto_requisicion_indirectos_add('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus_proyecto_requisicion_indirectos_add('Dajax.process',{'pagina':{{ apus.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ apus.page }} de {{ apus.pages }}
+{% if apus.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus_proyecto_requisicion_indirectos_add('Dajax.process',{'pagina': {{ apus.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_apus_proyecto_requisicion_indirectos_add('Dajax.process',{'pagina': {{ apus.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': '{{ proyecto.id }}' })"> >> </a>
+{% else %}
+{% endif %}
+<br>
+<a href="/inverboy/home/requisicionindirectosadddetails/{{ proyecto.id }}/">Ver requisicion</a>

@@ -1,0 +1,76 @@
+<div align="right">
+    <input type="submit" value="X"  align="center" onclick="cerrarVentanaCliente();">  </input>
+</div>
+<table align="center">
+    <tr>
+        <th>Identificaci&oacute;n:</th>
+        <td><label>{{ cliente.identificacion }}</label></td>
+    </tr>
+    <tr>
+        <th>Nombres:</th>
+        <td><label>{{ cliente.nombre_1 }} {{ cliente.nombre_2 }}</label></td>
+    </tr>
+    <tr>
+        <th>Apelllidos:</th>
+        <td><label>{{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+    </tr>
+    <tr>
+        <th>M. documento:</th>
+        <td><label>{{ cliente.municipio_documento.departamento }}, {{ cliente.municipio_documento }}</label></td>
+    </tr>
+    <tr>
+        <th>Estado civil:</th>
+        <td><label>{{ cliente.str_estado_civil }}</label></td>
+    </tr>
+    <tr>
+        <th>Dir. residencia:</th>
+        <td><label>{{ cliente.municipio_residencia.departamento }}, {{ cliente.municipio_residencia }}, {{ cliente.direccion_residencia }}</label></td>
+    </tr>
+    <tr>
+        <th>Telefono 1:</th>
+        <td><label>{{ cliente.telefono_1 }}</label></td>
+    </tr>
+    <tr>
+        <th>Telefono 2:</th>
+        <td><label>{{ cliente.telefono_2 }}</label></td>
+    </tr>
+    <tr>
+        <th>Correo:</th>
+        <td><label>{{ cliente.email }}</label></td>
+    </tr>
+    <tr>
+        <th>Empresa:</th>
+        <td><label>{{ cliente.empresa }}</label></td>
+    </tr>
+    <tr>
+        <th>Telefono empresa:</th>
+        <td><label>{{ cliente.telefono_empresa }}</label></td>
+    </tr>
+    <tr>
+        <th>Direcci&oacute;n empresa:</th>
+        <td><label>{{ cliente.direccion_empresa }}</label></td>
+    </tr>
+    <tr>
+        <th>Observaciones:</th>
+        <td><label>{{ cliente.observaciones }}</label></td>
+    </tr>
+</table>
+
+<p align="center">CONTACTOS</p>
+
+<table border="1" style="border-color: green" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">Municipio</th>
+        <th scope="col">Email</th>
+    </tr>
+    {% for contacto in cliente.contactocliente_set.all %}
+        <tr>
+            <td>{{ contacto.nombre }}</td>
+            <td>{{ contacto.telefono }}</td>
+            <td>{{ contacto.municipio.departamento }}, {{ contacto.municipio }}</td>
+            <td>{{ contacto.email }}</td>
+        </tr>
+    {% endfor %}
+</table>

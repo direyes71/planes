@@ -1,0 +1,85 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load static %}
+{% get_static_prefix as static_prefix %}
+{% block script %}
+	<!-- Para cargar css -->
+	<link href="{{ static_prefix }}css/novedades.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - NOVEDADES MODULO ORDENES DE COMPRA {% endblock %}
+{% block contenido %}
+    <p class="titulo">VER COTIZACION</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/cotizacionnovedad1.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Ahora es posible visualizar los valores subtotal, IVA y total antes de realizar la orden de compra:
+        <br>
+        1 - Recuadro valores previos
+    </p>
+    <br>
+    <br>
+    <!-- Ver cotizaciones -->
+    <p class="titulo">VER COTIZACIÓN</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/cotizacionordencompranovedad2.jpg">
+    </div>
+    <br>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - ID cotización
+            <br/>
+        2 - Proveedor de la cotización
+            <br/>
+        3 - Nombre del suministro, que se encuentre en la cotización
+            <br>
+            <br>
+        El listado de cotizaciones se encuentra ordenado por el código consecutivo de creación.
+    </p>
+    <br>
+    <br>
+    <!-- Ver Ordenes de compra -->
+    <p class="titulo">VER ORDENES DE COMPRA</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/ordencompranovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Orden de Compra
+            <br/>
+        2 - Nombre del suministro, que se encuentre en la Orden de compra
+            <br/>
+        3 - Proveedor de la Orden de Compra
+            <br>
+            <br>
+        El listado de Ordenes de Compra se encuentra ordenado por el proveedor alfabéticamente .
+    </p>
+    <br>
+    <br>
+    <!-- Ver Informes de recepcion -->
+    <p class="titulo">VER INFORMES DE RECEPCIÓN</p>
+	<!-- Imagen novedad -->
+    <div align="center">
+        <img src="{{ static_prefix }}ima/novedades/irecepcionnovedad1.jpg">
+    </div>
+    <p class="parrafo">
+        Ahora es posible realizar búsquedas de acuerdo a los siguientes criterios:
+            <br/>
+        1 - Consecutivo Informe de Recepción
+            <br/>
+        2 - Consecutivo Orden de Compra a la cual pertenece el Informe de Recepción
+            <br/>
+        3 - Proveedor de la Orden de Compra
+            <br/>
+        4 - Nombre del suministro, que se encuentre en el Informe de Recepción
+            <br>
+            <br>
+        El listado de Informes de Recepción se encuentra ordenado por el código consecutivo de la Orden de Compra en forma ascendente.
+    </p>
+{% endblock %}

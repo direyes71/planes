@@ -1,0 +1,37 @@
+<nav class="menu">
+    <ul>
+        <li>
+            <span class="linea1"></span>
+            <a href="/inverboy/home/stagesreport/{{ project.id }}/">Etapas del Proyecto</a>
+           <!-- <a href="#" class='menu_down'><span class="vin1"></span></a>-->
+            <span class="linea1"></span>
+            <ul>
+                {% for item_nav_menu in nav_menu %}
+                    <li>
+                        <a href="{{ item_nav_menu.url }}"  class="menu_more_link"  >{{ item_nav_menu.label }}</a>
+                        {% if item_nav_menu.items_menu_1 %}                            
+                            <a href="#" class='menu_down'><span class="vin1"></span></a>
+                            <ul>
+                                {% for item_menu_1 in item_nav_menu.items_menu_1 %}
+                                    <li>
+                                        <a href="{{ item_menu_1.url }}" class="menu_more_link">{{ item_menu_1.label }}</a>
+                                        {% if item_menu_1.items_menu_2 %}
+                                            <a href="#" class='menu_down'><span class="vin1"></span></a>
+                                            <ul>
+                                                {% for item_menu_2 in item_menu_1.items_menu_2 %}
+                                                    <li>
+                                                        <a href="{{ item_menu_2.url }}" class="menu_link">{{ item_menu_2.label }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</nav>

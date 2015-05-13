@@ -1,0 +1,20 @@
+{% extends "html/base_home.html"%}
+
+{% load adminmedia admin_list i18n %}
+
+{% block titulo %}<a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - {% if change %}Modificar tipo adicional{% else %}Nuevo tipo adicional{% endif %}{% endblock %}
+{% block contenido %}
+    <!-- contenido página -->
+    <form action="." method="POST">
+        <label id="id_label_error"></label>
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="Guardar" onclick="this.disabled=true">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <!-- fin contenido página -->
+{% endblock %}

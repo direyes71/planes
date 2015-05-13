@@ -1,0 +1,53 @@
+<table>
+    <tr>
+        <td>
+            Criterio Busqueda
+        </td>
+        <td>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+
+<table id="tablaReportes" align="center">
+    <tr>
+        <!--
+        <th scope="col">No.</th>
+        -->
+        <th scope="col">Nombre</th>
+        <th scope="col">Iniciales</th>
+        <th scope="col">Opciones</th>
+    </tr>
+    {% for seccion_proyecto in secciones_proyecto.modelo %}
+        <tr>
+            <!--
+            <td>
+                <label>{{ forloop.counter }}</label>
+            </td>
+            -->
+            <td>
+                <label>{{ seccion_proyecto.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ seccion_proyecto.iniciales }}</label>
+            </td>
+            <td>
+                {% if 'inverboy.change_seccionproyecto' in user.get_all_permissions %}
+                    <a href="/inverboy/home/modificarseccionproyecto/{{ seccion_proyecto.id }}/{{ proyecto.id }}/">Modificar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if secciones_proyecto.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_secciones_proyecto('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_secciones_proyecto('Dajax.process',{'pagina': {{ secciones_proyecto.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ secciones_proyecto.page }} de {{ secciones_proyecto.pages }}
+{% if secciones_proyecto.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_secciones_proyecto('Dajax.process',{'pagina': {{ secciones_proyecto.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_secciones_proyecto('Dajax.process',{'pagina': {{ secciones_proyecto.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

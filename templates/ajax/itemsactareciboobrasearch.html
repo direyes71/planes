@@ -1,0 +1,88 @@
+{% load humanize %}
+<table align="center">
+    <tr>
+        <td align="center">
+            CONDICIONES ORIGINALES
+        </td>
+        <td align="center">
+            OBRA EJECUTADA ACTA ACTUAL
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="tablaReportes" align="center">
+                <tr>
+                    <th>Suministro</th>
+                    <th>Sinonimos</th>
+                    <th>Cantidad</th>
+                    <th>Unidad de medida</th>
+                    <th>Valor unitario</th>
+                    <th>Valor item</th>
+                </tr>
+                {% for suministro in acta_recibo_obra.suministros %}
+                    <tr>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.nombre }}</label>
+                        </td>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.sinonimos }}</label>
+                        </td>
+                        <td align="right">
+                            <label>{{ suministro.suministro.suministro_orden_servicio_item.cantidad_total_contratada|force_escape|intcomma }}</label>
+                        </td>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.unidad_medida }}</label>
+                        </td>
+                        <td align="right">
+                            <label>{{ suministro.suministro.suministro_orden_servicio_item.precio|force_escape|intcomma }}</label>
+                        </td>
+                        <td align="right">
+                            <label>{{ suministro.suministro.suministro_orden_servicio_item.valor_total_item|force_escape|intcomma }}</label>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td>
+            <table class="tablaReportes" align="center">
+                <tr>
+                    <th>Suministro</th>
+                    <th>Sinonimos</th>
+                    <th>Cantidad</th>
+                    <th>Unidad de medida</th>
+                    <th>Valor item</th>
+                </tr>
+                {% for suministro in acta_recibo_obra.suministros %}
+                    <tr>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.nombre }}</label>
+                        </td>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.sinonimos }}</label>
+                        </td>
+                        <td align="right">
+                            <label>{{ suministro.cantidad|force_escape|intcomma }}</label>
+                        </td>
+                        <td>
+                            <label>{{ suministro.suministro.suministro.suministro.suministro.unidad_medida }}</label>
+                        </td>
+                        <td align="right">
+                            <label>{{ suministro.valor_item|force_escape|intcomma }}</label>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': 1, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.next_page }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_corte_diario_obra('Dajax.process',{'pagina': {{ suministros.pages }}, 'corte_diario_obra_id': {{ corte_diario_obra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

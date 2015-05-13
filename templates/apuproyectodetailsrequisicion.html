@@ -1,0 +1,492 @@
+{% extends "html/base_home.html"%}
+{% load humanize %}
+{% block script %}
+    <script type="text/javascript" language="javascript" charset="utf-8">
+        var array_suministros = new Array();
+        var array_clasificaciones_generales = new Array();
+        var array_nombres = new Array();
+        var array_sinonimos = new Array();
+        var array_unidades_embalaje = new Array();
+        var array_unidades_medida = new Array();
+        var array_cantidades = new Array();
+        var array_promedios_precios = new Array();
+        var suministros = "";
+        setCookie('suministros', suministros);
+        {% if suministros_apu %}
+            {% for suministro_apu in suministros_apu %}
+                /* AQUIIIII VOY */
+                array_suministros.push("{{ suministro_apu.suministro.id }}");
+                array_clasificaciones_generales.push("{{ suministro_apu.suministro.clasificacion_general }}");
+                array_nombres.push("{{ suministro_apu.suministro.nombre }}");
+                array_sinonimos.push("{{ suministro_apu.suministro.sinonimos }}");
+                array_unidades_embalaje.push("{{ suministro_apu.suministro.unidad_embalaje|force_escape }}");
+                array_unidades_medida.push("{{ suministro_apu.suministro.unidad_medida }}");
+                array_cantidades.push("{{ suministro_apu.cantidad_suministro|force_escape }}");
+                array_promedios_precios.push("{{ suministro_apu.precio_suministro|force_escape }}");
+            {% endfor %}
+            for(var i=0;i < array_suministros.length; i++){
+                suministros = suministros + array_suministros[i] + "-" + array_promedios_precios[i] + "-" + array_cantidades[i] + "--";
+            }
+            /*for(i=0; i<array_precio_proveedor.length; i++){
+                array_precio_proveedor[i] = int(array_precio_proveedor[i]);
+            }*/
+            setCookie('suministros', suministros);
+            //alert(getCookie('suministros'));
+        {% endif %}
+
+
+        function ventanaSuministros() {
+            document.getElementById('light').style.display='block';
+            document.getElementById('fade').style.display='block';
+            buscarSuministros();
+        }
+
+        function buscarSuministros(){
+            var clasificacion_general_suministro = document.getElementById('id_clasificacion_general_suministro').value;
+            var criterio = document.getElementById('id_criterio_busqueda').value;
+            Dajaxice.aplicacion.inverboy.buscar_suministros('Dajax.process',{'pagina': 1, 'clasificacion_general': clasificacion_general_suministro, 'criterio':criterio});
+        }
+
+
+        function agregarSuministros(){
+            var miTabla = document.getElementById("id_tabla_suministros_busqueda");
+            if(miTabla.rows.length > 1){
+                for(var i=0; i<miTabla.rows.length-1; i++){
+                    var check_box = document.getElementById("id_option_"+(i+1));
+                    if (check_box.checked) {
+                        campo_cantidad_suministro = document.getElementById("id_cantidad_"+(i+1));
+                        var cantidad_suministro = campo_cantidad_suministro.value;
+                        if(trim(cantidad_suministro)!="") {
+                            id = check_box.value
+                            existe = false
+                            for(j=0; j<array_suministros.length; j++){
+                                if(id==array_suministros[j])
+                                    existe=true
+                            }
+                            if(!existe){
+                                clasificacion_general = document.getElementById("id_label_clasificacion_general_"+(i+1)).title;
+                                nombre = document.getElementById("id_label_nombre_"+(i+1)).title;
+                                sinonimos = document.getElementById("id_label_sinonimos_"+(i+1)).title;
+                                unidad_embalaje = document.getElementById("id_label_unidad_embalaje_"+(i+1)).title;
+                                unidad_medida = document.getElementById("id_label_unidad_medida_"+(i+1)).title;
+                                promedio_precio = document.getElementById("id_label_promedio_precio_"+(i+1)).title;
+                                array_suministros.push(id);
+                                array_clasificaciones_generales.push(clasificacion_general)
+                                array_nombres.push(nombre);
+                                array_sinonimos.push(sinonimos);
+                                array_unidades_embalaje.push(unidad_embalaje);
+                                array_unidades_medida.push(unidad_medida);
+                                array_promedios_precios.push(promedio_precio);
+                                array_cantidades.push(cantidad_suministro);
+                                actualizarTablaSuministros();
+                                document.getElementById('light').style.display='none';
+                                document.getElementById('fade').style.display='none';
+                                document.getElementById('id_criterio_busqueda').value='';
+                            } else {
+                                alert('El suministro con nombre: "' + nombre + '", ya se encuentra en la lista.');
+                            }
+                        } else {
+                            alert('Debe digitar la cantidad del suministro.');
+                            darColorBorde("id_cantidad_"+(i+1), '#FF0000');
+                        }
+                        campo_cantidad_suministro.value = '';
+                    }
+                }
+            }
+        }
+
+
+        // funcion para calcular el precio
+        function calcularValor() {
+            valor_unitario = 0;
+            for(i=0; i<array_promedios_precios.length; i++){
+                valor_unitario = valor_unitario + (array_promedios_precios[i]*array_cantidades[i]);
+            }
+            cantidad_proyecto = document.getElementById("id_cantidad_proyecto").value;
+            cantidad_apu = document.getElementById("id_cantidad_apu").value;
+            mensaje_error = "";
+            if(trim(cantidad_proyecto) == "") {
+                mensaje_error = mensaje_error+"Digite una cantidad de proyecto. \n"
+                document.getElementById("id_cantidad_proyecto").value="";
+            } else {
+                if (! validaFloat(cantidad_proyecto)) {
+                    mensaje_error = mensaje_error+"Digite una cantidad de proyecto valida. \n"
+                    document.getElementById("id_cantidad_proyecto").value="";
+                }
+            }
+
+            if(trim(cantidad_apu) == "") {
+                mensaje_error = mensaje_error+"Digite una cantidad de APU. \n"
+                document.getElementById("id_cantidad_apu").value="";
+            } else {
+                if (! validaFloat(cantidad_apu)) {
+                    mensaje_error = mensaje_error+"Digite una cantidad de APU valida. \n"
+                    document.getElementById("id_cantidad_apu").value="";
+                }
+            }
+
+            if (mensaje_error == "") {
+                cantidad_total = cantidad_proyecto * cantidad_apu;
+                valor_total = cantidad_total * valor_unitario;
+                document.getElementById("id_cantidad_total").value = cantidad_total;
+                document.getElementById("id_valor_unitario").value = valor_unitario;
+                document.getElementById("id_valor_total").value = valor_total;
+            } else
+                alert(mensaje_error);
+        }
+
+
+        // Funcion para dar color
+        function darColorBorde(obj, color) {
+            document.getElementById(obj).style.borderColor = color;
+        }
+
+
+        // Funcion para eliminar espacios en blanco
+        function trim (myString) {
+            return myString.replace(/^\s+/g,'').replace(/\s+$/g,'');
+        }
+
+
+        // Funcion para validar numeros
+        function validaFloat(numero)
+        {
+            //if (re.test(numero))
+            if (! (/^([0-9])*[.]?[0-9]*$/.test(numero)))
+                return false
+            return true
+        }
+
+
+        // Funcion para actualizar Tabla suministros
+        function actualizarTablaSuministros() {
+            suministros = "";
+            setCookie('suministros', suministros);
+            borrarTabla();
+            for(var i=0;i < array_suministros.length; i++){
+                suministros = suministros + array_suministros[i] + "-" + array_promedios_precios[i] + "-" + array_cantidades[i] + "--";
+                setCookie('suministros', suministros);
+                suma(i, array_clasificaciones_generales[i], array_nombres[i], array_sinonimos[i], array_unidades_embalaje[i], array_unidades_medida[i], array_promedios_precios[i], array_cantidades[i]);
+            }
+        }
+
+
+        // FUNCION PARA LIMPIAR LA TABLA SUMINISTROS
+        function borrarTabla() {
+            var miTabla = document.getElementById("id_tabla_suministros");
+            for(var i = miTabla.rows.length - 1; i >= 1; i--) {
+                miTabla.deleteRow(i);
+            }
+        }
+
+
+         // FUNCION PARA AGREGAR UNA FILA A LA TABLA DE CONTACTOS
+        function suma(i, clasificacion_general, nombre, sinonimos, unidad_embalaje, unidad_medida, precio, cantidad) {
+            var miTabla = document.getElementById("id_cuerpo_tabla");
+            var lasCeldas = miTabla.getElementsByTagName("tr");
+            var fila = document.createElement("tr");
+            var celda1 = document.createElement("td");
+            var celda2 = document.createElement("td");
+            var celda3 = document.createElement("td");
+            var celda4 = document.createElement("td");
+            var celda5 = document.createElement("td");
+            var celda6 = document.createElement("td");
+            var celda7 = document.createElement("td");
+            var celda8 = document.createElement("td");
+            celda1.innerHTML = clasificacion_general.toString();
+            celda2.innerHTML = nombre.toString();
+            celda3.innerHTML = sinonimos.toString();
+            celda4.innerHTML = unidad_embalaje.toString();
+            celda5.innerHTML = unidad_medida.toString();
+            celda6.innerHTML = precio.toString();
+            celda7.innerHTML = cantidad.toString();
+            celda8.innerHTML = "<a href = 'javascript:void(0)' onclick='borrarFila("+ (i+1) +");'>Borrar</a>";
+            fila.appendChild(celda1);
+            fila.appendChild(celda2);
+            fila.appendChild(celda3);
+            fila.appendChild(celda4);
+            fila.appendChild(celda5);
+            fila.appendChild(celda6);
+            fila.appendChild(celda7);
+            fila.appendChild(celda8);
+            miTabla.appendChild(fila);
+        }
+
+
+         // FUNCION PARA ELMIMINAR UNA FILA SELECCIONADA DE LA TABLA CONTACTOS
+         function borrarFila(i)	{
+            if(confirm("¿Realmente desea eliminar este item?")) {
+                array_suministros.splice(i-1, 1);
+                array_clasificaciones_generales.splice(i-1, 1);
+                array_nombres.splice(i-1, 1);
+                array_sinonimos.splice(i-1, 1);
+                array_unidades_embalaje.splice(i-1, 1);
+                array_unidades_medida.splice(i-1, 1);
+                array_promedios_precios.splice(i-1, 1);
+                array_cantidades.splice(i-1, 1);
+                actualizarTablaSuministros();
+            }
+        }
+
+
+        // FUNCION PARA LIMPIAR LA VENTANA DE BUSQUEDA DE PROVEEDORES
+        function limpiarBusquedaProveedores() {
+            document.getElementById('id_criterio_busqueda').value = "";
+            document.getElementById('id_clasificacion_general_suministro').value = 0;
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none';
+        }
+
+
+        // FUNCION PARA EL MANEJO DE COOKIES
+        function setCookie(cookieName,cookieValue,expires,path,domain,secure) {
+            document.cookie=
+            escape(cookieName)+'='+escape(cookieValue)
+                +(expires?'; EXPIRES='+expires.toGMTString():'')
+                +(path?'; PATH='+path:'')
+                +(domain?'; DOMAIN='+domain:'')
+                +(secure?'; SECURE':'');
+        }
+
+        function getCookie(cookieName) {
+            var cookieValue=null;
+            var posName=document.cookie.indexOf(escape(cookieName)+'=');
+            if (posName!=-1) {
+                var posValue=posName+(escape(cookieName)+'=').length;
+                var endPos=document.cookie.indexOf(';',posValue);
+                if (endPos!=-1)
+                    cookieValue=unescape(document.cookie.substring(posValue,endPos));
+                else
+                    cookieValue=unescape(document.cookie.substring(posValue));
+            }
+            return cookieValue;
+        }
+
+
+        // Funcion al seleccionar un check de proveedor
+        function seleccionar(check){
+            if(document.getElementById('id_option_'+check).checked){
+                document.getElementById('id_cantidad_'+check).disabled = false;
+            }
+            else {
+                document.getElementById('id_cantidad_'+check).disabled = true;
+            }
+            darColorBorde('id_precio_'+check, '#FFFFFF');
+        }
+
+    </script>
+
+    <style type="text/css">
+
+        /* base semi-transparente */
+            .overlay{
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index:1001;
+                opacity:.75;
+                -moz-opacity: 0.75;
+                filter: alpha(opacity=75);
+            }
+
+        /* estilo para lo q este dentro de la ventana modal */
+            .modal {
+                display: none;
+                position: absolute;
+                width: 880px;
+                height: 600px;
+                left: 50%;
+                top: 50%;
+                margin-left: -440px;  /*Tamaño del DIV entre 2*/
+                margin-top: -300px;  /*Tamaño del DIV entre 2*/
+                padding: 16px;
+                background: #fff;
+                color: #333;
+                z-index:1002;
+                overflow: auto;
+            }
+
+    </style>
+
+{% endblock %}
+{% block titulo %} <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Detalles APU Maestro {% endblock %}
+{% block contenido %}
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        <form action="javascript:ventanaSuministros();">
+            <table>
+                <tr>
+                    <th>Clasificacion general</th>
+                    <td colspan="2">
+                        <select id="id_clasificacion_general_suministro">
+                            <option value="0">----</option>
+                            <option value="Equipo">Equipo</option>
+                            <option value="Mano de obra">Mano de obra</option>
+                            <option value="Material">Material</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Indirectos">Indirectos</option>
+                            <option value="Plenitareas">Plenitareas</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Criterio</label></th>
+                    <td><input type="text" name="criterio_busqueda" id="id_criterio_busqueda"></td>
+                    <td><input type="submit" value="Buscar" onclick="buscarSuministros();"></td>
+                </tr>
+            </table>
+            <table id="id_tabla_suministros_busqueda">
+                <tr>
+                    <th scope="col">Seleccionar</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Sinonimos</th>
+                    <th scope="col">Unidad de embalaje</th>
+                    <th scope="col">Unidad de medida</th>
+                    <th scope="col">Cantidad</th>
+                </tr>
+            </table>
+        </form>
+        <table>
+            <tr>
+                <td>
+                    <input type="submit" value="Aceptar" onclick="agregarSuministros();">
+                </td>
+                <td>
+                    <input type="submit" value="Cancelar" onclick="limpiarBusquedaProveedores(); ">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- fin ventana modal -->
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label>Capitulo APU Maestro:</label></th>
+                <td>
+                    {{ apu.capitulo.capitulo_asociado }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo APU Maestro:</label></th>
+                <td>
+                    {{ apu.capitulo }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Capitulo proyecto:</label></th>
+                <td>
+                    {{ form.capitulo.errors }}
+                    <select name="capitulo" id="id_capitulo" onchange="Dajaxice.aplicacion.inverboy.cargar_subcapitulos_apus_proyectos('Dajax.process',{'option':this.value, 'elemento': 'id_subcapitulo'});">
+                    {% for capitulo in capitulos %}
+                        <option value="{{ capitulo.id }}" {% if capitulo == capitulo_actual %} selected="selected" {% endif %}> {{ capitulo.nombre_capitulo }}</option>   <!-- se le da el valor al combo del id del capitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subcapitulo proyecto:</label></th>
+                <td>
+                    {{ form.subcapitulo.errors }}
+                    <select name="subcapitulo" id="id_subcapitulo">
+                    {% for subcapitulo in subcapitulos %}
+                        <option value="{{ subcapitulo.id }}" {% if subcapitulo == subcapitulo_actual %} selected="selected" {% endif %}>{{ subcapitulo.nombre_capitulo }} </option>   <!-- se le da el valor al combo del id del subcapitulo -->
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Unidad medida:</label></th>
+                <td>
+                    {{ apu.unidad_medida_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad proyecto:</label></th>
+                <td>
+                    {{ form.cantidad_proyecto.errors }} {{ form.cantidad_proyecto }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad APU:</label></th>
+                <td>
+                    {{ form.cantidad_apu.errors }} {{ form.cantidad_apu }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Cantidad Total:</label></th>
+                <td>
+                    {{ form.cantidad_total.errors }} {{ form.cantidad_total }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Valor Unitario:</label></th>
+                <td>
+                    {{ form.valor_unitario.errors }} {{ form.valor_unitario }}
+                </td>
+            </tr>
+            <tr>
+                <th><label>Valor Total:</label></th>
+                <td>
+                    {{ form.valor_total.errors }} {{ form.valor_total }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activo:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <input type="button" value="Calcular precio" onclick="calcularValor();">
+
+        <p align="center">Suministros</p>
+        <table border="1" id="id_tabla_suministros" align="center">
+            <tbody id=id_cuerpo_tabla>
+                <tr>
+                    <th>Clasificacion general</th>
+                    <th>Nombre</th>
+                    <th>Sinonimos</th>
+                    <th>Unidad de embalaje</th>
+                    <th>Unidad de medida</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Opciones</th>
+                </tr>
+                {% for suministro_apu in suministros_apu %}
+                    <tr>
+                        <td>{{ suministro_apu.suministro.clasificacion_general }}</td>
+                        <td>{{suministro_apu.suministro.nombre }}</td>
+                        <td>{{suministro_apu.suministro.sinonimos }}</td>
+                        <td>{{ suministro_apu.suministro.unidad_embalaje|force_escape }}</td>
+                        <td>{{ suministro_apu.suministro.unidad_medida }}</td>
+                        <td>{{ suministro_apu.precio_suministro|intcomma|force_escape }}</td>
+                        <td>{{ suministro_apu.cantidad_suministro|force_escape }}</td>
+                        <td>Cant.<input type="text">
+                        <a href = "javascript:void(0)" onclick="borrarFila( {{ forloop.counter }} );">Añadir al carrito</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p align="center"><a href="javascript:void(0)" onclick="ventanaSuministros();">Agregar suministro</a></p>
+        <br>
+{% endblock %}

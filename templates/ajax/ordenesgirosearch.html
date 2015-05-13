@@ -1,0 +1,87 @@
+{% load static %}
+{% get_static_prefix as static_prefix %}
+<table>
+    <tr>
+        <tr>
+            <td>
+                {% if fecha_inicial.error != '' %}
+                    <ul>
+                        <li>{{ fecha_inicial.error }}</li>
+                    </ul>
+                {% endif %}
+                <label>Fecha inicial</label>
+                <input type="text" id="id_fecha_inicial" name="fecha_inicial" placeholder="aaaa-mm-dd" value="{{ fecha_inicial.valor }}"/>
+                <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador_f_i">
+                <script type="text/javascript">
+                    Calendar.setup({inputField:"id_fecha_inicial",ifFormat:"%Y-%m-%d",button:"lanzador_f_i"});
+                </script>
+            </td>
+            <td>
+                {% if fecha_final.error != '' %}
+                    <ul>
+                        <li>{{ fecha_final.error }}</li>
+                    </ul>
+                {% endif %}
+                <label>Fecha final</label>
+                <input type="text" id="id_fecha_final" name="fecha_final" placeholder="aaaa-mm-dd" value="{{ fecha_final.valor }}"/>
+                <img src="{{ static_prefix }}ima/calendario.png" alt="calendar" width="16" height="16" border="0" title="Fecha final" id="lanzador_f_f">
+                <script type="text/javascript">
+                    Calendar.setup({inputField:"id_fecha_final",ifFormat:"%Y-%m-%d",button:"lanzador_f_f"});
+                </script>
+            </td>
+        </tr>
+        <td>
+            <label>Criterio Busqueda</label>
+            <input name="criterio" id="id_criterio" value="{{ criterio }}">
+        </td>
+        <td><input type="submit" value="Buscar"></td>
+    </tr>
+</table>
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>No.</th>
+        <th>Fecha</th>
+        <th>Proveedor</th>
+        <th>Persona</th>
+        <th>Estado</th>
+        <th>Opciones</th>
+    </tr>
+    {% for orden_giro in ordenes_giro.modelo %}
+        <tr>
+            <td>
+                <label>OG{{ orden_giro.proyecto.id }}-{{ orden_giro.consecutivo }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.fecha_registro|date:'Y-m-d' }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.proveedor.razon_social }}</label>
+            </td>
+            <td>
+                <label>{{ orden_giro.persona.first_name }}, {{ orden_giro.persona.last_name }}</label>
+            </td>
+            <td>
+                {% if orden_giro.estado == 1 %}
+                    <label>En ejecuci&oacute;n</label>
+                {% endif %}
+                {% if orden_giro.estado == 2 %}
+                    <label>Ejecutada</label>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/inverboy/home/ordenesgiroproyectodetails/{{ orden_giro.id }}/{{ proyecto.id }}/">Detalles</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if ordenes_giro.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro('Dajax.process',{'pagina': {{ ordenes_giro.prev_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ordenes_giro.page}} de {{ordenes_giro.pages}}
+{% if ordenes_giro.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro('Dajax.process',{'pagina': {{ ordenes_giro.next_page }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_ordenes_giro('Dajax.process',{'pagina': {{ ordenes_giro.pages }}, 'criterio': '{{ criterio }}', 'fecha_inicial': '{{ fecha_inicial.valor }}', 'fecha_final': '{{ fecha_final.valor }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

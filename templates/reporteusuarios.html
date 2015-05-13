@@ -1,0 +1,25 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load l10n %}
+{% block titulo_pagina %} Reporte {% endblock %}
+{% block script %}
+{% endblock %}
+{% block titulo %} Usuarios {% endblock %}
+{% block contenido %}
+    <form action="/inverboy/home/usuariossearch/" method="POST" name="formulario">
+        <table>
+            <tr>
+                <td>
+                    Criterio Busqueda
+                </td>
+                <td>
+                    <input name="criterio" id="id_criterio" value="{{ criterio }}" maxlength="40" onkeyup="return validar_vacio_solo_espacios(event)" onkeypress="return validar_teclado_numerosLetrasEspacios(event)" pattern="^[A-Za-z0-9\s\xF1\xD1\Á\É\Í\Ó\Ú\á\é\í\ó\ú]+$">
+                </td>
+                <td><input type="submit" value="Buscar"></td>
+            </tr>
+        </table>
+    </form>
+   <div id="id_reporte_usuarios">
+        {% include 'ajax/usuariosearch.html' %}
+    </div>
+{% endblock %}

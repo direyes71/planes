@@ -1,0 +1,50 @@
+{% extends 'html/base_home.html' %}
+{% block titulo %}{% if change %}Modificar tipo{% else %}Nuevo tipo{% endif %}{% endblock %}
+{% block contenido %}
+    <form action="." name="form1" method="post">
+        {% if error %}
+            <ul><li>{{ error }}</li></ul>
+        {% endif %}
+        <table id="tablaFormulario" align="center">
+            <tr>
+                <th><label> Categoria: </label></th>
+                <td>
+                    {{ form.categoria.errors }}
+                    <select name="categoria" id="id_categoria" onchange="Dajaxice.aplicacion.inverboy.cargar_especificaciones('Dajax.process',{'option': this.value, 'html': 'tipoadd.html'})">
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}" {% if categoria == categoria_actual %} selected="selected" {% endif %}>{{ categoria.nombre }}</option>   <!-- se le da el valor al combo del id de la categoria -->
+                        {% endfor %}
+	                </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label> Especificacion: </label></th>
+                <td>
+                    {{ form.especificacion.errors }}
+                    <select name="especificacion" id="id_especificacion">
+                        {% for especificacion in especificaciones %}
+                            <option value="{{ especificacion.id }}" {% if especificacion == especificacion_actual %} selected="selected" {% endif %}>{{ especificacion.nombre }}</option>   <!-- se le da el valor al combo del id de la especificacion -->
+                        {% endfor %}
+	                </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Nombre:</label></th>
+                <td>
+                    {{ form.nombre.errors }} {{ form.nombre }}
+                </td>
+            </tr>
+            {% if change %}
+                <tr>
+                    <th><label>Activa:</label></th>
+                    <td>
+                        {{ form.estado.errors }} {{ form.estado }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <div id="botonFormulario">
+            <p><input type="submit" value="Guardar" onclick="this.disabled=true;"></p>
+        </div>
+    </form>
+{% endblock %}

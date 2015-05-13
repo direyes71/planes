@@ -1,0 +1,25 @@
+<label id="error_contacto" class="mensajeErrorContacto"></label>
+<table id="tablapersonas" border="1" align="center">
+    <tbody id="cuerpoTabla">
+        <tr>
+            <th>Identificaci&oacute;n</th>
+            <th>Nombres</th>
+            <th>Cargo</th>
+            <th>Celular</th>
+            <th>Opciones</th>
+        </tr>
+        {% for usuario in usuarios_administracion_proyecto %}
+            <tr>
+                <td>{{ usuario.identificacion }}</td>
+                <td>{{ usuario.first_name }}, {{ usuario.last_name }}</td>
+                <td>{{ usuario.cargo }}</td>
+                <td>{{ usuario.celular }}</td>
+                <td>
+                    {% if 'inverboy.add_personaadministrativoproyecto' in user.get_all_permissions %}
+                        <a href = "javascript:void(0)" onclick="eliminarPersonaProyecto( {{ usuario.id }}, {{ proyecto.id }} );">Desvincular</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

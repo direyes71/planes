@@ -1,0 +1,44 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th>Suministro</th>
+        <th>Cantidad facturada</th>
+        <th>Unidad de medida</th>
+        <th>Valor unitario</th>
+        <th>+ IVA</th>
+        <th>Subtotal</th>
+    </tr>
+    {% for item_factura in items_factura.modelo %}
+        <tr id="if_fila_suministro_{{ item_factura.suministro.id }}">
+            <td>
+                <label>{{ item_factura.suministro.nombre }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.cantidad_item|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.suministro.unidad_medida }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.valor_unitario_item_sin_iva|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.str_porcentaje_iva|force_escape|intcomma }}</label>
+            </td>
+            <td>
+                <label>{{ item_factura.valor_total_item_sin_iva|force_escape|intcomma }}</label>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if items_factura.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra('Dajax.process',{'pagina': 1, 'factura_orden_compra_id': {{ factura_orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra('Dajax.process',{'pagina': {{ items_factura.prev_page }}, 'factura_orden_compra_id': {{ factura_orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{ items_factura.page }} de {{ items_factura.pages }}
+{% if items_factura.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra('Dajax.process',{'pagina': {{ items_factura.next_page }}, 'factura_orden_compra_id': {{ factura_orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_items_factura_orden_compra('Dajax.process',{'pagina': {{ items_factura.pages }}, 'factura_orden_compra_id': {{ factura_orden_compra.id }}, 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

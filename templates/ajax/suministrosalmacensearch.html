@@ -1,0 +1,44 @@
+{% load humanize %}
+<table id="tablaReportes" align="center">
+    <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Sinonimos</th>
+        <th scope="col">Unidad embalaje</th>
+        <th scope="col">Unidad medida</th>
+        <th scope="col">Cantidad total</th>
+        <th scope="col">Cantidad actual</th>
+    </tr>
+    {% for suministro in suministros.modelo %}
+         <tr id= 'fila_suministro_{{ forloop.counter0 }}'>
+            <td>
+                {{ suministro.suministro.nombre }}
+            </td>
+            <td>
+                {{ suministro.suministro.sinonimos }}
+            </td>
+            <td>
+                {{ suministro.suministro.unidad_embalaje|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro.suministro.unidad_medida }}
+            </td>
+            <td>
+                {{ suministro.cantidad_total|force_escape|intcomma }}
+            </td>
+            <td>
+                {{ suministro.cantidad_actual|force_escape|intcomma }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if suministros.has_prev %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen('Dajax.process',{'pagina': 1, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> << </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen('Dajax.process',{'pagina': {{ suministros.prev_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> < </a>
+{% else %}
+{% endif %}
+    P&aacute;gina {{suministros.page}} de {{suministros.pages}}
+{% if suministros.has_next %}
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen('Dajax.process',{'pagina': {{ suministros.next_page }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> > </a>
+    <a href="javascript:Dajaxice.aplicacion.inverboy.paginar_suministros_almacen('Dajax.process',{'pagina': {{ suministros.pages }}, 'criterio': '{{ criterio }}', 'proyecto_id': {{ proyecto.id }} })"> >> </a>
+{% else %}
+{% endif %}

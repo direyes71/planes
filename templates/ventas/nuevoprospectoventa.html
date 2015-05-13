@@ -1,0 +1,335 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% load adminmedia admin_list i18n %}
+
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Proyecto: {{ proyecto.nombre }}</a> - Nuevo prospecto de venta
+{% endblock %}
+{% block script %}
+    <link rel="stylesheet" href="{{ static_prefix }}css/chosen.css">
+    <link rel="stylesheet" href="{{ static_prefix }}css/jquery-ui.css">
+
+    <!-- Calendario -->
+    <link href="{{ static_prefix }}css/calendario.css" type="text/css" rel="stylesheet" charset="utf-8">
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        /* base semi-transparente */
+        .overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index:1001;
+            opacity:.75;
+            -moz-opacity: 0.75;
+            filter: alpha(opacity=75);
+        }
+
+        /* estilo para lo q este dentro de la ventana modal */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 580px;
+            height: 320px;
+            left: 50%;
+            top: 50%;
+            margin-left: -290px;  /*Tamaño del DIV entre 2*/
+            margin-top: -160px;  /*Tamaño del DIV entre 2*/
+            padding: 16px;
+            background: #fff;
+            color: #333;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        /* estilo para el mensaje de error del contacto */
+        .mensajeErrorContacto {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+
+    <!-- base semi-transparente -->
+    <div id="fade" class="overlay" onclick = ""></div>
+    <!-- fin base semi-transparente -->
+
+    <!-- ventana modal -->
+    <div id="light" class="modal">
+        {% include 'ajax/ventas/busquedainmueblesnuevoprospectoventa.html' %}
+        {% include 'ajax/ventas/nuevanotificacionprospectoventa.html' %}
+    </div>
+    
+    <!-- fin ventana modal -->
+
+    {% if error %}
+        <label>{{ error }}</label>
+    {% endif %}
+
+    <!-- contenido página -->
+
+    <table>
+        <tr>
+            <th>Tipo identificaci&oacute;n:</th>
+            <td><label>{{ cliente.str_tipo_identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Identificaci&oacute;n:</th>
+            <td><label>{{ cliente.identificacion }}</label></td>
+        </tr>
+        <tr>
+            <th>Nombres:</th>
+            <td><label>{{ cliente.nombre_1 }} {{ cliente.nombre_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Apellidos:</th>
+            <td><label>{{ cliente.apellido_1 }} {{ cliente.apellido_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Municipio documento:</th>
+            <td><label>{{ cliente.municipio_documento.departamento }}, {{ cliente.municipio_documento }}</label></td>
+        </tr>
+        <tr>
+            <th>Estado civil:</th>
+            <td><label>{{ cliente.str_estado_civil }}</label></td>
+        </tr>
+        <tr>
+            <th>Municipio residencia:</th>
+            <td><label>{{ cliente.municipio_residencia.departamento }}, {{ cliente.municipio_residencia }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono 1:</th>
+            <td><label>{{ cliente.telefono_1 }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono 2:</th>
+            <td><label>{{ cliente.telefono_2 }}</label></td>
+        </tr>
+        <tr>
+            <th>Correo:</th>
+            <td><label>{{ cliente.email }}</label></td>
+        </tr>
+        <tr>
+            <th>Empresa:</th>
+            <td><label>{{ cliente.empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Telefono empresa:</th>
+            <td><label>{{ cliente.telefono_empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Direcci&oacute;n empresa:</th>
+            <td><label>{{ cliente.direccion_empresa }}</label></td>
+        </tr>
+        <tr>
+            <th>Observaciones:</th>
+            <td><label>{{ cliente.observaciones }}</label></td>
+        </tr>
+    </table>
+
+    <form action="." method="POST">
+        <h2>Encuesta</h2>
+
+        <table>
+            {{ encuesta_form.as_table }}
+        </table>
+
+        <div id="id_inmuebles_interes">
+            {% include 'ajax/ventas/inmueblesnuevoprospectoventa.html' %}
+        </div>
+
+        <a href="javascript:void(0)" id="id_btn_agregar_inmuebles">Agregar inmuebles de interes</a>
+
+        <a id="showCalc" href="javascript:void(0)">Calculadora</a>
+
+        <br>
+
+        <div id="id_notificaciones">
+            {% include 'ajax/ventas/notificacionesnuevoprospectoventa.html' %}
+        </div>
+
+        <a href="javascript:void(0)" id="id_btn_agregar_notificacion">Agregar notificaci&oacute;n</a>
+        
+        <br>
+
+        <input type="submit" value="Registrar prospecto" onclick="this.disabled=true;">
+    </form>
+
+    <div id="calc"></div>
+
+    <style>
+
+        select#id_inmuebles{
+            width: 80%;
+            min-height: 100px;
+        }
+
+        #grupo_agregar_inmueble{
+            float: right;
+            width: 50px;
+            height: 24px;
+            font-size: 16px;
+            text-align: center;
+            padding-top: 6px;
+            border: 1px solid #333;
+            background-color: #dcdcdc;
+            text-decoration: none;
+            color: black;
+            margin-right: 20px;
+            margin-top: 30px;
+        }
+
+        #grupo_agregar_inmueble:hover{
+            background-color: #808080;
+            color: white;
+        }
+
+        #grupo_valores_enviar  table#grupo_valores tbody tr th {
+            text-align: left;
+            font-weight: 100;
+
+        }
+        table th td{
+
+            text-align: left;
+        }
+
+        .error_inmueble{
+
+            display: none;
+            width: 78%;
+            padding: 3px;
+            padding-top: 5px;
+            margin: 0px auto 0px 0px;
+            margin-bottom: 10px;
+            color: red;
+            height: 22px;
+            border: 1px solid #ccc;
+            text-align: center;
+
+        }
+    </style>
+
+    <!-- fin contenido página -->
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#id_btn_agregar_inmuebles').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.busqueda_inmuebles_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#light').on("submit", "#id_form_busqueda_inmuebles", function(e) {
+                e.preventDefault();
+                var datos = $(this).serialize(true);
+                Dajaxice.aplicacion.inverboy.busqueda_inmuebles_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+            });
+
+            $('#light').on("change", "#id_seleccion_agrupacion", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.seleccionar_agrupacion_inmuebles_nuevo_prospecto_venta('Dajax.process', {'agrupacion_inmueble_id': $(this).val(), 'parametro': $(this).is(':checked'), 'criterio': $(this).attr('criterio'), 'pagina': $(this).attr('pagina'), 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#light').on("click", "#id_btn_agregar_inmuebles_interes", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.agregar_agrupaciones_inmuebles_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#light').on("click", "#id_btn_cancelar_agregar", function(e) {
+                e.preventDefault();
+                document.getElementById('light').style.display='none';
+                document.getElementById('fade').style.display='none';
+            });
+
+            $('#id_inmuebles_interes').on("click", "#id_btn_eliminar_agrupacion_inmueble", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.eliminar_agrupacion_inmuebles_nuevo_prospecto_venta('Dajax.process', {'agrupacion_inmuebles_id': $(this).attr('agrupacion_inmuebles_id'), 'proyecto_id': {{ proyecto.id }}});
+            })
+
+            $('#id_btn_agregar_notificacion').on("click", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.nueva_notificacion_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}});
+            });
+                        
+            $('#light').on("submit", "#id_form_notificacion_venta", function(e) {
+                e.preventDefault();
+                var datos = $(this).serialize(true);
+                if ($(this).attr("valor") == "guardar"){
+                    Dajaxice.aplicacion.inverboy.nueva_notificacion_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+                } else if ($(this).attr("valor") == "modificar"){
+                    Dajaxice.aplicacion.inverboy.modificar_notificacion_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}, 'datos': datos});
+                }
+            });
+
+            $('#id_notificaciones').on("click", "#id_btn_eliminar_notificacion", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.eliminar_notificacion_nuevo_prospecto_venta('Dajax.process', {'indice': $(this).attr('indice'), 'proyecto_id': {{ proyecto.id }}});
+            });
+
+            $('#id_notificaciones').on("click", "#id_btn_modificar_notificacion", function(e) {
+                e.preventDefault();
+                Dajaxice.aplicacion.inverboy.modificar_notificacion_nuevo_prospecto_venta('Dajax.process', {'proyecto_id': {{ proyecto.id }}, 'indice': $(this).attr('indice')});
+            });
+        });
+
+        function paginar_busqueda_inmuebles_agregar(pagina, criterio){
+            Dajaxice.aplicacion.inverboy.paginar_busqueda_agrupaciones_nuevo_prospecto_venta('Dajax.process',{'pagina': pagina, 'criterio': criterio, 'proyecto_id': {{ proyecto.id }}});
+        }
+    </script>
+
+    <script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>
+
+    <!-- Calendario -->
+    <script src="{{ static_prefix }}js/calendar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-es.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ static_prefix }}js/calendar-setup.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- Selector de tiempo -->
+    <script src="{{ static_prefix }}js/jquery.clockpick.1.2.9.js" type="text/javascript"></script>
+    <script src="{{ static_prefix }}js/jquery.clockpick.1.2.9.min.js" type="text/javascript"></script>
+
+    <!-- Calculadora -->
+    <script type="text/javascript" src="{% admin_media_prefix %}js/jquery-1.4.4.min.js"></script>
+    <script src="{{ static_prefix }}js/calculator.js" type="text/javascript"></script>
+    <script src="{{ static_prefix }}js/jquery-ui.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		jquery_1_4_4 = $.noConflict();
+	</script>
+
+    <script type="text/javascript">
+        // Funciones para inicializar la calculadora
+        jquery_1_4_4(function(){
+			jquery_1_4_4.fn.calculator.hide = function(calc) {
+				calc.fadeOut(500);
+			};
+
+			jquery_1_4_4('#calc').calculator({movable:true,resizable:true, width:260, height:280,defaultOpen:false});
+			jquery_1_4_4('#showCalc').click(function(){
+				jquery_1_4_4('#calc').show();
+			})
+		})
+    </script>
+
+{% endblock %}

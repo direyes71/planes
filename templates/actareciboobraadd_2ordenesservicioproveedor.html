@@ -1,0 +1,18 @@
+{% extends "html/base_home.html" %}
+{% load humanize %}
+{% block titulo %}
+    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}/">Proyecto: {{ proyecto.nombre }}</a> - Ordenes servicio proveedor {{ proveedor.razon_social }}, Nueva acta de recibo de obra
+{% endblock %}
+{% block script %}
+    
+{% endblock %}
+{% block contenido %}
+    {% if error != '' %}
+        <label>{{ error }}</label>
+    {% endif %}
+    <form action="." method="POST">
+        <div id="id_reporte_ordenes_servicio">
+            {% include 'ajax/ordenesservicioproveedorsearchactareciboobraadd.html' %}
+        </div>
+    </form>
+{% endblock %}

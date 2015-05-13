@@ -1,0 +1,106 @@
+{% extends "html/base_home.html" %}
+{% block titulo %}{% if modificar %}Modificar entidad bancaria{% else %}Nueva entidad bancaria{% endif %}{% endblock %}
+{% block script %}
+
+<link rel="stylesheet" href="{{ static_prefix }}css/custom-theme/jquery-ui-1.10.4.custom.min.css">
+<script src="{{ static_prefix }}js/jquery.1.11.0.min.js"></script>
+<script src="{{ static_prefix }}js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ static_prefix }}js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="{{ static_prefix }}css/personalizado.css">
+{% endblock %}
+
+{% block contenido %}
+    <form action="." method="POST">{% csrf_token %}
+    	<input type="text" style="display:none" name="cuentas" value="{{entidad_bancaria.cuentas_asociadas|length}}" id="cantidad_cuentas">
+    	<input style="display:none" name="entidad_a_modificar" value="{{entidad_bancaria.pk}}">
+    	<input style="display:none" name="eliminadas" value="" id="cuentas_eliminadas">
+		<p>
+			<strong>Nombre:</strong>
+
+			<input type="text" name="nombre" value="{{entidad_bancaria.nombre}}" placeholder="Ej: Bancolombia">
+
+		</p>
+		{% if modificar %}
+			<p>
+				<strong>Activo:</strong>
+				<input type="checkbox" name="activo" {% if entidad_bancaria.estado_registro %} checked="checked"{% endif %}>
+			</p>
+		{% endif %}
+		<table id="cuentas" class="tabla_dedalo">
+			<tr>
+				<th>Borrar</th>
+				<th>Número</th>
+				<th>Descripción</th>
+			</tr>
+			{% for cuenta in entidad_bancaria.cuentas_asociadas %}
+				<tr id="fila_numero_{{forloop.counter0}}">
+					<input style="display:none" value="{{cuenta.pk}}" name="cuenta_{{forloop.counter0}}">
+					<td><input type="button" onclick="eliminar(this);" value="X" numero="{{forloop.counter0}}"></td>
+					<td><input type="text" name="nombre_{{forloop.counter0}}" value="{{cuenta.numero}}"></td>
+					<td><textarea name="descripcion_{{forloop.counter0}}">{{cuenta.descripcion}}</textarea></td>
+				</tr>
+			{% endfor %}
+
+		</table>
+		<p> <input type="button" id="btn_agregar_cuenta" value="Agregar numero de cuenta"> </p>
+		<p>
+			<input type="submit" value="Guardar" onclick="this.disabled=true;">
+		</p>
+    </form>
+
+
+<script type="text/javascript">
+
+function eliminar(source){
+
+	if($("input[name='cuenta_"+$(source).attr("numero")+"']").length){
+		var a_borrar = $("#cuentas_eliminadas").val();
+		if(a_borrar){
+			a_borrar+=",";
+		}
+		a_borrar+=$("input[name='cuenta_"+$(source).attr("numero")+"']").val();
+		$("#cuentas_eliminadas").val(a_borrar);
+	}
+
+	$("#fila_numero_"+$(source).attr("numero")).remove();
+}
+
+
+$(document).on("ready",function(){
+	{% if entidad_bancaria.cuentas_asociadas %}
+		$("#cantidad_cuentas").val({{entidad_bancaria.cuentas_asociadas|length}});
+	{% else %}
+		$("#cantidad_cuentas").val(0);
+	{% endif %}
+	
+	$("input[type='submit']").button();
+
+	$("#btn_agregar_cuenta").on("click",function(event){
+		
+		var c = parseInt($("#cantidad_cuentas").val());
+
+		if( c>0 && !$("input[name='nombre_"+(c-1)+"']").val()){
+			
+		}else{
+			var name = "nombre_"+c;
+			var desc = "descripcion_"+c;
+			$("#cuentas").append('<tr id="fila_numero_'+c+'"><td><input type="button" onclick="eliminar(this);" value="X" numero="'+c+'"></td><td><input type="text" name="'+name+'"></td><td><textarea name="'+desc+'"></textarea></td></tr>');
+
+			c++;
+			$("#cantidad_cuentas").val(c);
+		}
+		
+		$("input[name='nombre_"+(c-1)+"']").focus();
+	});
+});
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+

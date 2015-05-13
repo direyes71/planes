@@ -1,0 +1,42 @@
+/* CSS Document */
+.tabla_uno {
+    /*border: solid 1px #959595;
+    vertical-align: middle;*/
+    /*text-align: center;*/
+    border: 1px solid #696969;
+}
+
+.tabla_uno tr, .tabla_uno th, .tabla_uno td {
+    border:hidden;
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:2px;
+}
+
+.tabla_dos {
+    border: 1px solid #696969;
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:2px;
+}
+
+.tabla_reporte {
+    /*border: solid 1px #959595;
+    vertical-align: middle;*/
+    /*text-align: center;*/
+    border: 1px solid #696969;
+    white-space: nowrap;
+    /*border-collapse:collapse;*/
+}
+
+.tabla_reporte td, .tabla_reporte th{
+    /*border: 1px solid #666666;*/
+    /*font-size:11px; line-height:13px;*/
+    /*border-bottom:1px solid #666666;*/
+    /*vertical-align:middle;*/
+    /*padding-bottom:2px;*/
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:2px;
+    /*font-family:"Lucida Grande", Verdana, Arial, sans-serif;*/
+}
