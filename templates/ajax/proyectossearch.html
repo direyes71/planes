@@ -66,9 +66,7 @@
                 {{ proyecto.ext }}
             </td>
             <td>
-                {% if 'inverboy.view_proyecto' in user.get_all_permissions %}
-                    <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Detalles</a>
-                {% endif %}
+                <a href="/inverboy/home/proyectodetails/{{ proyecto.id }}">Detalles</a>
                 {% if 'inverboy.change_proyecto' in user.get_all_permissions %}
                     <a href="/inverboy/home/proyectochange/{{ proyecto.id }}">Modificar</a>
                 {% endif %}

@@ -36,10 +36,8 @@
                 <div class="action_buttons actions_phase">
                     {% comment %}
                     {% if 'inverboy.create_setup' in user.get_all_permissions and phase.can_be_eliminated %}
-                    {% endcomment %}
                         <a href="/inverboy/home/phasechange/{{ phase.id }}/{{ phase.stage.project.id }}" phase_id="{{ phase.id }}" class="buttom_1 phase_update">Modificar</a>
                         <a href="/inverboy/home/phasedelete/{{ phase.id }}/{{ phase.stage.id }}/{{ phase.stage.project.id }}" class="buttom_1 phase_delete">Eliminar</a>
-                    {% comment %}
                     {% endif %}
                     {% endcomment %}
                 </div>

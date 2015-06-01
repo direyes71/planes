@@ -34,6 +34,9 @@ def home(request):
 def logear(request):
     u"""Función utilizada para logearse en la plataforma via ajax.
     """
+    from views_modulo_planes import stages_report
+    return stages_report(request, 1)
+    """
     from django.utils import simplejson
     import httpagentparser
     from django.http import HttpResponse
@@ -74,6 +77,7 @@ def logear(request):
     else:
         html = "<html><body>Para usar esta aplicaci&oacute;n debe usar Mozilla Firefox V.18 o superior.</body></html>"
         return HttpResponse(html)
+    """
 
 
 #Cerrar sesion
